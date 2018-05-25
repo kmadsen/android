@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_blue_bright">
+
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/mapbox_mapview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--<com.kmadsen.compass.CompassGLSurfaceView-->
+        <!--android:id="@+id/map_gl_surface_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
+
+    <com.kmadsen.compass.mapbox.MapOverlayView
+        android:id="@+id/map_overlay_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <com.kmadsen.compass.mapbox.MapBottomSheet
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        android:background="@color/colorPrimaryDark"
+        style="?attr/bottomSheetStyle"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
