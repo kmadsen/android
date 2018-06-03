@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.kylemadsen.testandroid"
         minSdkVersion 25
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -17,14 +18,41 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
+    def versionAndroidSdk = "27.1.1"
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support:design:26.+'
+    compile 'com.android.support:appcompat-v7:' + versionAndroidSdk
+    compile 'com.android.support:design:' + versionAndroidSdk
     testCompile 'junit:junit:4.12'
+}
+
+dependencies {
+    def versionRxJava = "2.0.2"
+    compile 'io.reactivex.rxjava2:rxjava:' + versionRxJava
+}
+
+dependencies {
+    def versionDagger = "2.16"
+
+    //dagger 2
+    compile 'com.google.dagger:dagger:' + versionDagger
+    annotationProcessor 'com.google.dagger:dagger-compiler:' + versionDagger
+
+    //to enable DaggerActivity, DaggerBroadcastReceiver, DaggerFragment etc classes
+    compile 'com.google.dagger:dagger-android:' + versionDagger
+    annotationProcessor 'com.google.dagger:dagger-android-processor:' + versionDagger
+
+    //support libraries with dagger 2
+    compile 'com.google.dagger:dagger-android-support:' + versionDagger
 }
