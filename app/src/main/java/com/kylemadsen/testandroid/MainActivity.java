@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.kylemadsen.testandroid.ar.ArAvailabilityController;
 import com.kylemadsen.testandroid.audio.TextToSpeechController;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         ViewGroup contentView = findViewById(R.id.content);
         viewGroupController = ViewGroupController.onCreate(contentView);
         viewGroupController.attach(new TextToSpeechController());
+
+        viewGroupController.attach(new ArAvailabilityController());
     }
 
     @Override
