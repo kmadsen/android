@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.kylemadsen.testandroid.R;
 import com.kylemadsen.testandroid.ViewController;
-import com.kylemadsen.testandroid.viewutils.ViewUtensil;
+import com.kylemadsen.testandroid.utils.ViewUtensil;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -31,23 +31,16 @@ public class TextToSpeechController implements ViewController {
         final ImageView imageView = ViewUtensil.findById(view, R.id.audio_speaker);
         ((Animatable) imageView.getDrawable()).start();
 
-
         textToSpeech = new TextToSpeech(view.getContext(), status -> { });
         withDashView = ViewUtensil.findById(view, R.id.with_dash_button);
         withPeriodView = ViewUtensil.findById(view, R.id.with_period_button);
 
-        withDashView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                speakMessage("Just follow the app - it will determine the pickup and dropoff order and direct you to each stop.");
-            }
+        withDashView.setOnClickListener(v -> {
+            speakMessage("This is a Shared ride. You might have multiple pickups on the same route. Just follow the app. it will determine the pickup and dropoff order and direct you to each stop.");
         });
 
-        withPeriodView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                speakMessage("Just follow the app. it will determine the pickup and dropoff order and direct you to each stop.");
-            }
+        withPeriodView.setOnClickListener(v -> {
+            speakMessage("This is a Shared ride. You might have multiple pickups on the same route. Just follow the app. It will determine the pickup and dropoff order and direct you to each stop.");
         });
     }
 

@@ -3,4 +3,9 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <string name="ar_availability_checking">Checking</string>
+    <string name="ar_availability_supported">Supported</string>
+    <string name="ar_availability_unsupported">Unsupported</string>
+    <string name="ar_availability_unknown">Unknown</string>
 </resources>

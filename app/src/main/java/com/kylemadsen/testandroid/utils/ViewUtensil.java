@@ -1,4 +1,4 @@
-package com.kylemadsen.testandroid.viewutils;
+package com.kylemadsen.testandroid.utils;
 
 import android.app.Activity;
 import android.support.annotation.CheckResult;
