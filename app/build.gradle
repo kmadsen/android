@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 27
@@ -26,40 +25,40 @@ android {
 
 dependencies {
     def versionAndroidSdk = "27.1.1"
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:' + versionAndroidSdk
-    compile 'com.android.support:design:' + versionAndroidSdk
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:' + versionAndroidSdk
+    implementation 'com.android.support:design:' + versionAndroidSdk
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
 
 dependencies {
     def versionRxJava = "2.0.2"
-    compile 'io.reactivex.rxjava2:rxjava:' + versionRxJava
-    compile 'io.reactivex.rxjava2:rxandroid:' + versionRxJava
+    implementation 'io.reactivex.rxjava2:rxjava:' + versionRxJava
+    implementation 'io.reactivex.rxjava2:rxandroid:' + versionRxJava
 }
 
 dependencies {
     def versionDagger = "2.16"
 
     //dagger 2
-    compile 'com.google.dagger:dagger:' + versionDagger
+    implementation 'com.google.dagger:dagger:' + versionDagger
     annotationProcessor 'com.google.dagger:dagger-compiler:' + versionDagger
 
     //to enable DaggerActivity, DaggerBroadcastReceiver, DaggerFragment etc classes
-    compile 'com.google.dagger:dagger-android:' + versionDagger
+    implementation 'com.google.dagger:dagger-android:' + versionDagger
     annotationProcessor 'com.google.dagger:dagger-android-processor:' + versionDagger
 
     //support libraries with dagger 2
-    compile 'com.google.dagger:dagger-android-support:' + versionDagger
+    implementation 'com.google.dagger:dagger-android-support:' + versionDagger
 }
 
 dependencies {
-    compile 'com.google.ar:core:1.2.0'
+    implementation 'com.google.ar:core:1.2.1'
 
-//    compile "com.google.ar.sceneform:core:1.0.0"
-//    compile "com.google.ar.sceneform.ux:sceneform-ux:1.0.0"
+    implementation "com.google.ar.sceneform:core:1.0.0"
+    implementation "com.google.ar.sceneform.ux:sceneform-ux:1.0.0"
 }
