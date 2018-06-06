@@ -9,12 +9,12 @@
         android:orientation="vertical"
         tools:context="com.kylemadsen.testandroid.MainActivity">
 
-    <LinearLayout
-            android:id="@+id/content"
+    <fragment
+            android:name="com.google.ar.sceneform.ux.ArFragment"
+            android:id="@+id/ux_fragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"/>
+            android:layout_weight="1"/>
 
     <android.support.design.widget.BottomNavigationView
             android:id="@+id/navigation"
