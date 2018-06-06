@@ -1,6 +1,7 @@
 package com.kylemadsen.testandroid.audio;
 
 import android.graphics.drawable.Animatable;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,8 +18,6 @@ import static android.speech.tts.TextToSpeech.QUEUE_FLUSH;
 
 public class TextToSpeechController implements ViewController {
 
-    private TextView withDashView;
-    private TextView withPeriodView;
     private TextToSpeech textToSpeech;
 
     @Override
@@ -32,8 +31,8 @@ public class TextToSpeechController implements ViewController {
         ((Animatable) imageView.getDrawable()).start();
 
         textToSpeech = new TextToSpeech(view.getContext(), status -> { });
-        withDashView = ViewUtensil.findById(view, R.id.with_dash_button);
-        withPeriodView = ViewUtensil.findById(view, R.id.with_period_button);
+        TextView withDashView = ViewUtensil.findById(view, R.id.with_dash_button);
+        TextView withPeriodView = ViewUtensil.findById(view, R.id.with_period_button);
 
         withDashView.setOnClickListener(v -> {
             speakMessage("This is a Shared ride. You might have multiple pickups on the same route. Just follow the app. it will determine the pickup and dropoff order and direct you to each stop.");
@@ -53,8 +52,7 @@ public class TextToSpeechController implements ViewController {
 
     private void speakMessage(String message) {
         final String utteranceId = UUID.randomUUID().toString();
-        HashMap<String, String> params = new HashMap<>(2);
-        params.put(KEY_PARAM_UTTERANCE_ID, utteranceId);
-        textToSpeech.speak(message, QUEUE_FLUSH, params);
+        Bundle params = new Bundle();
+        textToSpeech.speak(message, QUEUE_FLUSH, params, utteranceId);
     }
 }
