@@ -9,19 +9,37 @@
         android:orientation="vertical"
         tools:context="com.kylemadsen.testandroid.MainActivity">
 
-    <fragment
-            android:name="com.google.ar.sceneform.ux.ArFragment"
-            android:id="@+id/ux_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
 
-    <android.support.design.widget.BottomNavigationView
-            android:id="@+id/navigation"
+        <fragment
+            android:name="com.kylemadsen.testandroid.ar.ArFragment"
+            android:id="@+id/ux_fragment"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            />
+
+        <FrameLayout
+            android:id="@+id/ar_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="?android:attr/windowBackground"
-            app:menu="@menu/navigation"/>
+            android:background="#7E9CCC65">
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+            android:id="@+id/ar_configuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="?android:attr/windowBackground">
+
+    </FrameLayout>
 
 </LinearLayout>

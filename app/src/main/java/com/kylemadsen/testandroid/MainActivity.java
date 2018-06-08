@@ -1,30 +1,57 @@
 package com.kylemadsen.testandroid;
 
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.widget.FrameLayout;
+import com.google.ar.core.HitResult;
+import com.google.ar.core.Plane;
+import com.kylemadsen.testandroid.ar.ArFragment;
+import com.kylemadsen.testandroid.ar.ArObjectReader;
+import com.kylemadsen.testandroid.logger.L;
 
 public class MainActivity extends AppCompatActivity {
+
+    ViewGroupController configurationController;
+    ViewGroupController statusController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(this::navigateTo);
+        FrameLayout configurationLayout = findViewById(R.id.ar_configuration);
+        FrameLayout statusLayout = findViewById(R.id.ar_status);
+        configurationController = ViewGroupController.onCreate(configurationLayout);
+        statusController = ViewGroupController.onCreate(statusLayout);
+
+        ArFragment arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+
+        arFragment.setOnTapArPlaneListener(new ArFragment.OnTapArPlaneListener() {
+            @Override
+            public void onTapPlane(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
+                L.i("onTapPlane");
+                L.i(ArObjectReader.read(hitResult));
+                L.i(ArObjectReader.read(plane));
+                L.i("motionEvent: %s", motionEvent.toString());
+
+
+                //float distance = hitResult.getDistance();
+                //Pose pose = hitResult.getHitPose();
+                //L.i("");
+                //Anchor anchor = hitResult.createAnchor();
+                //Trackable trackable = hitResult.getTrackable();
+            }
+        });
+
+
     }
 
-    private boolean navigateTo(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.navigation_home:
-                return true;
-            case R.id.navigation_dashboard:
-                return true;
-            case R.id.navigation_notifications:
-                return true;
-        }
-        return false;
+    @Override
+    protected void onDestroy() {
+        statusController.onDestroy();
+        configurationController.onDestroy();
+
+        super.onDestroy();
     }
 }
