@@ -2,10 +2,7 @@ package com.kylemadsen.testandroid;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent;
 import android.widget.FrameLayout;
-import com.google.ar.core.HitResult;
-import com.google.ar.core.Plane;
 import com.kylemadsen.testandroid.ar.ArFragment;
 import com.kylemadsen.testandroid.ar.ArObjectReader;
 import com.kylemadsen.testandroid.logger.L;
@@ -27,21 +24,18 @@ public class MainActivity extends AppCompatActivity {
 
         ArFragment arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
-        arFragment.setOnTapArPlaneListener(new ArFragment.OnTapArPlaneListener() {
-            @Override
-            public void onTapPlane(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
-                L.i("onTapPlane");
-                L.i(ArObjectReader.read(hitResult));
-                L.i(ArObjectReader.read(plane));
-                L.i("motionEvent: %s", motionEvent.toString());
+        arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+            L.i("onTapPlane");
+            L.i(ArObjectReader.read(hitResult));
+            L.i(ArObjectReader.read(plane));
+            L.i("motionEvent: %s", motionEvent.toString());
 
 
-                //float distance = hitResult.getDistance();
-                //Pose pose = hitResult.getHitPose();
-                //L.i("");
-                //Anchor anchor = hitResult.createAnchor();
-                //Trackable trackable = hitResult.getTrackable();
-            }
+            //float distance = hitResult.getDistance();
+            //Pose pose = hitResult.getHitPose();
+            //L.i("");
+            //Anchor anchor = hitResult.createAnchor();
+            //Trackable trackable = hitResult.getTrackable();
         });
 
 

@@ -41,6 +41,7 @@ import com.google.ar.sceneform.ux.FootprintSelectionVisualizer;
 import com.google.ar.sceneform.ux.PlaneDiscoveryController;
 import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.ar.sceneform.ux.TransformationSystem;
+import com.kylemadsen.testandroid.logger.L;
 import java.util.Iterator;
 
 public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, Scene.OnUpdateListener {
@@ -321,12 +322,21 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
         Frame frame = this.arSceneView.getArFrame();
         this.transformationSystem.selectNode((TransformableNode)null);
         ArFragment.OnTapArPlaneListener onTapArPlaneListener = this.onTapArPlaneListener;
+
+        if (frame != null) {
+            L.i("is there a frame");
+            L.i(ArObjectReader.read(frame));
+        }
+
         if (frame != null && onTapArPlaneListener != null && motionEvent != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
             Iterator var4 = frame.hitTest(motionEvent).iterator();
 
+            int resultCount = 1;
             while(var4.hasNext()) {
                 HitResult hit = (HitResult)var4.next();
                 Trackable trackable = hit.getTrackable();
+                L.i("resultCount:%d\n%s", resultCount++, ArObjectReader.read(hit));
+                L.i(ArObjectReader.read(trackable));
                 if (trackable instanceof Plane && ((Plane)trackable).isPoseInPolygon(hit.getHitPose())) {
                     Plane plane = (Plane)trackable;
                     onTapArPlaneListener.onTapPlane(hit, plane, motionEvent);
