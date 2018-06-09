@@ -38,7 +38,6 @@ import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.FootprintSelectionVisualizer;
-import com.google.ar.sceneform.ux.PlaneDiscoveryController;
 import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.ar.sceneform.ux.TransformationSystem;
 import com.kylemadsen.testandroid.logger.L;
@@ -46,12 +45,9 @@ import java.util.Iterator;
 
 public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, Scene.OnUpdateListener {
 
-    private static final String TAG = ArFragment.class.getSimpleName();
-    private static final int RC_PERMISSIONS = 1010;
     private boolean installRequested;
     private boolean sessionInitializationFailed = false;
     private ArSceneView arSceneView;
-    private PlaneDiscoveryController planeDiscoveryController;
     private TransformationSystem transformationSystem;
     private GestureDetector gestureDetector;
     private FrameLayout frameLayout;
@@ -67,14 +63,6 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
         return this.arSceneView;
     }
 
-    public PlaneDiscoveryController getPlaneDiscoveryController() {
-        return this.planeDiscoveryController;
-    }
-
-    public TransformationSystem getTransformationSystem() {
-        return this.transformationSystem;
-    }
-
     public void setOnTapArPlaneListener(@Nullable ArFragment.OnTapArPlaneListener onTapArPlaneListener) {
         this.onTapArPlaneListener = onTapArPlaneListener;
     }
@@ -82,15 +70,13 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.frameLayout = (FrameLayout)inflater.inflate(com.google.ar.sceneform.ux.R.layout.sceneform_ux_fragment_layout, container, true);
         this.arSceneView = (ArSceneView)this.frameLayout.findViewById(com.google.ar.sceneform.ux.R.id.sceneform_ar_scene_view);
-        View instructionsView = this.loadPlaneDiscoveryView(inflater, container);
-        this.frameLayout.addView(instructionsView);
-        this.planeDiscoveryController = new PlaneDiscoveryController(instructionsView);
         if (Build.VERSION.SDK_INT < 24) {
             return this.frameLayout;
         } else {
             FootprintSelectionVisualizer selectionVisualizer = new FootprintSelectionVisualizer();
             this.transformationSystem = new TransformationSystem(this.getResources().getDisplayMetrics(), selectionVisualizer);
-            ((ModelRenderable.Builder)ModelRenderable.builder().setSource(this.getActivity(), com.google.ar.sceneform.ux.R.raw.sceneform_footprint)).build().thenAccept((renderable) -> {
+            ((ModelRenderable.Builder)ModelRenderable.builder()
+                    .setSource(this.getActivity(), com.google.ar.sceneform.ux.R.raw.sceneform_footprint)).build().thenAccept((renderable) -> {
                 if (selectionVisualizer.getFootprintRenderable() == null) {
                     selectionVisualizer.setFootprintRenderable(renderable);
                 }
@@ -279,9 +265,6 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
 
             while(var3.hasNext()) {
                 Plane plane = (Plane)var3.next();
-                if (plane.getTrackingState() == TrackingState.TRACKING) {
-                    this.planeDiscoveryController.hide();
-                }
             }
 
         }
@@ -297,10 +280,6 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
                 } catch (CameraNotAvailableException var2) {
                     this.sessionInitializationFailed = true;
                 }
-
-                if (!this.sessionInitializationFailed) {
-                    this.planeDiscoveryController.show();
-                }
             }
 
         }
@@ -309,13 +288,8 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
     private void stop() {
         if (this.isStarted) {
             this.isStarted = false;
-            this.planeDiscoveryController.hide();
             this.arSceneView.pause();
         }
-    }
-
-    private View loadPlaneDiscoveryView(LayoutInflater inflater, @Nullable ViewGroup container) {
-        return inflater.inflate(com.google.ar.sceneform.ux.R.layout.sceneform_plane_discovery_layout, container, false);
     }
 
     private void onSingleTap(MotionEvent motionEvent) {
