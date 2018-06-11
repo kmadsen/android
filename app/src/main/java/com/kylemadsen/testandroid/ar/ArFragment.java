@@ -23,6 +23,7 @@ import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
+import com.google.ar.core.Point;
 import com.google.ar.core.Session;
 import com.google.ar.core.Trackable;
 import com.google.ar.core.TrackingState;
@@ -40,6 +41,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.FootprintSelectionVisualizer;
 import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.ar.sceneform.ux.TransformationSystem;
+import com.kylemadsen.testandroid.R;
 import com.kylemadsen.testandroid.logger.L;
 import java.util.Iterator;
 
@@ -68,15 +70,14 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.frameLayout = (FrameLayout)inflater.inflate(com.google.ar.sceneform.ux.R.layout.sceneform_ux_fragment_layout, container, true);
-        this.arSceneView = (ArSceneView)this.frameLayout.findViewById(com.google.ar.sceneform.ux.R.id.sceneform_ar_scene_view);
+        this.frameLayout = (FrameLayout)inflater.inflate(R.layout.sceneform_ux_fragment_layout, container, true);
+        this.arSceneView = frameLayout.findViewById(R.id.sceneform_ar_scene_view);
         if (Build.VERSION.SDK_INT < 24) {
             return this.frameLayout;
         } else {
             FootprintSelectionVisualizer selectionVisualizer = new FootprintSelectionVisualizer();
             this.transformationSystem = new TransformationSystem(this.getResources().getDisplayMetrics(), selectionVisualizer);
-            ((ModelRenderable.Builder)ModelRenderable.builder()
-                    .setSource(this.getActivity(), com.google.ar.sceneform.ux.R.raw.sceneform_footprint)).build().thenAccept((renderable) -> {
+            (ModelRenderable.builder().setSource(this.getActivity(), R.raw.sceneform_footprint)).build().thenAccept((renderable) -> {
                 if (selectionVisualizer.getFootprintRenderable() == null) {
                     selectionVisualizer.setFootprintRenderable(renderable);
                 }
@@ -114,10 +115,6 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
         return true;
     }
 
-    public String[] getAdditionalPermissions() {
-        return new String[0];
-    }
-
     protected void handleSessionException(UnavailableException sessionException) {
         String message;
         if (sessionException instanceof UnavailableArcoreNotInstalledException) {
@@ -134,7 +131,7 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
             Log.e("StandardArFragment", (new StringBuilder(11 + String.valueOf(var3).length())).append("Exception: ").append(var3).toString());
         }
 
-        Toast.makeText(this.requireActivity(), message, 1).show();
+        Toast.makeText(this.requireActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     protected Config getSessionConfiguration(Session session) {
@@ -144,14 +141,9 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
     protected void requestDangerousPermissions() {
         if (this.canRequestDangerousPermissions) {
             this.canRequestDangerousPermissions = false;
-            String[] additionalPermissions = this.getAdditionalPermissions();
-            int permissionLength = additionalPermissions != null ? additionalPermissions.length : 0;
-            String[] permissions = new String[permissionLength + 1];
-            permissions[0] = "android.permission.CAMERA";
-            if (permissionLength > 0) {
-                System.arraycopy(additionalPermissions, 0, permissions, 1, additionalPermissions.length);
-            }
-
+            String[] permissions = new String[] {
+                    "android.permission.CAMERA"
+            };
             this.requestPermissions(permissions, 1010);
         }
     }
@@ -165,25 +157,17 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
                     intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
                     intent.setData(Uri.fromParts("package", ArFragment.this.requireActivity().getPackageName(), (String)null));
                     ArFragment.this.requireActivity().startActivity(intent);
-                    ArFragment.this.setCanRequestDangerousPermissions(true);
+                    ArFragment.this.canRequestDangerousPermissions = true;
                 }
             }).setNegativeButton(17039360, (DialogInterface.OnClickListener)null).setIcon(17301543).setOnDismissListener(new DialogInterface.OnDismissListener() {
                 public void onDismiss(final DialogInterface arg0) {
-                    if (!ArFragment.this.getCanRequestDangerousPermissions()) {
+                    if (!ArFragment.this.canRequestDangerousPermissions) {
                         ArFragment.this.requireActivity().finish();
                     }
 
                 }
             }).show();
         }
-    }
-
-    protected Boolean getCanRequestDangerousPermissions() {
-        return this.canRequestDangerousPermissions;
-    }
-
-    protected void setCanRequestDangerousPermissions(Boolean canRequestDangerousPermissions) {
-        this.canRequestDangerousPermissions = canRequestDangerousPermissions;
     }
 
     public void onResume() {
@@ -198,8 +182,7 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
     protected final void initializeSession() {
         if (!this.sessionInitializationFailed) {
             if (ContextCompat.checkSelfPermission(this.requireActivity(), "android.permission.CAMERA") == 0) {
-                UnavailableException sessionException = null;
-
+                UnavailableException sessionException;
                 try {
                     switch(ArCoreApk.getInstance().requestInstall(this.requireActivity(), !this.installRequested)) {
                         case INSTALL_REQUESTED:
@@ -261,12 +244,21 @@ public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, S
     public void onUpdate(FrameTime frameTime) {
         Frame frame = this.arSceneView.getArFrame();
         if (frame != null) {
-            Iterator var3 = frame.getUpdatedTrackables(Plane.class).iterator();
-
-            while(var3.hasNext()) {
-                Plane plane = (Plane)var3.next();
+            int resultCount = 0;
+            for (Trackable trackable : frame.getUpdatedTrackables(Trackable.class)) {
+                resultCount++;
+            }
+            if (resultCount > 0) {
+                L.i("onUpdateGetTrackables:%d", resultCount);
             }
 
+            for (Plane plane : frame.getUpdatedTrackables(Plane.class)) {
+                L.i("plane=%s", ArObjectReader.read(plane));
+            }
+
+            for (Point point : frame.getUpdatedTrackables(Point.class)) {
+                L.i("point=%s", ArObjectReader.read(point));
+            }
         }
     }
 

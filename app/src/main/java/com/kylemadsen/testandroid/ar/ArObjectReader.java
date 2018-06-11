@@ -7,6 +7,7 @@ import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.LightEstimate;
 import com.google.ar.core.Plane;
+import com.google.ar.core.Point;
 import com.google.ar.core.PointCloud;
 import com.google.ar.core.Pose;
 import com.google.ar.core.Trackable;
@@ -42,16 +43,6 @@ public class ArObjectReader {
                "getCloudAnchorId=" + anchor.getCloudAnchorId() +
                ", getCloudAnchorState=" + read(Anchor.CloudAnchorState.class, anchor.getCloudAnchorState()) +
                ", getTrackingState=" + read(TrackingState.class, anchor.getTrackingState()) +
-               "}";
-    }
-
-    public static String read(Plane plane) {
-        return "{ ClassName=" + plane.getClass().getSimpleName() +
-               ", getType=" + read(Plane.Type.class, plane.getType()) +
-               ", getCenterPose=" + read(plane.getCenterPose()) +
-               ", getExtentX=" + plane.getExtentX() +
-               ", getExtentZ=" + plane.getExtentZ() +
-               ", getPolygon=" + plane.getPolygon().toString() +
                "}";
     }
 
@@ -120,7 +111,26 @@ public class ArObjectReader {
     public static String read(Trackable trackable) {
         return "{ ClassName=" + trackable.getClass().getSimpleName() +
                 ", getTrackingState=" + read(TrackingState.class, trackable.getTrackingState()) +
-                ", trackable.getAnchors.size=" + trackable.getAnchors().size() +
+                ", getAnchors.size=" + trackable.getAnchors().size() +
+                "}";
+    }
+
+    public static String read(Plane plane) {
+        return "{ ClassName=" + plane.getClass().getSimpleName() +
+                ", getTrackingState=" + read(TrackingState.class, plane.getTrackingState()) +
+                ", getType=" + read(Plane.Type.class, plane.getType()) +
+                ", getCenterPose=" + read(plane.getCenterPose()) +
+                ", getExtentX=" + plane.getExtentX() +
+                ", getExtentZ=" + plane.getExtentZ() +
+                ", getPolygon=" + plane.getPolygon().toString() +
+                "}";
+    }
+
+    public static String read(Point point) {
+        return "{ ClassName=" + point.getClass().getSimpleName() +
+                ", getTrackingState=" + read(TrackingState.class, point.getTrackingState()) +
+                ", getOrientationMode=" + read(Point.OrientationMode.class, point.getOrientationMode()) +
+                ", getAnchors.size=" + point.getAnchors().size() +
                 "}";
     }
 
