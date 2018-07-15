@@ -29,7 +29,9 @@ public class TextToSpeechController implements ViewController {
         TextView withDashView = ViewUtensil.findById(view, R.id.with_dash_button);
         TextView withPeriodView = ViewUtensil.findById(view, R.id.with_period_button);
 
+        L.i("set click listeners");
         withDashView.setOnClickListener(v -> {
+            L.i("dash clicked");
             observeSpeaking("This is a test message - do you hear it?")
                     .subscribe(isSpeaking -> {
                         L.i("is speaking with dash %s", String.valueOf(isSpeaking));
@@ -37,11 +39,14 @@ public class TextToSpeechController implements ViewController {
         });
 
         withPeriodView.setOnClickListener(v -> {
+            L.i("period clicked");
             observeSpeaking("This is a test message. Do you hear it?")
                     .subscribe(isSpeaking -> {
                         L.i("is speaking with period %s", String.valueOf(isSpeaking));
                     });
         });
+        L.i("complete it what the fuck");
+
     }
 
     @Override

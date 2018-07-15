@@ -9,37 +9,21 @@
         android:orientation="vertical"
         tools:context="com.kylemadsen.testandroid.MainActivity">
 
-    <FrameLayout
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/goto_gnss_button"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        >
+        android:layout_height="wrap_content"
+        android:text="@string/activity_main_goto_gnss"/>
 
-        <fragment
-            android:name="com.kylemadsen.testandroid.ar.ArFragment"
-            android:id="@+id/ux_fragment"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            />
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/goto_ar_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_main_ar_gnss"/>
 
-        <FrameLayout
-            android:id="@+id/ar_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="#7E9CCC65">
-
-        </FrameLayout>
-
-    </FrameLayout>
-
-    <FrameLayout
-            android:id="@+id/ar_configuration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="?android:attr/windowBackground">
-
-    </FrameLayout>
-
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/goto_animations_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_main_animations"/>
 </LinearLayout>
