@@ -21,5 +21,9 @@
         android:layout_height="wrap_content"
         android:text="@string/activity_main_ar_gnss"/>
 
-
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/goto_animations_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_main_animations"/>
 </LinearLayout>

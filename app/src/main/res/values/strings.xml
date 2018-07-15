@@ -7,6 +7,7 @@
 
     <string name="activity_main_goto_gnss">Go to GNSS Logger</string>
     <string name="activity_main_ar_gnss">Go to AR</string>
+    <string name="activity_main_animations">Go to animations</string>
 
     <string name="ar_availability_checking">Checking</string>
     <string name="ar_availability_supported">Supported</string>
