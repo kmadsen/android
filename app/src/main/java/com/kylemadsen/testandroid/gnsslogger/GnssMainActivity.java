@@ -76,7 +76,7 @@ public class GnssMainActivity extends AppCompatActivity
   private UiLogger mUiLogger;
   private RealTimePositionVelocityCalculator mRealTimePositionVelocityCalculator;
   private FileLogger mFileLogger;
-  private AgnssUiLogger mAgnssUiLogger;
+  private GnssUiLogger mGnssUiLogger;
   private Fragment[] mFragments;
   private GoogleApiClient mGoogleApiClient;
   private boolean mAutoSwitchGroundTruthMode;
@@ -258,14 +258,14 @@ public class GnssMainActivity extends AppCompatActivity
         RealTimePositionVelocityCalculator.RESIDUAL_MODE_DISABLED, null /* fixedGroundTruth */);
 
     mFileLogger = new FileLogger(getApplicationContext());
-    mAgnssUiLogger = new AgnssUiLogger();
+    mGnssUiLogger = new GnssUiLogger();
     mGnssContainer =
         new GnssContainer(
             getApplicationContext(),
             mUiLogger,
             mFileLogger,
             mRealTimePositionVelocityCalculator,
-            mAgnssUiLogger);
+                mGnssUiLogger);
     mFragments = new Fragment[NUMBER_OF_FRAGMENTS];
     SettingsFragment settingsFragment = new SettingsFragment();
     settingsFragment.setGpsContainer(mGnssContainer);
@@ -286,10 +286,10 @@ public class GnssMainActivity extends AppCompatActivity
     mapFragment.setPositionVelocityCalculator(mRealTimePositionVelocityCalculator);
     mFragments[FRAGMENT_INDEX_MAP] = mapFragment;
 
-    AgnssFragment agnssFragment = new AgnssFragment();
-    agnssFragment.setGpsContainer(mGnssContainer);
-    agnssFragment.setUILogger(mAgnssUiLogger);
-    mFragments[FRAGMENT_INDEX_AGNSS] = agnssFragment;
+    GnssFragment gnssFragment = new GnssFragment();
+    gnssFragment.setGpsContainer(mGnssContainer);
+    gnssFragment.setUILogger(mGnssUiLogger);
+    mFragments[FRAGMENT_INDEX_AGNSS] = gnssFragment;
 
     PlotFragment plotFragment = new PlotFragment();
     mFragments[FRAGMENT_INDEX_PLOT] = plotFragment;

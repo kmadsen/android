@@ -16,7 +16,7 @@ public class TextToSpeechController implements ViewController {
 
     @Override
     public int getLayoutId() {
-        return R.layout.text_to_speech_view;
+        return R.layout.animation_text_to_speech;
     }
 
     @Override

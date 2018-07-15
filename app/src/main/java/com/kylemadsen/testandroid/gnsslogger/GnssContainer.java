@@ -60,7 +60,7 @@ public class GnssContainer {
         public void onProviderEnabled(String provider) {
           if (mLogLocations) {
             for (GnssListener logger : mLoggers) {
-              if (logger instanceof AgnssUiLogger && !firstTime) {
+              if (logger instanceof GnssUiLogger && !firstTime) {
                 continue;
               }
               logger.onProviderEnabled(provider);
@@ -72,7 +72,7 @@ public class GnssContainer {
         public void onProviderDisabled(String provider) {
           if (mLogLocations) {
             for (GnssListener logger : mLoggers) {
-              if (logger instanceof AgnssUiLogger && !firstTime) {
+              if (logger instanceof GnssUiLogger && !firstTime) {
                 continue;
               }
               logger.onProviderDisabled(provider);
@@ -94,7 +94,7 @@ public class GnssContainer {
           }
           if (mLogLocations) {
             for (GnssListener logger : mLoggers) {
-              if (logger instanceof AgnssUiLogger && !firstTime) {
+              if (logger instanceof GnssUiLogger && !firstTime) {
                 continue;
               }
               logger.onLocationChanged(location);
@@ -329,7 +329,7 @@ public class GnssContainer {
 
   private void logRegistration(String listener, boolean result) {
     for (GnssListener logger : mLoggers) {
-      if (logger instanceof AgnssUiLogger && !firstTime) {
+      if (logger instanceof GnssUiLogger && !firstTime) {
         continue;
       }
       logger.onListenerRegistration(listener, result);

@@ -36,13 +36,13 @@ import android.widget.TextView;
 import com.kylemadsen.testandroid.R;
 
 /** The UI fragment that hosts a logging view. */
-public class AgnssFragment extends Fragment {
+public class GnssFragment extends Fragment {
 
-  public static final String TAG = ":AgnssFragment";
+  public static final String TAG = ":GnssFragment";
   private TextView mLogView;
   private ScrollView mScrollView;
   private GnssContainer mGpsContainer;
-  private AgnssUiLogger mUiLogger;
+  private GnssUiLogger mUiLogger;
 
   private final AgnssUIFragmentComponent mUiComponent = new AgnssUIFragmentComponent();
 
@@ -50,14 +50,14 @@ public class AgnssFragment extends Fragment {
     mGpsContainer = value;
   }
 
-  public void setUILogger(AgnssUiLogger value) {
+  public void setUILogger(GnssUiLogger value) {
     mUiLogger = value;
   }
 
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View newView = inflater.inflate(R.layout.agnss_fragment, container, false /* attachToRoot */);
+    View newView = inflater.inflate(R.layout.gnss_fragment, container, false /* attachToRoot */);
     mLogView = (TextView) newView.findViewById(R.id.log_view);
     mScrollView = (ScrollView) newView.findViewById(R.id.log_scroll);
 

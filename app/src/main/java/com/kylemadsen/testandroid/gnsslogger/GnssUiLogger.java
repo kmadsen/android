@@ -30,19 +30,19 @@ import java.util.concurrent.TimeUnit;
  * A class representing a UI logger for the application. Its responsibility is show information in
  * the UI.
  */
-public class AgnssUiLogger implements GnssListener {
+public class GnssUiLogger implements GnssListener {
 
   private static final int USED_COLOR = Color.rgb(0x4a, 0x5f, 0x70);
 
-  public AgnssUiLogger() {}
+  public GnssUiLogger() {}
 
-  private AgnssFragment.AgnssUIFragmentComponent mUiFragmentComponent;
+  private GnssFragment.AgnssUIFragmentComponent mUiFragmentComponent;
 
-  public synchronized AgnssFragment.AgnssUIFragmentComponent getUiFragmentComponent() {
+  public synchronized GnssFragment.AgnssUIFragmentComponent getUiFragmentComponent() {
     return mUiFragmentComponent;
   }
 
-  public synchronized void setUiFragmentComponent(AgnssFragment.AgnssUIFragmentComponent value) {
+  public synchronized void setUiFragmentComponent(GnssFragment.AgnssUIFragmentComponent value) {
     mUiFragmentComponent = value;
   }
 
@@ -99,7 +99,7 @@ public class AgnssUiLogger implements GnssListener {
   }
 
   private void logText(String tag, String text, int color) {
-    AgnssFragment.AgnssUIFragmentComponent component = getUiFragmentComponent();
+    GnssFragment.AgnssUIFragmentComponent component = getUiFragmentComponent();
     if (component != null) {
       component.logTextFragment(tag, text, color);
     }
