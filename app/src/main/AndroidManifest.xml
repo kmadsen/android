@@ -73,7 +73,7 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <activity android:name=".CompassMainActivity"
+        <activity android:name="com.kmadsen.compass.CompassMainActivity"
             android:parentActivityName=".MainActivity">
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data

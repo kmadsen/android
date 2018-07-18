@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.kmadsen.compass.CompassMainActivity;
 import com.kylemadsen.testandroid.ar.ArMainActivity;
 import com.kylemadsen.testandroid.audio.AnimationMainActivity;
 import com.kylemadsen.testandroid.gnsslogger.GnssMainActivity;

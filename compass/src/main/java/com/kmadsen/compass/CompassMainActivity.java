@@ -1,4 +1,4 @@
-package com.kylemadsen.testandroid;
+package com.kmadsen.compass;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
