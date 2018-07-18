@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import com.kylemadsen.testandroid.ar.ArFragment;
+
+import com.kmadsen.compass.CompassMainActivity;
 import com.kylemadsen.testandroid.ar.ArMainActivity;
-import com.kylemadsen.testandroid.ar.ArObjectReader;
 import com.kylemadsen.testandroid.audio.AnimationMainActivity;
 import com.kylemadsen.testandroid.gnsslogger.GnssMainActivity;
-import com.kylemadsen.testandroid.logger.L;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
         View gotoAnimationsButton = findViewById(R.id.goto_animations_button);
         gotoAnimationsButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, AnimationMainActivity.class);
+            startActivity(intent);
+        });
+
+        View gotoCompassButton = findViewById(R.id.goto_compass_button);
+        gotoCompassButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, CompassMainActivity.class);
             startActivity(intent);
         });
     }

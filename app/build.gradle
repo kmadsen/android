@@ -48,6 +48,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
 dependencies {
@@ -96,4 +98,8 @@ dependencies {
     implementation files('libs/asn1-base.jar')
     implementation files('libs/suplClient.jar')
     implementation files('libs/protobuf-nano.jar')
+}
+
+dependencies {
+    implementation project(path: ':compass')
 }
