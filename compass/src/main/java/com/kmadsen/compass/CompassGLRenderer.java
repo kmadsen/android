@@ -31,7 +31,7 @@ public class CompassGLRenderer implements GLSurfaceView.Renderer {
     private float mCubeRotation;
     private long mLastUpdateMillis;
 
-    CompassGLRenderer() {
+    public CompassGLRenderer() {
         mMVPMatrix = new float[16];
         mProjectionMatrix = new float[16];
         mViewMatrix = new float[16];
@@ -45,7 +45,7 @@ public class CompassGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         GLES20.glClearDepthf(1.0f);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
