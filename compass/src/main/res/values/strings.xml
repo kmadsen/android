@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Compass</string>
+
+    <string name="compass_mapbox_access_token">pk.eyJ1Ijoia21hZHNlbjgwMSIsImEiOiJjamd6Zm9ydnczOWpqMzNtbHY2NG94NG5sIn0.bQVovPuRuZUSJRknUmM3VQ</string>
 </resources>
