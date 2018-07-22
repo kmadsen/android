@@ -1,16 +1,17 @@
 package com.kmadsen.compass
 
-import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.kmadsen.compass.location.LocationPermissions
 
 import com.kmadsen.compass.location.LocationService
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
-import kotlin.properties.Delegates
 
 class CompassMainActivity : AppCompatActivity() {
+
+    private var locationPermissions: LocationPermissions = LocationPermissions()
 
     lateinit var mapViewController: MapViewController
     lateinit var locationService: LocationService
@@ -28,18 +29,32 @@ class CompassMainActivity : AppCompatActivity() {
         mapView.getMapAsync { mapboxMap -> mapViewController = MapViewController(mapView, mapboxMap) }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
+        L.i("onStart")
 
-        locationService.start {
-            rawLocationUpdate ->
-            L.i("thread: %d rawLocationUpdate %s", Thread.currentThread().id, rawLocationUpdate.toString())
+        locationPermissions.onActivityStart(this) {
+            isGranted ->
+            L.i("permission granted $isGranted")
+            if (isGranted) {
+                locationService.start { locationUpdate ->
+                    L.i("thread: %d rawLocationUpdate %s", Thread.currentThread().id, locationUpdate.toString())
+                }
+            }
         }
     }
 
-    override fun onPause() {
+    override fun onStop() {
         locationService.stop()
 
-        super.onPause()
+        super.onStop()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<out String>,
+                                            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        locationPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

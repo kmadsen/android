@@ -7,57 +7,49 @@ import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.kylemadsen.core.logger.L
 import java.util.concurrent.TimeUnit
-import kotlin.properties.Delegates
 
+class LocationService(val application: Application) {
 
-@SuppressLint("MissingPermission") // TODO the permission check should be on a "start()" function
-class LocationService(application: Application) {
-
-    // Configuration
     private val locationRequest: LocationRequest = LocationRequest.create()
             .setPriority(PRIORITY_HIGH_ACCURACY)
             .setInterval(TimeUnit.SECONDS.toMillis(5))
 
-    var lastLocation: Location? = null
-    var locationAvailability: LocationAvailability? = null
-    var locationResult: LocationResult? = null
-
-    private val fusedLocationProviderClient: FusedLocationProviderClient by lazy {
-        L.i("fusedLocationProviderClient)")
+    private val providerClient: FusedLocationProviderClient by lazy {
+        L.i("providerClient)")
         LocationServices.getFusedLocationProviderClient(application)
     }
 
-    private lateinit var onRawLocationUpdate: (RawLocationUpdate) -> (Unit)
+    private var lastLocation: Location? = null
+    private var locationAvailability: LocationAvailability? = null
+    private var locationResult: LocationResult? = null
 
-    fun start(onRawLocationUpdate: (RawLocationUpdate) -> (Unit)) {
+    private lateinit var onRawLocationUpdate: (LocationUpdate) -> (Unit)
+
+    @SuppressLint("MissingPermission")
+    fun start(onRawLocationUpdate: (LocationUpdate) -> (Unit)) {
         L.i(".start")
         this.onRawLocationUpdate = onRawLocationUpdate
-        activeFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null)
-    }
 
-    fun stop() {
-        L.i(".stop")
-        activeFusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
-
-    private fun getRawLocationUpdate(): RawLocationUpdate {
-        return RawLocationUpdate(
-                lastLocation,
-                locationAvailability,
-                locationResult
-        )
-    }
-
-    private val activeFusedLocationProviderClient by Delegates.observable(fusedLocationProviderClient) {
-        _, old, new ->
-        L.i("activeFusedLocationProviderClient")
-        old.removeLocationUpdates(locationCallback)
-        new.lastLocation.addOnSuccessListener {
+        providerClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        providerClient.lastLocation.addOnSuccessListener {
             location: Location? ->
             L.i(".lastLocationSuccess " + location?.toString())
             this@LocationService.lastLocation = location
             onRawLocationUpdate.invoke(getRawLocationUpdate())
         }
+    }
+
+    fun stop() {
+        L.i(".stop")
+        providerClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun getRawLocationUpdate(): LocationUpdate {
+        return LocationUpdate(
+                lastLocation,
+                locationAvailability,
+                locationResult
+        )
     }
 
     private val locationCallback: LocationCallback = object : LocationCallback() {
