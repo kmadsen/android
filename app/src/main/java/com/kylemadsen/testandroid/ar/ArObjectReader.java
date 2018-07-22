@@ -1,6 +1,7 @@
 package com.kylemadsen.testandroid.ar;
 
 import android.media.Image;
+
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Frame;
@@ -13,6 +14,7 @@ import com.google.ar.core.Pose;
 import com.google.ar.core.Trackable;
 import com.google.ar.core.TrackingState;
 import com.google.ar.core.exceptions.NotYetAvailableException;
+
 import java.nio.FloatBuffer;
 import java.util.Locale;
 
@@ -20,40 +22,40 @@ public class ArObjectReader {
 
     public static String read(HitResult hitResult) {
         return "{ ClassName=" + hitResult.getClass().getSimpleName() +
-               ", getDistance=" + hitResult.getDistance() +
-               ", getHitPose=" + read(hitResult.getHitPose()) +
-               ", createAnchor=" + read(hitResult.createAnchor()) +
-               "}";
+                ", getDistance=" + hitResult.getDistance() +
+                ", getHitPose=" + read(hitResult.getHitPose()) +
+                ", createAnchor=" + read(hitResult.createAnchor()) +
+                "}";
     }
 
     private static String read(Pose pose) {
         return "{ ClassName=" + pose.getClass().getSimpleName() +
-               ", tx=" + pose.tx() +
-               ", ty=" + pose.ty() +
-               ", tz=" + pose.tz() +
-               ", qx=" + pose.qx() +
-               ", qy=" + pose.qy() +
-               ", qz=" + pose.qz() +
-               ", qw=" + pose.qw() +
-               "]";
+                ", tx=" + pose.tx() +
+                ", ty=" + pose.ty() +
+                ", tz=" + pose.tz() +
+                ", qx=" + pose.qx() +
+                ", qy=" + pose.qy() +
+                ", qz=" + pose.qz() +
+                ", qw=" + pose.qw() +
+                "]";
     }
 
     private static String read(Anchor anchor) {
         return "{ ClassName=" + anchor.getClass().getSimpleName() +
-               "getCloudAnchorId=" + anchor.getCloudAnchorId() +
-               ", getCloudAnchorState=" + read(Anchor.CloudAnchorState.class, anchor.getCloudAnchorState()) +
-               ", getTrackingState=" + read(TrackingState.class, anchor.getTrackingState()) +
-               "}";
+                "getCloudAnchorId=" + anchor.getCloudAnchorId() +
+                ", getCloudAnchorState=" + read(Anchor.CloudAnchorState.class, anchor.getCloudAnchorState()) +
+                ", getTrackingState=" + read(TrackingState.class, anchor.getTrackingState()) +
+                "}";
     }
 
     public static String read(Frame frame) {
         return "{ ClassName=" + frame.getClass().getSimpleName() +
-               ", acquireCameraImage=" + readAcquireCameraImage(frame) +
-               ", acquirePointCloud=" + readAcquirePointCloud(frame) +
-               ", getCamera=" + read(frame.getCamera()) +
-               ", getLightEstimate=" + read(frame.getLightEstimate()) +
-               ", getTimestamp=" + frame.getTimestamp() +
-               "}";
+                ", acquireCameraImage=" + readAcquireCameraImage(frame) +
+                ", acquirePointCloud=" + readAcquirePointCloud(frame) +
+                ", getCamera=" + read(frame.getCamera()) +
+                ", getLightEstimate=" + read(frame.getLightEstimate()) +
+                ", getTimestamp=" + frame.getTimestamp() +
+                "}";
     }
 
     private static String readAcquirePointCloud(Frame frame) {
@@ -83,7 +85,7 @@ public class ArObjectReader {
 
     public static String readAcquireCameraImage(Frame frame) {
         try {
-            Image image =  frame.acquireCameraImage();
+            Image image = frame.acquireCameraImage();
             String imageDimensions = "[width=" + image.getWidth() + ", height=" + image.getHeight() + "]";
             image.close();
             return imageDimensions;

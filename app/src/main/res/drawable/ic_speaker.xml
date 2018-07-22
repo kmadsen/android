@@ -1,73 +1,69 @@
-<animated-vector
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:aapt="http://schemas.android.com/aapt"
-        tools:ignore="NewApi">
+<animated-vector xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    tools:ignore="NewApi">
     <aapt:attr name="android:drawable">
         <vector
-                android:name="audio_speaker"
-                android:width="96dp"
-                android:height="80dp"
-                android:viewportWidth="138"
-                android:viewportHeight="114">
-            <path android:name="speaker_box"
-                  android:pathData="M60.7838172,13.8847352 L37.2918027,34.249638 L10.2904791,34.249638 C4.60760611,34.249638 0,38.8290182 0,44.4786567 L0,68.5231649 C0,74.1712249 4.60760611,78.7506051 10.2904791,78.7506051 L37.2902144,78.7506051 L60.7822289,99.1170864 C63.0169417,101.338109 66.4746316,101.590678 68.9984117,99.8937341 L68.9984117,13.1080875 C66.4762199,11.4079867 63.01853,11.6621336 60.7838172,13.8847352 Z"
-                  android:fillColor="#FFF"
-            />
-            <path android:name="volume1"
-                  android:pathData="M89.0548702,57.5007874 C89.0548702,67.7910825 83.8879134,76.8734413 76,82.383962 L81.6660107,88 C90.9700295,80.9964888 97,69.9423747 97,57.5007874 C97,45.0576253 90.9684402,34.0035112 81.6660107,27 L76,32.616038 C83.8879134,38.1265587 89.0548702,47.2089175 89.0548702,57.5007874 Z"
-                  android:fillColor="#FFF"
-            />
-            <path android:name="volume2"
-                  android:pathData="M109.137923,57 C109.137923,72.9051594 101.145336,86.9517882 89,95.3215082 L94.6386814,101 C108.174033,91.1168598 117,75.0834713 117,57 C117,38.9165287 108.174033,22.8815572 94.6386814,13 L89,18.6769087 C101.145336,27.0466288 109.137923,41.0948406 109.137923,57 Z"
-                  android:fillColor="#FFF"
-            />
-            <path android:name="volume3"
-                  android:pathData="M108.626562,0 L103,5.6660822 C119.382812,16.7936381 130.185937,35.6428049 130.185937,57.000787 C130.185937,78.3571951 119.382812,97.2063619 103,108.333918 L108.626562,114 C126.38125,101.355193 138,80.5213237 138,57.000787 C138,33.4786763 126.38125,12.6463807 108.626562,0 Z"
-                  android:fillColor="#FFF"
-            />
+            android:name="audio_speaker"
+            android:width="96dp"
+            android:height="80dp"
+            android:viewportWidth="138"
+            android:viewportHeight="114">
+            <path
+                android:name="speaker_box"
+                android:pathData="M60.7838172,13.8847352 L37.2918027,34.249638 L10.2904791,34.249638 C4.60760611,34.249638 0,38.8290182 0,44.4786567 L0,68.5231649 C0,74.1712249 4.60760611,78.7506051 10.2904791,78.7506051 L37.2902144,78.7506051 L60.7822289,99.1170864 C63.0169417,101.338109 66.4746316,101.590678 68.9984117,99.8937341 L68.9984117,13.1080875 C66.4762199,11.4079867 63.01853,11.6621336 60.7838172,13.8847352 Z"
+                android:fillColor="#FFF" />
+            <path
+                android:name="volume1"
+                android:pathData="M89.0548702,57.5007874 C89.0548702,67.7910825 83.8879134,76.8734413 76,82.383962 L81.6660107,88 C90.9700295,80.9964888 97,69.9423747 97,57.5007874 C97,45.0576253 90.9684402,34.0035112 81.6660107,27 L76,32.616038 C83.8879134,38.1265587 89.0548702,47.2089175 89.0548702,57.5007874 Z"
+                android:fillColor="#FFF" />
+            <path
+                android:name="volume2"
+                android:pathData="M109.137923,57 C109.137923,72.9051594 101.145336,86.9517882 89,95.3215082 L94.6386814,101 C108.174033,91.1168598 117,75.0834713 117,57 C117,38.9165287 108.174033,22.8815572 94.6386814,13 L89,18.6769087 C101.145336,27.0466288 109.137923,41.0948406 109.137923,57 Z"
+                android:fillColor="#FFF" />
+            <path
+                android:name="volume3"
+                android:pathData="M108.626562,0 L103,5.6660822 C119.382812,16.7936381 130.185937,35.6428049 130.185937,57.000787 C130.185937,78.3571951 119.382812,97.2063619 103,108.333918 L108.626562,114 C126.38125,101.355193 138,80.5213237 138,57.000787 C138,33.4786763 126.38125,12.6463807 108.626562,0 Z"
+                android:fillColor="#FFF" />
         </vector>
     </aapt:attr>
     <target android:name="volume1">
         <aapt:attr name="android:animation">
             <objectAnimator
-                    android:propertyName="fillAlpha"
-                    android:duration="500"
-                    android:startOffset="0"
-                    android:valueFrom="0"
-                    android:valueTo="1"
-                    android:valueType="floatType"
-                    android:repeatMode="reverse"
-                    android:repeatCount="infinite"
-            />
+                android:propertyName="fillAlpha"
+                android:duration="500"
+                android:startOffset="0"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:valueType="floatType"
+                android:repeatMode="reverse"
+                android:repeatCount="infinite" />
         </aapt:attr>
     </target>
     <target android:name="volume2">
         <aapt:attr name="android:animation">
             <objectAnimator
-                    android:propertyName="fillAlpha"
-                    android:duration="500"
-                    android:startOffset="100"
-                    android:valueFrom="0"
-                    android:valueTo="1"
-                    android:valueType="floatType"
-                    android:repeatMode="reverse"
-                    android:repeatCount="infinite"
-            />
+                android:propertyName="fillAlpha"
+                android:duration="500"
+                android:startOffset="100"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:valueType="floatType"
+                android:repeatMode="reverse"
+                android:repeatCount="infinite" />
         </aapt:attr>
     </target>
     <target android:name="volume3">
         <aapt:attr name="android:animation">
             <objectAnimator
-                    android:propertyName="fillAlpha"
-                    android:duration="500"
-                    android:startOffset="200"
-                    android:valueFrom="0"
-                    android:valueTo="1"
-                    android:valueType="floatType"
-                    android:repeatMode="reverse"
-                    android:repeatCount="infinite"
-            />
+                android:propertyName="fillAlpha"
+                android:duration="500"
+                android:startOffset="200"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:valueType="floatType"
+                android:repeatMode="reverse"
+                android:repeatCount="infinite" />
         </aapt:attr>
     </target>
 </animated-vector>

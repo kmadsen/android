@@ -41,8 +41,8 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.FootprintSelectionVisualizer;
 import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.ar.sceneform.ux.TransformationSystem;
+import com.kylemadsen.core.logger.L;
 import com.kylemadsen.testandroid.R;
-import com.kylemadsen.testandroid.logger.L;
 import java.util.Iterator;
 
 public class ArFragment extends Fragment implements Scene.OnPeekTouchListener, Scene.OnUpdateListener {

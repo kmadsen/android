@@ -1,9 +1,9 @@
 package com.kylemadsen.testandroid.utils;
 
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
-
-import java.util.concurrent.TimeUnit;
 
 public class RetryWithDelay implements Function<Observable<? extends Throwable>, Observable<?>> {
     private final int maxRetries;

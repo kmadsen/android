@@ -1,4 +1,4 @@
-package com.kylemadsen.testandroid.logger;
+package com.kylemadsen.core.logger;
 
 public interface ILogger {
 

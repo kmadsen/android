@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-    def versionAndroidSdk = "27.1.1"
+    def versionAndroidSdk = '27.1.1'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:' + versionAndroidSdk
     implementation 'com.android.support:design:' + versionAndroidSdk
@@ -101,5 +101,6 @@ dependencies {
 }
 
 dependencies {
+    implementation project(path: ':core')
     implementation project(path: ':compass')
 }

@@ -1,8 +1,9 @@
 package com.kylemadsen.testandroid;
 
 import android.app.Application;
-import com.kylemadsen.testandroid.logger.AndroidLogger;
-import com.kylemadsen.testandroid.logger.L;
+
+import com.kylemadsen.core.logger.AndroidLogger;
+import com.kylemadsen.core.logger.L;
 import com.mapbox.mapboxsdk.Mapbox;
 
 public class MainApplication extends Application {
@@ -11,9 +12,8 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Mapbox.getInstance(getApplicationContext(), getString(R.string.compass_mapbox_access_token));
-
         initLogging();
+        Mapbox.getInstance(getApplicationContext(), getString(R.string.compass_mapbox_access_token));
     }
 
     private void initLogging() {

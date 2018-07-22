@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
+import com.kylemadsen.core.logger.L;
 import com.kylemadsen.testandroid.R;
 import com.kylemadsen.testandroid.ViewGroupController;
-import com.kylemadsen.testandroid.logger.L;
 
 public class ArMainActivity extends AppCompatActivity {
 

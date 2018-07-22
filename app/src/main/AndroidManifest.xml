@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.kylemadsen.testandroid">
+    package="com.kylemadsen.testandroid">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
-    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.WRITE_GSERVICES"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.WRITE_GSERVICES" />
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false"
-        />
+        android:required="false" />
 
     <application
-            android:name=".MainApplication"
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+        android:name=".MainApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
 
-        <meta-data android:name="com.google.ar.core" android:value="optional" />
+        <meta-data
+            android:name="com.google.ar.core"
+            android:value="optional" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -38,16 +39,17 @@
             android:value="AIzaSyCorxBDtMQzz87fmuDRLb8hdUTsNg2rWS4" />
 
         <activity
-                android:name=".MainActivity"
-                android:label="@string/app_name">
+            android:name=".MainActivity"
+            android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".ar.ArMainActivity"
+        <activity
+            android:name=".ar.ArMainActivity"
             android:parentActivityName=".MainActivity">
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
@@ -55,7 +57,8 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <activity android:name=".gnsslogger.GnssMainActivity"
+        <activity
+            android:name=".gnsslogger.GnssMainActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:alwaysRetainTaskState="true">
@@ -65,7 +68,8 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <activity android:name=".audio.AnimationMainActivity"
+        <activity
+            android:name=".audio.AnimationMainActivity"
             android:parentActivityName=".MainActivity">
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
@@ -73,7 +77,8 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <activity android:name="com.kmadsen.compass.CompassMainActivity"
+        <activity
+            android:name="com.kmadsen.compass.CompassMainActivity"
             android:parentActivityName=".MainActivity">
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data

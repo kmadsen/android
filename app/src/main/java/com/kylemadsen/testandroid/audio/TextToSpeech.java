@@ -2,12 +2,15 @@ package com.kylemadsen.testandroid.audio;
 
 import android.content.Context;
 import android.speech.tts.UtteranceProgressListener;
+
 import com.jakewharton.rxrelay2.BehaviorRelay;
-import com.kylemadsen.testandroid.logger.L;
+import com.kylemadsen.core.logger.L;
 import com.kylemadsen.testandroid.utils.Unit;
-import io.reactivex.Observable;
+
 import java.util.HashMap;
 import java.util.UUID;
+
+import io.reactivex.Observable;
 
 import static android.speech.tts.TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID;
 import static android.speech.tts.TextToSpeech.QUEUE_FLUSH;

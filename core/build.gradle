@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
@@ -12,6 +11,7 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -37,20 +37,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-}
-
-dependencies {
-    // Required to make map box work because they're using architecture components
-    def lifecycle_version = "1.1.1"
-    implementation "android.arch.lifecycle:reactivestreams:$lifecycle_version"
-
-    // 'api' so the main app doesn't have to also include it as a dependency
-    api 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.3.0'
-}
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation project(path: ':core')
 }

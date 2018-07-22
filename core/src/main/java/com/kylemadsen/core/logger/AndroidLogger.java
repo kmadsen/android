@@ -1,6 +1,7 @@
-package com.kylemadsen.testandroid.logger;
+package com.kylemadsen.core.logger;
 
 import android.util.Log;
+
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

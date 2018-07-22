@@ -1,4 +1,4 @@
-package com.kylemadsen.testandroid.logger;
+package com.kylemadsen.core.logger;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
