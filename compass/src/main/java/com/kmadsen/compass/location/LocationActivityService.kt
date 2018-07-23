@@ -4,26 +4,19 @@ import android.app.Activity
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kylemadsen.core.logger.L
-import kotlin.properties.Delegates
 
 class LocationActivityService(
         private val locationPermissions: LocationPermissions,
         private val fusedLocationService: FusedLocationService
 ) {
-    private var fusedLocation: FusedLocation by Delegates.observable(FusedLocation()) {
-        property, oldValue, newValue ->
-
-
-    }
-
-    fun onStart(activity: Activity) {
+    fun onStart(activity: Activity, fusedLocationUpdate: (FusedLocation) -> (Unit)) {
         locationPermissions.onActivityStart(activity) {
             isGranted ->
             L.i("permission granted $isGranted")
             if (isGranted.not()) {
                 return@onActivityStart
             }
-            fusedLocationService.start { locationUpdate -> fusedLocation = locationUpdate }
+            fusedLocationService.start(fusedLocationUpdate)
         }
     }
 

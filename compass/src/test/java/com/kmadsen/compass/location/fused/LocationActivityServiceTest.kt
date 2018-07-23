@@ -1,16 +1,5 @@
 package com.kmadsen.compass.location.fused
 
-import android.app.Activity
-import com.kmadsen.compass.location.LocationActivityService
-import com.kmadsen.compass.location.LocationPermissions
-import com.nhaarman.mockitokotlin2.*
-import junit.framework.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
-
 class LocationActivityServiceTest {
 
 //    private fun <T> any(): T {

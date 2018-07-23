@@ -6,11 +6,12 @@ import com.kmadsen.compass.location.LocationActivityService
 import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kmadsen.compass.mapbox.MapViewController
+import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 
 class CompassMainActivity : AppCompatActivity() {
 
-    lateinit var mapViewController: MapViewController
+    var mapViewController: MapViewController? = null
     lateinit var locationActivityService: LocationActivityService
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,13 +27,20 @@ class CompassMainActivity : AppCompatActivity() {
 
         val mapView = findViewById<MapView>(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync { mapboxMap -> mapViewController = MapViewController(mapView, mapboxMap) }
+        mapView.getMapAsync {
+            mapboxMap ->
+            L.i("The map is ready")
+            mapViewController = MapViewController(mapView, mapboxMap)
+        }
     }
 
     override fun onStart() {
         super.onStart()
 
-        locationActivityService.onStart(this)
+        locationActivityService.onStart(this) {
+            fusedLocation ->
+            mapViewController?.updateLocation(fusedLocation)
+        }
     }
 
     override fun onStop() {
