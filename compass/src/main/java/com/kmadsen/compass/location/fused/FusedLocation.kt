@@ -5,6 +5,7 @@ import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationResult
 
 data class FusedLocation(
-        val location: Location?,
-        val locationAvailability: LocationAvailability?,
-        val locationResult: LocationResult?)
+        val location: Location? = null,
+        val locationAvailability: LocationAvailability? = null,
+        val locationResult: LocationResult? = null)
+

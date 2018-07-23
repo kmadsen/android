@@ -26,16 +26,16 @@ class FusedLocationService(val application: Application) {
     private lateinit var onRawLocationUpdate: (FusedLocation) -> (Unit)
 
     @SuppressLint("MissingPermission")
-    fun start(onRawLocationUpdate: (FusedLocation) -> (Unit)) {
+    fun start(fusedLocationUpdate: (FusedLocation) -> (Unit)) {
         L.i(".start")
-        this.onRawLocationUpdate = onRawLocationUpdate
+        this.onRawLocationUpdate = fusedLocationUpdate
 
         providerClient.requestLocationUpdates(locationRequest, locationCallback, null)
         providerClient.lastLocation.addOnSuccessListener {
             location: Location? ->
             L.i(".lastLocationSuccess " + location?.toString())
             this@FusedLocationService.lastLocation = location
-            onRawLocationUpdate.invoke(getRawLocationUpdate())
+            fusedLocationUpdate.invoke(getRawLocationUpdate())
         }
     }
 

@@ -24,21 +24,41 @@ android {
     }
 }
 
+afterEvaluate {
+    android.sourceSets.all { sourceSet ->
+        if (!sourceSet.name.startsWith("test")) {
+            sourceSet.kotlin.setSrcDirs([])
+        }
+    }
+}
+
 dependencies {
     def versionAndroidSdk = '27.1.1'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:' + versionAndroidSdk
     implementation 'com.android.support:design:' + versionAndroidSdk
     implementation 'com.android.support:support-v13:' + versionAndroidSdk
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.7.6'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
+dependencies {
+    // https://github.com/nhaarman/mockito-kotlin/releases
+    def versionMockitoKotlin = '2.0.0-RC1'
+    def versionRxKotlin = '2.2.0'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "io.reactivex.rxjava2:rxkotlin:$versionRxKotlin"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$versionMockitoKotlin"
+}
 
 dependencies {
     implementation 'com.google.android.gms:play-services-location:15.0.1'
