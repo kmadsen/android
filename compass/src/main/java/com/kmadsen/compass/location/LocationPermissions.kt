@@ -12,7 +12,8 @@ class LocationPermissions {
 
     private lateinit var permissionGranted: (isGranted: Boolean) -> (Unit)
 
-    fun onActivityStart(activity: Activity, permissionGranted: (isGranted: Boolean) -> (Unit)) {
+    fun onActivityStart(activity: Activity,
+                        permissionGranted: (isGranted: Boolean) -> (Unit)) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             // Permissions granted at install time.
             permissionGranted.invoke(true)
@@ -30,7 +31,9 @@ class LocationPermissions {
         }
     }
 
-    fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    fun onRequestPermissionsResult(requestCode: Int,
+                                   permissions: Array<out String>,
+                                   grantResults: IntArray) {
         if (requestCode == permissionRequestCode) {
             if (grantResults.isNotEmpty()
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED

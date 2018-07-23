@@ -1,4 +1,4 @@
-package com.kmadsen.compass.location
+package com.kmadsen.compass.location.fused
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -8,7 +8,7 @@ import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.kylemadsen.core.logger.L
 import java.util.concurrent.TimeUnit
 
-class LocationService(val application: Application) {
+class FusedLocationService(val application: Application) {
 
     private val locationRequest: LocationRequest = LocationRequest.create()
             .setPriority(PRIORITY_HIGH_ACCURACY)
@@ -23,10 +23,10 @@ class LocationService(val application: Application) {
     private var locationAvailability: LocationAvailability? = null
     private var locationResult: LocationResult? = null
 
-    private lateinit var onRawLocationUpdate: (LocationUpdate) -> (Unit)
+    private lateinit var onRawLocationUpdate: (FusedLocation) -> (Unit)
 
     @SuppressLint("MissingPermission")
-    fun start(onRawLocationUpdate: (LocationUpdate) -> (Unit)) {
+    fun start(onRawLocationUpdate: (FusedLocation) -> (Unit)) {
         L.i(".start")
         this.onRawLocationUpdate = onRawLocationUpdate
 
@@ -34,7 +34,7 @@ class LocationService(val application: Application) {
         providerClient.lastLocation.addOnSuccessListener {
             location: Location? ->
             L.i(".lastLocationSuccess " + location?.toString())
-            this@LocationService.lastLocation = location
+            this@FusedLocationService.lastLocation = location
             onRawLocationUpdate.invoke(getRawLocationUpdate())
         }
     }
@@ -44,8 +44,8 @@ class LocationService(val application: Application) {
         providerClient.removeLocationUpdates(locationCallback)
     }
 
-    private fun getRawLocationUpdate(): LocationUpdate {
-        return LocationUpdate(
+    private fun getRawLocationUpdate(): FusedLocation {
+        return FusedLocation(
                 lastLocation,
                 locationAvailability,
                 locationResult
@@ -55,14 +55,14 @@ class LocationService(val application: Application) {
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationAvailability(locationAvailability: LocationAvailability?) {
             L.i(".onLocationAvailability " + locationAvailability?.toString())
-            this@LocationService.locationAvailability = locationAvailability
+            this@FusedLocationService.locationAvailability = locationAvailability
             onRawLocationUpdate.invoke(getRawLocationUpdate())
         }
 
         override fun onLocationResult(locationResult: LocationResult?) {
             L.i(".onLocationResult " + locationResult?.toString())
             L.i(".onLocationResult " + locationResult?.locations?.size)
-            this@LocationService.locationResult = locationResult
+            this@FusedLocationService.locationResult = locationResult
             onRawLocationUpdate.invoke(getRawLocationUpdate())
         }
     }
