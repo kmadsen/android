@@ -53,14 +53,6 @@ dependencies {
 }
 
 dependencies {
-    def versionRxJava = "2.0.2"
-    implementation 'io.reactivex.rxjava2:rxjava:' + versionRxJava
-    implementation 'io.reactivex.rxjava2:rxandroid:' + versionRxJava
-
-    implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
-}
-
-dependencies {
     def versionDagger = "2.16"
 
     //dagger 2

@@ -14,7 +14,7 @@ class LocationActivityServiceTest {
 //    @Mock
 //    lateinit var fusedLocationService: FusedLocationService
 //
-//    lateinit var locationActivityService: LocationActivityService
+//    lateinit var locationActivityService: LocationsController
 //
 //    @Before
 //    fun setup() {
@@ -32,7 +32,7 @@ class LocationActivityServiceTest {
 //
 //        MockitoAnnotations.initMocks(this)
 //
-//        locationActivityService = LocationActivityService(
+//        locationActivityService = LocationsController(
 //                locationPermissions,
 //                fusedLocationService
 //        )
@@ -50,7 +50,7 @@ class LocationActivityServiceTest {
 //        val fusedLocationService: FusedLocationService = mock {
 //            on { }
 //        }
-//        val locationActivityService = LocationActivityService(
+//        val locationActivityService = LocationsController(
 //                locationPermissions,
 //                fusedLocationService
 //        )
