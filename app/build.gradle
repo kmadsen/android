@@ -6,7 +6,7 @@ android {
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.kylemadsen.testandroid"
-        minSdkVersion 26
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -50,14 +50,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-}
-
-dependencies {
-    def versionRxJava = "2.0.2"
-    implementation 'io.reactivex.rxjava2:rxjava:' + versionRxJava
-    implementation 'io.reactivex.rxjava2:rxandroid:' + versionRxJava
-
-    implementation 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 }
 
 dependencies {
