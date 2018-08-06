@@ -16,14 +16,15 @@ class CompassMainActivity : AppCompatActivity() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    private var mapViewController: MapViewController? = null
+    private lateinit var mapViewController: MapViewController
     private lateinit var locationsController: LocationsController
+    private lateinit var compassGLSurfaceView: CompassGLSurfaceView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.compass_main_activity)
 
-        val glView = findViewById<CompassGLSurfaceView>(R.id.surface_view)
+        compassGLSurfaceView = findViewById(R.id.surface_view)
 
         locationsController = LocationsController(
                 LocationPermissions(),
@@ -37,12 +38,12 @@ class CompassMainActivity : AppCompatActivity() {
             mapViewController = MapViewController(mapView, mapboxMap)
             compositeDisposable.add(locationsController.firstValidLocation()
                     .subscribe { compassLocation: CompassLocation ->
-                        mapViewController!!.centerMap(compassLocation.latitude, compassLocation.longitude)
+                        mapViewController.centerMap(compassLocation.latitude, compassLocation.longitude)
                     })
             compositeDisposable.add(locationsController.allFusedLocations()
                     .subscribe { fusedLocation: FusedLocation ->
                         run {
-                            mapViewController!!.updatePinLocation(fusedLocation)
+                            mapViewController.updatePinLocation(fusedLocation)
                         }
                     })
         }
@@ -51,10 +52,12 @@ class CompassMainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        compassGLSurfaceView.onStart()
         locationsController.onStart(this)
     }
 
     override fun onStop() {
+        compassGLSurfaceView.onStop()
         locationsController.onStop()
         compositeDisposable.clear()
 

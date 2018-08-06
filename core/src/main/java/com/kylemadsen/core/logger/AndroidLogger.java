@@ -103,7 +103,7 @@ public enum AndroidLogger implements ILogger {
         } else {
             String[] lines = message.split("\n");
             for (String line : lines) {
-                String formattedMessage = String.format(Locale.ENGLISH, "%s_%d_%d: %s", tag, threadId, currentTimeMillis(), message);
+                String formattedMessage = String.format(Locale.ENGLISH, "%s_%d_%d: %s", tag, threadId, currentTimeMillis(), line);
                 Log.println(priority, tag, formattedMessage);
             }
         }

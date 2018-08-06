@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class CompassGLRenderer implements GLSurfaceView.Renderer {
+public class CubeGLRenderer implements GLSurfaceView.Renderer {
 
     /** Rotation increment per frame. */
     private static final float CUBE_ROTATION_INCREMENT = 0.6f;
@@ -31,7 +31,7 @@ public class CompassGLRenderer implements GLSurfaceView.Renderer {
     private float mCubeRotation;
     private long mLastUpdateMillis;
 
-    public CompassGLRenderer() {
+    public CubeGLRenderer() {
         mMVPMatrix = new float[16];
         mProjectionMatrix = new float[16];
         mViewMatrix = new float[16];
