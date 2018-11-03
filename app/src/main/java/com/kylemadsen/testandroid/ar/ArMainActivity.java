@@ -6,7 +6,7 @@ import android.widget.FrameLayout;
 
 import com.kylemadsen.core.logger.L;
 import com.kylemadsen.testandroid.R;
-import com.kylemadsen.testandroid.ViewGroupController;
+import com.kylemadsen.core.view.ViewGroupController;
 
 public class ArMainActivity extends AppCompatActivity {
 
@@ -20,8 +20,8 @@ public class ArMainActivity extends AppCompatActivity {
 
         FrameLayout configurationLayout = findViewById(R.id.ar_configuration);
         FrameLayout statusLayout = findViewById(R.id.ar_status);
-        configurationController = ViewGroupController.onCreate(configurationLayout);
-        statusController = ViewGroupController.onCreate(statusLayout);
+        configurationController = ViewGroupController.Companion.onCreate(configurationLayout);
+        statusController = ViewGroupController.Companion.onCreate(statusLayout);
 
         ArFragment arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 

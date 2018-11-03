@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.kylemadsen.core.logger.L;
 import com.kylemadsen.testandroid.R;
-import com.kylemadsen.testandroid.ViewController;
+import com.kylemadsen.core.view.ViewController;
 import com.kylemadsen.testandroid.utils.ViewUtensil;
 
 import io.reactivex.Observable;

@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.google.ar.core.ArCoreApk;
 import com.kylemadsen.testandroid.R;
-import com.kylemadsen.testandroid.ViewController;
+import com.kylemadsen.core.view.ViewController;
 import com.kylemadsen.testandroid.utils.RetryWithDelay;
 import com.kylemadsen.testandroid.utils.ViewUtensil;
 import io.reactivex.Observable;
