@@ -48,5 +48,3 @@ dependencies {
 
     api 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 }
-
-
