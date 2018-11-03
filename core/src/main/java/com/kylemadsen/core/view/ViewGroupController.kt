@@ -6,7 +6,7 @@ import android.view.ViewGroup
 
 import java.util.ArrayList
 
-class ViewGroupController(
+class ViewGroupController private constructor(
         private var viewGroup: ViewGroup?,
         private val layoutInflater: LayoutInflater
 ) {
@@ -33,6 +33,7 @@ class ViewGroupController(
     companion object {
 
         @MainThread
+        @JvmStatic
         fun onCreate(viewGroup: ViewGroup): ViewGroupController {
             val layoutInflater = LayoutInflater.from(viewGroup.context)
             return ViewGroupController(viewGroup, layoutInflater)

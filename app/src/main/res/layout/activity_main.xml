@@ -7,27 +7,4 @@
     android:orientation="vertical"
     tools:context="com.kylemadsen.testandroid.MainActivity">
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/goto_gnss_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/activity_main_goto_gnss" />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/goto_ar_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/activity_main_ar_gnss" />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/goto_animations_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/activity_main_animations" />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/goto_compass_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/activity_main_compass" />
 </LinearLayout>
