@@ -35,7 +35,7 @@ class CompassMainActivity : AppCompatActivity() {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { mapboxMap ->
             L.i("The map is ready")
-            mapViewController = MapViewController(mapView, mapboxMap)
+            mapViewController = MapViewController(mapboxMap)
             compositeDisposable.add(locationsController.firstValidLocation()
                     .subscribe { compassLocation: CompassLocation ->
                         mapViewController.centerMap(compassLocation.latitude, compassLocation.longitude)

@@ -9,11 +9,11 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 
-class MapViewController(private val mapView: MapView, private val mapboxMap: MapboxMap) {
+class MapViewController(private val mapboxMap: MapboxMap) {
 
     private val defaultZoom: Double = 12.0
 
-    var marker: Marker? = null
+    private var marker: Marker? = null
 
     fun updatePinLocation(fusedLocation: FusedLocation) {
         if (fusedLocation.locationResult == null) {

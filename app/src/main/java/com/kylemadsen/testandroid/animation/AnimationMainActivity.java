@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 
-import com.kylemadsen.testandroid.R;
 import com.kylemadsen.core.view.ViewGroupController;
+import com.kylemadsen.testandroid.R;
 
 public class AnimationMainActivity extends AppCompatActivity {
 
@@ -17,7 +17,7 @@ public class AnimationMainActivity extends AppCompatActivity {
         setContentView(R.layout.animation_main_activity);
 
         ViewGroup contentView = findViewById(R.id.animation_content);
-        viewGroupController = ViewGroupController.Companion.onCreate(contentView);
+        viewGroupController = ViewGroupController.onCreate(contentView);
         viewGroupController.attach(new TextToSpeechController());
         viewGroupController.attach(new AnimationController());
     }
