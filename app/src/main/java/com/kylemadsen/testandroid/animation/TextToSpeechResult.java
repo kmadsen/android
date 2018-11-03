@@ -1,4 +1,4 @@
-package com.kylemadsen.testandroid.audio;
+package com.kylemadsen.testandroid.animation;
 
 import java.util.Objects;
 

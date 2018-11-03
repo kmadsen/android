@@ -4,9 +4,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/text_to_speech_content"
+    <LinearLayout
+        android:id="@+id/animation_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        />
 
 </LinearLayout>
