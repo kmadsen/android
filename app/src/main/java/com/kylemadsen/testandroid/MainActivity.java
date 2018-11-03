@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.kmadsen.compass.CompassMainActivity;
 import com.kylemadsen.testandroid.ar.ArMainActivity;
-import com.kylemadsen.testandroid.audio.AnimationMainActivity;
+import com.kylemadsen.testandroid.animation.AnimationMainActivity;
 import com.kylemadsen.testandroid.gnsslogger.GnssMainActivity;
 
 public class MainActivity extends AppCompatActivity {

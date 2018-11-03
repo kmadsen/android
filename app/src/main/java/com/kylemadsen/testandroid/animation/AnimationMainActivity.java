@@ -1,4 +1,4 @@
-package com.kylemadsen.testandroid.audio;
+package com.kylemadsen.testandroid.animation;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +16,11 @@ public class AnimationMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.animation_main_activity);
 
-        ViewGroup contentView = findViewById(R.id.text_to_speech_content);
+        ViewGroup contentView = findViewById(R.id.animation_content);
         viewGroupController = ViewGroupController.onCreate(contentView);
         viewGroupController.attach(new TextToSpeechController());
+        viewGroupController.attach(new AnimationController());
+
     }
 
     @Override
