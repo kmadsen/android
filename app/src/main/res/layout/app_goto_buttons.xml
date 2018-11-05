@@ -25,4 +25,12 @@
         android:layout_height="wrap_content"
         android:text="@string/activity_main_compass" />
 
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/goto_layout_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_main_coordinator_layout" />
+
+
+
 </merge>

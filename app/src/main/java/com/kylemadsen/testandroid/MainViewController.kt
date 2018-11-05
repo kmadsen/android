@@ -6,6 +6,7 @@ import com.kylemadsen.core.view.ViewController
 import com.kylemadsen.core.view.ViewRouter
 import com.kylemadsen.testandroid.animation.AnimationMainActivity
 import com.kylemadsen.testandroid.ar.ArMainActivity
+import com.kylemadsen.testandroid.coordinatorlayout.CoordinatorLayoutActivity
 import com.kylemadsen.testandroid.gnsslogger.GnssMainActivity
 
 class MainViewController(
@@ -33,6 +34,11 @@ class MainViewController(
         val gotoCompassButton: View = view.find(R.id.goto_compass_button)
         gotoCompassButton.setOnClickListener {
             viewRouter.goToActivity(CompassMainActivity::class.java)
+        }
+
+        val gotoCoordinatorLayoutButton: View = view.find(R.id.goto_layout_button)
+        gotoCoordinatorLayoutButton.setOnClickListener {
+            viewRouter.goToActivity(CoordinatorLayoutActivity::class.java)
         }
     }
 
