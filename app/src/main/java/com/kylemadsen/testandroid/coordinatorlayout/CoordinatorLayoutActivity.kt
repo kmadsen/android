@@ -15,7 +15,7 @@ import com.kylemadsen.testandroid.animation.TextToSpeechController
 
 class CoordinatorLayoutActivity : AppCompatActivity() {
 
-    var viewGroupController: ViewGroupController? = null
+    private var viewGroupController: ViewGroupController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
