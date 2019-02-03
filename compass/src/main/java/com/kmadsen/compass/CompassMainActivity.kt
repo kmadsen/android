@@ -3,11 +3,13 @@ package com.kmadsen.compass
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.kmadsen.compass.location.CompassLocation
-import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.location.LocationPermissions
+import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kmadsen.compass.mapbox.MapViewController
+import com.kylemadsen.core.FileLogger
+import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import io.reactivex.disposables.CompositeDisposable
@@ -30,6 +32,16 @@ class CompassMainActivity : AppCompatActivity() {
                 LocationPermissions(),
                 FusedLocationService(application)
         )
+
+        compositeDisposable.add(FileLogger(this).observeWritableFile()
+                .doOnNext { writableFile: WritableFile ->
+                    writableFile.writeLine("writeLine something")
+                    writableFile.flushBuffer()
+                }
+                .doOnError { throwable: Throwable ->
+                    L.i(throwable, "DEBUG_FILE file writer closed")
+                }
+                .subscribe())
 
         val mapView = findViewById<MapView>(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
@@ -60,7 +72,6 @@ class CompassMainActivity : AppCompatActivity() {
         compassGLSurfaceView.onStop()
         locationsController.onStop()
         compositeDisposable.clear()
-
         super.onStop()
     }
 
