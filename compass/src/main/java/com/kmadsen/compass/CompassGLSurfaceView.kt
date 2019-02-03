@@ -11,7 +11,7 @@ import com.kylemadsen.core.logger.L
 
 class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : GLSurfaceView(context, attrs) {
 
-    private val glSurfaceRenderer: SensorGLRenderer = SensorGLRenderer(context)
+    private val glSurfaceRenderer: SensorGLRenderer = SensorGLRenderer()
 
     init {
         setEGLContextClientVersion(2)
@@ -22,13 +22,7 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
         renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
     }
 
-    fun onStart() {
-        L.i("sensor start")
-        glSurfaceRenderer.start()
-    }
-
-    fun onStop() {
-        L.i("sensor stop")
-        glSurfaceRenderer.stop()
+    fun update(roationMatrix: FloatArray) {
+        glSurfaceRenderer.update(roationMatrix)
     }
 }

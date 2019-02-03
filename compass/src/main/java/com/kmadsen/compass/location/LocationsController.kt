@@ -16,8 +16,7 @@ class LocationsController constructor(
     private val fusedLocationRelay: BehaviorRelay<FusedLocation> = BehaviorRelay.create()
 
     fun onStart(activity: Activity) {
-        locationPermissions.onActivityStart(activity) {
-            isGranted ->
+        locationPermissions.onActivityStart(activity) { isGranted ->
             L.i("permission granted $isGranted")
             if (isGranted.not()) {
                 return@onActivityStart
