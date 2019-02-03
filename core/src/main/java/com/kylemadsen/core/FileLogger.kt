@@ -68,8 +68,6 @@ class WritableFile(
     }
 
     fun flushBuffer() {
-        val startTime = SystemClock.elapsedRealtime()
         bufferedWriter.flush()
-        L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
     }
 }

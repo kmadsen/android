@@ -1,17 +1,14 @@
 package com.kmadsen.compass.sensors
 
-import android.content.Context
+import android.hardware.SensorManager
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.kmadsen.compass.Cube
-
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class SensorGLRenderer constructor(context: Context) : GLSurfaceView.Renderer {
-
-    private val positionSensors: PositionSensors = PositionSensors(context)
+class SensorGLRenderer: GLSurfaceView.Renderer {
 
     private val mMVPMatrix: FloatArray = FloatArray(16)
     private val mProjectionMatrix: FloatArray = FloatArray(16)
@@ -24,14 +21,6 @@ class SensorGLRenderer constructor(context: Context) : GLSurfaceView.Renderer {
     init {
         // Set the fixed camera position (View matrix).
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f)
-    }
-
-    fun start() {
-        positionSensors.start()
-    }
-
-    fun stop() {
-        positionSensors.stop()
     }
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
@@ -56,12 +45,14 @@ class SensorGLRenderer constructor(context: Context) : GLSurfaceView.Renderer {
     override fun onDrawFrame(unused: GL10) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
 
-        positionSensors.setRotation(mRotationMatrix)
-
         // Combine the rotation matrix with the projection and camera view
         Matrix.multiplyMM(mFinalMVPMatrix, 0, mMVPMatrix, 0, mRotationMatrix, 0)
 
         // Draw cube.
         mCube!!.draw(mFinalMVPMatrix)
+    }
+
+    fun update(rotation: FloatArray) {
+        SensorManager.getRotationMatrixFromVector(mRotationMatrix, rotation)
     }
 }
