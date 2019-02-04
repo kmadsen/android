@@ -5,9 +5,7 @@ import android.graphics.PixelFormat
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 
-import com.kmadsen.compass.sensors.PositionSensors
 import com.kmadsen.compass.sensors.SensorGLRenderer
-import com.kylemadsen.core.logger.L
 
 class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : GLSurfaceView(context, attrs) {
 

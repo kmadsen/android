@@ -61,7 +61,7 @@ class CompassMainActivity : AppCompatActivity() {
     }
 
     private fun WritableFile.writeInBuffers(): Completable {
-        return compassDependencies.positionSensors.observeSensor(Sensor.TYPE_ACCELEROMETER)
+        return compassDependencies.androidSensors.observeSensor(Sensor.TYPE_ACCELEROMETER)
                 .buffer(1L, TimeUnit.SECONDS)
                 .doOnNext { loggedEventList: List<LoggedEvent> ->
                     val startTime = SystemClock.elapsedRealtime()
@@ -76,7 +76,7 @@ class CompassMainActivity : AppCompatActivity() {
     }
 
     private fun WritableFile.writeEach(): Completable {
-        return compassDependencies.positionSensors.observeSensor(Sensor.TYPE_ACCELEROMETER)
+        return compassDependencies.androidSensors.observeSensor(Sensor.TYPE_ACCELEROMETER)
                 .doOnNext { loggedEvent ->
                     writeLine("measuredAt=${loggedEvent.sensorEvent.timestamp} recordedAt=${loggedEvent.recordedAtNanos}")
                     flushBuffer()
@@ -87,7 +87,7 @@ class CompassMainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        compositeDisposable.add(compassDependencies.positionSensors.observeRotationVector()
+        compositeDisposable.add(compassDependencies.androidSensors.observeRotationVector()
                 .subscribe { compassGLSurfaceView.update(it.sensorEvent.values) }
         )
 

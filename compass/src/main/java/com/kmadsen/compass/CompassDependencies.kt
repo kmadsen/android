@@ -5,7 +5,7 @@ import android.hardware.SensorManager
 import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.location.fused.FusedLocationService
-import com.kmadsen.compass.sensors.PositionSensors
+import com.kmadsen.compass.sensors.AndroidSensors
 
 class CompassDependencies(
         val compassMainActivity: CompassMainActivity
@@ -25,5 +25,5 @@ class CompassDependencies(
     val sensorManager: SensorManager = compassMainActivity
             .getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-    val positionSensors: PositionSensors = PositionSensors(sensorManager)
+    val androidSensors: AndroidSensors = AndroidSensors(sensorManager)
 }

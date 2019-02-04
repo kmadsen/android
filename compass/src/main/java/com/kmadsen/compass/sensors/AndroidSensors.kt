@@ -9,7 +9,7 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.FlowableEmitter
 
-class PositionSensors(private val sensorManager: SensorManager) {
+class AndroidSensors(private val sensorManager: SensorManager) {
     fun observeRotationVector(): Flowable<LoggedEvent> {
         return Flowable.create({ emitter ->
             val rotationVectorSensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
