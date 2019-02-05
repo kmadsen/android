@@ -12,9 +12,9 @@ import java.util.*
 
 class FileLogger(private val context: Context) {
 
-    fun observeWritableFile(): Observable<WritableFile> {
+    fun observeWritableFile(fileNamePrefix: String): Observable<WritableFile> {
         return Observable.create { emitter ->
-            val fileContainer = createWritableFile()
+            val fileContainer = createWritableFile(fileNamePrefix)
             emitter.onNext(fileContainer)
             emitter.setCancellable {
                 L.i("DEBUG_FILE close file")
@@ -23,7 +23,7 @@ class FileLogger(private val context: Context) {
         }
     }
 
-    private fun createWritableFile(): WritableFile {
+    private fun createWritableFile(fileNamePrefix: String): WritableFile {
         val directory = File(context.filesDir, directoryName)
         directory.mkdir()
 
@@ -39,7 +39,6 @@ class FileLogger(private val context: Context) {
 
     companion object {
         private const val directoryName = "telematics"
-        private const val fileNamePrefix = "sensors"
         private val formatter = SimpleDateFormat("yyy_MM_dd_HH_mm_ss", Locale.ENGLISH)
     }
 }

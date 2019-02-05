@@ -14,7 +14,6 @@ import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import io.reactivex.Completable
 import io.reactivex.disposables.CompositeDisposable
-import java.util.concurrent.TimeUnit
 
 class CompassMainActivity : AppCompatActivity() {
 
@@ -33,13 +32,12 @@ class CompassMainActivity : AppCompatActivity() {
 
         compassGLSurfaceView = findViewById(R.id.surface_view)
 
-        compositeDisposable.add(FileLogger(this).observeWritableFile()
-                .flatMapCompletable { writableFile ->
-                    writableFile.writeInBuffers()
-                }
-                .doOnError { throwable: Throwable ->
-                    L.i(throwable, "DEBUG_FILE file writer closed")
-                }
+        compositeDisposable.add(FileLogger(this).observeWritableFile("accelerometer")
+                .flatMapCompletable { writableFile -> writableFile.writeAccelerometer() }
+                .subscribe())
+
+        compositeDisposable.add(FileLogger(this).observeWritableFile("gyroscope")
+                .flatMapCompletable { writableFile -> writableFile.writeGyroscope() }
                 .subscribe())
 
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
@@ -59,38 +57,56 @@ class CompassMainActivity : AppCompatActivity() {
         }
     }
 
-    private fun WritableFile.writeInBuffers(): Completable {
+    private fun WritableFile.writeAccelerometer(): Completable {
         return compassDependencies.androidSensors.observeSensor(Sensor.TYPE_ACCELEROMETER)
-                .buffer(1L, TimeUnit.SECONDS)
-                .doOnNext { loggedEventList: List<LoggedEvent> ->
+                .doOnSubscribe {
+                    val sensor: Sensor = compassDependencies.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+                    writeLine("name=${sensor.name} vendor=${sensor.vendor}")
+                    writeLine("measured_at\trecorded_at\taccuracy\tvalue_x\tvalue_y\tvalue_z")
+                }
+                .doOnNext { loggedEvent: LoggedEvent ->
+                    val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
+                            "\t${loggedEvent.recordedAtNanos}" +
+                            "\t${loggedEvent.sensorEvent.accuracy}" +
+                            "\t${loggedEvent.sensorEvent.values[0]}" +
+                            "\t${loggedEvent.sensorEvent.values[1]}" +
+                            "\t${loggedEvent.sensorEvent.values[2]}"
+                    writeLine(sensorLine)
+                }
+                .buffer(500).doOnNext {
                     val startTime = SystemClock.elapsedRealtime()
-                    writeLine("read block ${loggedEventList.size}")
-                    loggedEventList.forEach { loggedEvent ->
-                        writeSensor(loggedEvent)
-                    }
                     flushBuffer()
                     L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
                 }
                 .ignoreElements()
+                .onErrorComplete()
     }
 
-    private fun WritableFile.writeEach(): Completable {
-        return compassDependencies.androidSensors.observeSensor(Sensor.TYPE_ACCELEROMETER)
-                .doOnNext { loggedEvent ->
-                    writeSensor(loggedEvent)
+    private fun WritableFile.writeGyroscope(): Completable {
+        return compassDependencies.androidSensors.observeSensor(Sensor.TYPE_GYROSCOPE)
+                .doOnSubscribe {
+                    val sensor: Sensor = compassDependencies.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+                    writeLine("name=${sensor.name} vendor=${sensor.vendor}")
+                    writeLine("measured_at\trecorded_at\taccuracy\tvalue_x\tvalue_y\tvalue_z")
+                }
+                .doOnNext { loggedEvent: LoggedEvent ->
+                    val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
+                            "\t${loggedEvent.recordedAtNanos}" +
+                            "\t${loggedEvent.sensorEvent.accuracy}" +
+                            "\t${loggedEvent.sensorEvent.values[0]}" +
+                            "\t${loggedEvent.sensorEvent.values[1]}" +
+                            "\t${loggedEvent.sensorEvent.values[2]}"
+                    writeLine(sensorLine)
+                }
+                .buffer(500).doOnNext {
+                    val startTime = SystemClock.elapsedRealtime()
                     flushBuffer()
+                    L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
                 }
                 .ignoreElements()
+                .onErrorComplete()
     }
 
-    private fun WritableFile.writeSensor(loggedEvent: LoggedEvent) {
-        val values = loggedEvent.sensorEvent.values
-                .joinToString(", ", "[", "]")
-        val sensorLine = "measuredAt=${loggedEvent.sensorEvent.timestamp}" +
-                " recordedAt=${loggedEvent.recordedAtNanos}" +
-                " values=$values"
-        writeLine(sensorLine)
-    }
 
     override fun onStart() {
         super.onStart()
@@ -104,8 +120,13 @@ class CompassMainActivity : AppCompatActivity() {
 
     override fun onStop() {
         compassDependencies.locationsController.onStop()
-        compositeDisposable.clear()
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.clear()
+
+        super.onDestroy()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,

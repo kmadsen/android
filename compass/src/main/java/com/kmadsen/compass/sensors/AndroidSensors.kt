@@ -35,13 +35,15 @@ class AndroidSensors(private val sensorManager: SensorManager) {
     class SensorListener(
             private val emitter: FlowableEmitter<LoggedEvent>
     ) : SensorEventListener {
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
 
         }
 
         override fun onSensorChanged(sensorEvent: SensorEvent) {
-            val recordedAtNanos: Long = SystemClock.elapsedRealtimeNanos()
-            emitter.onNext(LoggedEvent(sensorEvent, recordedAtNanos))
+            if (emitter.isCancelled.not()) {
+                val recordedAtNanos: Long = SystemClock.elapsedRealtimeNanos()
+                emitter.onNext(LoggedEvent(sensorEvent, recordedAtNanos))
+            }
         }
     }
 }
