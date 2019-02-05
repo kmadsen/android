@@ -20,7 +20,7 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
         renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
     }
 
-    fun update(roationMatrix: FloatArray) {
-        glSurfaceRenderer.update(roationMatrix)
+    fun update(rotationMatrix: FloatArray) {
+        glSurfaceRenderer.update(rotationMatrix)
     }
 }

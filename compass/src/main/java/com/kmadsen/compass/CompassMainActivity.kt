@@ -45,7 +45,6 @@ class CompassMainActivity : AppCompatActivity() {
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { mapboxMap ->
-            L.i("The map is ready")
             mapViewController = MapViewController(mapboxMap)
             compositeDisposable.add(compassDependencies.locationsController.firstValidLocation()
                     .subscribe { compassLocation: CompassLocation ->
@@ -67,7 +66,7 @@ class CompassMainActivity : AppCompatActivity() {
                     val startTime = SystemClock.elapsedRealtime()
                     writeLine("read block ${loggedEventList.size}")
                     loggedEventList.forEach { loggedEvent ->
-                        writeLine("measuredAt=${loggedEvent.sensorEvent.timestamp} recordedAt=${loggedEvent.recordedAtNanos}")
+                        writeSensor(loggedEvent)
                     }
                     flushBuffer()
                     L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
@@ -78,10 +77,19 @@ class CompassMainActivity : AppCompatActivity() {
     private fun WritableFile.writeEach(): Completable {
         return compassDependencies.androidSensors.observeSensor(Sensor.TYPE_ACCELEROMETER)
                 .doOnNext { loggedEvent ->
-                    writeLine("measuredAt=${loggedEvent.sensorEvent.timestamp} recordedAt=${loggedEvent.recordedAtNanos}")
+                    writeSensor(loggedEvent)
                     flushBuffer()
                 }
                 .ignoreElements()
+    }
+
+    private fun WritableFile.writeSensor(loggedEvent: LoggedEvent) {
+        val values = loggedEvent.sensorEvent.values
+                .joinToString(", ", "[", "]")
+        val sensorLine = "measuredAt=${loggedEvent.sensorEvent.timestamp}" +
+                " recordedAt=${loggedEvent.recordedAtNanos}" +
+                " values=$values"
+        writeLine(sensorLine)
     }
 
     override fun onStart() {
