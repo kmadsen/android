@@ -5,6 +5,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.SystemClock
+import com.kylemadsen.core.logger.L
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.FlowableEmitter
@@ -21,11 +22,11 @@ class AndroidSensors(private val sensorManager: SensorManager) {
         }, BackpressureStrategy.BUFFER)
     }
 
-    fun observeSensor(sensor: Int): Flowable<LoggedEvent> {
+    fun observeSensor(sensorType: Int): Flowable<LoggedEvent> {
         return Flowable.create({ emitter ->
-            val rotationVectorSensor: Sensor = sensorManager.getDefaultSensor(sensor)
+            val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
             val sensorListener = SensorListener(emitter)
-            sensorManager.registerListener(sensorListener, rotationVectorSensor, 0)
+            sensorManager.registerListener(sensorListener, sensor, 0)
             emitter.setCancellable {
                 sensorManager.unregisterListener(sensorListener)
             }

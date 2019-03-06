@@ -40,6 +40,10 @@ class CompassMainActivity : AppCompatActivity() {
                 .flatMapCompletable { writableFile -> writableFile.writeGyroscope() }
                 .subscribe())
 
+        compositeDisposable.add(FileLogger(this).observeWritableFile("magnetometer")
+                .flatMapCompletable { writableFile -> writableFile.writeMagnetometer() }
+                .subscribe())
+
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { mapboxMap ->
@@ -58,19 +62,20 @@ class CompassMainActivity : AppCompatActivity() {
     }
 
     private fun WritableFile.writeAccelerometer(): Completable {
-        return compassDependencies.androidSensors.observeSensor(Sensor.TYPE_ACCELEROMETER)
+        val sensorType: Int = Sensor.TYPE_ACCELEROMETER
+        return compassDependencies.androidSensors.observeSensor(sensorType)
                 .doOnSubscribe {
-                    val sensor: Sensor = compassDependencies.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-                    writeLine("name=${sensor.name} vendor=${sensor.vendor}")
-                    writeLine("measured_at\trecorded_at\taccuracy\tvalue_x\tvalue_y\tvalue_z")
+                    val sensor: Sensor = compassDependencies.sensorManager.getDefaultSensor(sensorType)
+                    writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("measured_at recorded_at accuracy value_x value_y value_z")
                 }
                 .doOnNext { loggedEvent: LoggedEvent ->
                     val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
-                            "\t${loggedEvent.recordedAtNanos}" +
-                            "\t${loggedEvent.sensorEvent.accuracy}" +
-                            "\t${loggedEvent.sensorEvent.values[0]}" +
-                            "\t${loggedEvent.sensorEvent.values[1]}" +
-                            "\t${loggedEvent.sensorEvent.values[2]}"
+                            " ${loggedEvent.recordedAtNanos}" +
+                            " ${loggedEvent.sensorEvent.accuracy}" +
+                            " ${loggedEvent.sensorEvent.values[0]}" +
+                            " ${loggedEvent.sensorEvent.values[1]}" +
+                            " ${loggedEvent.sensorEvent.values[2]}"
                     writeLine(sensorLine)
                 }
                 .buffer(500).doOnNext {
@@ -83,22 +88,49 @@ class CompassMainActivity : AppCompatActivity() {
     }
 
     private fun WritableFile.writeGyroscope(): Completable {
-        return compassDependencies.androidSensors.observeSensor(Sensor.TYPE_GYROSCOPE)
+        val sensorType: Int = Sensor.TYPE_GYROSCOPE
+        return compassDependencies.androidSensors.observeSensor(sensorType)
                 .doOnSubscribe {
-                    val sensor: Sensor = compassDependencies.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
-                    writeLine("name=${sensor.name} vendor=${sensor.vendor}")
-                    writeLine("measured_at\trecorded_at\taccuracy\tvalue_x\tvalue_y\tvalue_z")
+                    val sensor: Sensor = compassDependencies.sensorManager.getDefaultSensor(sensorType)
+                    writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("measured_at recorded_at accuracy value_x value_y value_z")
                 }
                 .doOnNext { loggedEvent: LoggedEvent ->
                     val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
-                            "\t${loggedEvent.recordedAtNanos}" +
-                            "\t${loggedEvent.sensorEvent.accuracy}" +
-                            "\t${loggedEvent.sensorEvent.values[0]}" +
-                            "\t${loggedEvent.sensorEvent.values[1]}" +
-                            "\t${loggedEvent.sensorEvent.values[2]}"
+                            " ${loggedEvent.recordedAtNanos}" +
+                            " ${loggedEvent.sensorEvent.accuracy}" +
+                            " ${loggedEvent.sensorEvent.values[0]}" +
+                            " ${loggedEvent.sensorEvent.values[1]}" +
+                            " ${loggedEvent.sensorEvent.values[2]}"
                     writeLine(sensorLine)
                 }
                 .buffer(500).doOnNext {
+                    val startTime = SystemClock.elapsedRealtime()
+                    flushBuffer()
+                    L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
+                }
+                .ignoreElements()
+                .onErrorComplete()
+    }
+
+    private fun WritableFile.writeMagnetometer(): Completable {
+        val sensorType: Int = Sensor.TYPE_MAGNETIC_FIELD
+        return compassDependencies.androidSensors.observeSensor(sensorType)
+                .doOnSubscribe {
+                    val sensor: Sensor = compassDependencies.sensorManager.getDefaultSensor(sensorType)
+                    writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("measured_at recorded_at accuracy value_x value_y value_z")
+                }
+                .doOnNext { loggedEvent: LoggedEvent ->
+                    val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
+                            " ${loggedEvent.recordedAtNanos}" +
+                            " ${loggedEvent.sensorEvent.accuracy}" +
+                            " ${loggedEvent.sensorEvent.values[0]}" +
+                            " ${loggedEvent.sensorEvent.values[1]}" +
+                            " ${loggedEvent.sensorEvent.values[2]}"
+                    writeLine(sensorLine)
+                }
+                .buffer(50).doOnNext {
                     val startTime = SystemClock.elapsedRealtime()
                     flushBuffer()
                     L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
