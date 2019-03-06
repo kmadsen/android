@@ -8,6 +8,7 @@ import com.kmadsen.compass.location.CompassLocation
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.LoggedEvent
+import com.kmadsen.compass.timeseries.CompassView
 import com.kylemadsen.core.FileLogger
 import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
@@ -24,6 +25,8 @@ class CompassMainActivity : AppCompatActivity() {
     private lateinit var mapViewController: MapViewController
     private lateinit var compassGLSurfaceView: CompassGLSurfaceView
 
+    private lateinit var compassView: CompassView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.compass_main_activity)
@@ -31,6 +34,8 @@ class CompassMainActivity : AppCompatActivity() {
         compassDependencies = CompassDependencies(this)
 
         compassGLSurfaceView = findViewById(R.id.surface_view)
+
+        compassView = findViewById(R.id.magnetometer)
 
         compositeDisposable.add(FileLogger(this).observeWritableFile("accelerometer")
                 .flatMapCompletable { writableFile -> writableFile.writeAccelerometer() }
@@ -70,6 +75,8 @@ class CompassMainActivity : AppCompatActivity() {
                     writeLine("measured_at recorded_at accuracy value_x value_y value_z")
                 }
                 .doOnNext { loggedEvent: LoggedEvent ->
+                    compassView.onAccelerationChange(loggedEvent.sensorEvent.values)
+
                     val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
                             " ${loggedEvent.recordedAtNanos}" +
                             " ${loggedEvent.sensorEvent.accuracy}" +
@@ -122,6 +129,8 @@ class CompassMainActivity : AppCompatActivity() {
                     writeLine("measured_at recorded_at accuracy value_x value_y value_z")
                 }
                 .doOnNext { loggedEvent: LoggedEvent ->
+                    compassView.onMagneticFieldChange(loggedEvent.sensorEvent.values)
+
                     val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
                             " ${loggedEvent.recordedAtNanos}" +
                             " ${loggedEvent.sensorEvent.accuracy}" +
