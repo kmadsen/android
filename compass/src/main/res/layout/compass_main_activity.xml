@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         mapbox:mapbox_styleUrl="@string/mapbox_style_mapbox_streets" />
 
-    <com.kmadsen.compass.timeseries.CompassView
+    <com.kmadsen.compass.fusedcompass.CompassView
         android:id="@+id/magnetometer"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"

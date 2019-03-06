@@ -8,7 +8,8 @@ import com.kmadsen.compass.location.CompassLocation
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.LoggedEvent
-import com.kmadsen.compass.timeseries.CompassView
+import com.kmadsen.compass.fusedcompass.CompassModel
+import com.kmadsen.compass.fusedcompass.CompassView
 import com.kylemadsen.core.FileLogger
 import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
@@ -56,6 +57,7 @@ class CompassMainActivity : AppCompatActivity() {
             compositeDisposable.add(compassDependencies.locationsController.firstValidLocation()
                     .subscribe { compassLocation: CompassLocation ->
                         mapViewController.centerMap(compassLocation.latitude, compassLocation.longitude)
+                        compassView.onLocationChanged(compassLocation)
                     })
             compositeDisposable.add(compassDependencies.locationsController.allFusedLocations()
                     .subscribe { fusedLocation: FusedLocation ->

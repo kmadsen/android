@@ -45,9 +45,10 @@ class LocationsController constructor(
                     .map { fusedLocation: FusedLocation ->
                         val location: Location? = fusedLocation.location
                         if (location != null) {
-                            return@map CompassLocation(location.latitude, location.longitude)
+                            val altitudeMeters: Double? = if (location.hasAltitude()) location.altitude else null
+                            return@map CompassLocation(location.time, location.latitude, location.longitude, altitudeMeters)
                         }
-                        return@map CompassLocation(0.0, 0.0)
+                        return@map CompassLocation(0, 0.0, 0.0, null)
                     }
     }
 
