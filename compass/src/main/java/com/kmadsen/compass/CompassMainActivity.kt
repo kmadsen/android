@@ -8,7 +8,6 @@ import com.kmadsen.compass.location.CompassLocation
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.LoggedEvent
-import com.kmadsen.compass.fusedcompass.CompassModel
 import com.kmadsen.compass.fusedcompass.CompassView
 import com.kylemadsen.core.FileLogger
 import com.kylemadsen.core.WritableFile
@@ -77,7 +76,7 @@ class CompassMainActivity : AppCompatActivity() {
                     writeLine("measured_at recorded_at accuracy value_x value_y value_z")
                 }
                 .doOnNext { loggedEvent: LoggedEvent ->
-                    compassView.onAccelerationChange(loggedEvent.sensorEvent.values)
+                    compassView.onAccelerationChange(loggedEvent.sensorEvent.timestamp, loggedEvent.sensorEvent.values)
 
                     val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
                             " ${loggedEvent.recordedAtNanos}" +
@@ -131,7 +130,7 @@ class CompassMainActivity : AppCompatActivity() {
                     writeLine("measured_at recorded_at accuracy value_x value_y value_z")
                 }
                 .doOnNext { loggedEvent: LoggedEvent ->
-                    compassView.onMagneticFieldChange(loggedEvent.sensorEvent.values)
+                    compassView.onMagneticFieldChange(loggedEvent.sensorEvent.timestamp, loggedEvent.sensorEvent.values)
 
                     val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
                             " ${loggedEvent.recordedAtNanos}" +

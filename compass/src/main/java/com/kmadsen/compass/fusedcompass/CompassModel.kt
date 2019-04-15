@@ -7,7 +7,7 @@ import com.kylemadsen.core.logger.L
 import java.lang.Math.toDegrees
 import kotlin.math.PI
 
-class CompassModel {
+class CompassModel : ICompassModel {
 
     private val lastAccelerometer = FloatArray(3)
     private val lastMagnetometer = FloatArray(3)
@@ -20,8 +20,7 @@ class CompassModel {
 
     private var geomagneticField: GeomagneticField? = null
 
-
-    fun onLocationChange(compassLocation: CompassLocation) {
+    override fun onLocationChange(compassLocation: CompassLocation) {
         if (compassLocation.altitudeMeters == null) return
 
         val geomagneticField = GeomagneticField(
@@ -38,23 +37,18 @@ class CompassModel {
         L.i("geomagneticField update horizontalStrength=${geomagneticField.horizontalStrength}")
     }
 
-    fun onMagneticFieldChange(eventValues: FloatArray) {
+    override fun onMagneticFieldChange(timeNanos: Long, eventValues: FloatArray) {
         System.arraycopy(eventValues, 0, lastMagnetometer, 0, eventValues.size)
-
 
         lastMagnetometerSet = true
     }
 
-    fun onAccelerationChange(eventValues: FloatArray) {
+    override fun onAccelerationChange(timeNanos: Long, eventValues: FloatArray) {
         System.arraycopy(eventValues, 0, lastAccelerometer, 0, eventValues.size)
         lastAccelerometerSet = true
     }
 
-    fun isReady(): Boolean {
-        return lastAccelerometerSet && lastMagnetometerSet
-    }
-
-    fun getAzimuthInRadians(): Float {
+    override fun getAzimuthInRadians(): Float {
         L.i("getAzimuthInRadians magnetometer x=${lastMagnetometer[0]} y=${lastMagnetometer[1]} z=${lastMagnetometer[2]}")
         L.i("getAzimuthInRadians magnetometer x=${lastMagnetometer[0]} y=${lastMagnetometer[1]} z=${lastMagnetometer[2]}")
 
