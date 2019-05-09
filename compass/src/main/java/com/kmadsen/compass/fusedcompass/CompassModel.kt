@@ -16,7 +16,7 @@ class CompassModel : ICompassModel {
 
     private var lastAccelerometerSet = false
     private var lastMagnetometerSet = false
-    private var currentDegree = 0.0
+    private var lastAzimuthInRadians: Double? = null
 
     private var geomagneticField: GeomagneticField? = null
 
@@ -38,24 +38,37 @@ class CompassModel : ICompassModel {
     }
 
     override fun onMagneticFieldChange(timeNanos: Long, eventValues: FloatArray) {
-        System.arraycopy(eventValues, 0, lastMagnetometer, 0, eventValues.size)
+        val x = (lastMagnetometer[0] + 0.015 * (eventValues[0] - lastMagnetometer[0])).toFloat()
+        System.out.println("$x = ${lastMagnetometer[0]} + 0.015 * (${eventValues[0]} - ${lastMagnetometer[0]}")
+        val floatArray = FloatArray(3) { i ->
+            (lastMagnetometer[i] + 0.015 * (eventValues[i] - lastMagnetometer[i])).toFloat()
+        }
+        System.arraycopy(floatArray, 0, lastMagnetometer, 0, eventValues.size)
 
         lastMagnetometerSet = true
     }
 
     override fun onAccelerationChange(timeNanos: Long, eventValues: FloatArray) {
-        System.arraycopy(eventValues, 0, lastAccelerometer, 0, eventValues.size)
+        val floatArray = FloatArray(3) { i ->
+            (lastAccelerometer[i] + 0.015 * (eventValues[i] - lastAccelerometer[i])).toFloat()
+        }
+        System.arraycopy(floatArray, 0, lastAccelerometer, 0, eventValues.size)
+
         lastAccelerometerSet = true
     }
 
     override fun getAzimuthInRadians(): Float {
-        L.i("getAzimuthInRadians magnetometer x=${lastMagnetometer[0]} y=${lastMagnetometer[1]} z=${lastMagnetometer[2]}")
-        L.i("getAzimuthInRadians magnetometer x=${lastMagnetometer[0]} y=${lastMagnetometer[1]} z=${lastMagnetometer[2]}")
 
         SensorManager.getRotationMatrix(rotationMatrix, null, lastAccelerometer, lastMagnetometer)
         SensorManager.getOrientation(rotationMatrix, orientation)
-        val azimuthInRadians = orientation[0] - PI
-        currentDegree = toDegrees(azimuthInRadians)
+        var azimuthInRadians = orientation[0] - PI
+
+        lastAzimuthInRadians = azimuthInRadians.mRound(0.5)
+        L.i("getAzimuthInRadians $lastAzimuthInRadians magnetometer x=${lastMagnetometer[0]} y=${lastMagnetometer[1]} z=${lastMagnetometer[2]}")
         return azimuthInRadians.toFloat()
     }
+}
+
+fun Double.mRound(factor: Double): Double {
+    return Math.round(this / factor) * factor
 }
