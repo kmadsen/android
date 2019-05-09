@@ -4,7 +4,9 @@ import android.hardware.GeomagneticField
 import android.hardware.SensorManager
 import com.kmadsen.compass.location.CompassLocation
 import com.kylemadsen.core.logger.L
+import java.lang.Math.min
 import java.lang.Math.toDegrees
+import java.util.concurrent.TimeUnit
 import kotlin.math.PI
 
 class CompassModel : ICompassModel {
@@ -16,6 +18,10 @@ class CompassModel : ICompassModel {
 
     private var lastAccelerometerSet = false
     private var lastMagnetometerSet = false
+
+    private var lastAccelerometerNanos: Long = 0
+    private var lastMagnetometerNanos: Long = 0
+
     private var lastAzimuthInRadians: Double? = null
 
     private var geomagneticField: GeomagneticField? = null
@@ -38,10 +44,16 @@ class CompassModel : ICompassModel {
     }
 
     override fun onMagneticFieldChange(timeNanos: Long, eventValues: FloatArray) {
+        val alpha = if (lastMagnetometerNanos > 0) {
+            min(0.9, ((timeNanos - lastMagnetometerNanos) / TimeUnit.MILLISECONDS.toNanos(100).toDouble()))
+        } else {
+            0.15
+        }
+        lastMagnetometerNanos = timeNanos
         val x = (lastMagnetometer[0] + 0.015 * (eventValues[0] - lastMagnetometer[0])).toFloat()
-        System.out.println("$x = ${lastMagnetometer[0]} + 0.015 * (${eventValues[0]} - ${lastMagnetometer[0]}")
+        System.out.println("$x = ${lastMagnetometer[0]} + $alpha * (${eventValues[0]} - ${lastMagnetometer[0]} $alpha")
         val floatArray = FloatArray(3) { i ->
-            (lastMagnetometer[i] + 0.015 * (eventValues[i] - lastMagnetometer[i])).toFloat()
+            (lastMagnetometer[i] + alpha * (eventValues[i] - lastMagnetometer[i])).toFloat()
         }
         System.arraycopy(floatArray, 0, lastMagnetometer, 0, eventValues.size)
 
@@ -49,8 +61,14 @@ class CompassModel : ICompassModel {
     }
 
     override fun onAccelerationChange(timeNanos: Long, eventValues: FloatArray) {
+        val alpha = if (lastAccelerometerNanos > 0) {
+            min(0.9, (timeNanos - lastAccelerometerNanos) / TimeUnit.MILLISECONDS.toNanos(100).toDouble())
+        } else {
+            0.15
+        }
+        lastAccelerometerNanos = timeNanos
         val floatArray = FloatArray(3) { i ->
-            (lastAccelerometer[i] + 0.015 * (eventValues[i] - lastAccelerometer[i])).toFloat()
+            (lastAccelerometer[i] + alpha * (eventValues[i] - lastAccelerometer[i])).toFloat()
         }
         System.arraycopy(floatArray, 0, lastAccelerometer, 0, eventValues.size)
 
