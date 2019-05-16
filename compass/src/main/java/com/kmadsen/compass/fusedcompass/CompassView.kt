@@ -21,6 +21,7 @@ class CompassView(
 ) : View(context, attrs) {
 
     private val compassModel = CompassModel()
+    private var azimuthInRadians: Double = 0.0
 
     private val mPaintLine = Paint()
 
@@ -33,8 +34,10 @@ class CompassView(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
-        disposable = Observable.interval(100L, TimeUnit.MILLISECONDS)
-                .doOnNext { invalidate() }
+        disposable = Observable.interval(10L, TimeUnit.MILLISECONDS)
+                .doOnNext {
+                    updateAzimuthRadians(compassModel.getAzimuthInRadians().toDouble())
+                }
                 .subscribe()
     }
 
@@ -50,13 +53,11 @@ class CompassView(
     }
 
     private fun drawAxes(canvas: Canvas) {
-        val azimuthInRadians: Float = compassModel.getAzimuthInRadians()
-
         val centerX: Float = canvas.width.toFloat() / 2.0f
         val centerY: Float = canvas.height.toFloat() / 2.0f
         val radiusPx = dpToPx(50f)
-        val pointerX = centerX + radiusPx * sin(azimuthInRadians)
-        val pointerY = centerY + radiusPx * cos(azimuthInRadians)
+        val pointerX = centerX + radiusPx * sin(azimuthInRadians.toFloat())
+        val pointerY = centerY + radiusPx * cos(azimuthInRadians.toFloat())
 
         canvas.drawLine(centerX, centerY, pointerX, pointerY, mPaintLine)
         canvas.drawCircle(pointerX, pointerY, dpToPx(5F), mPaintLine)
@@ -76,5 +77,10 @@ class CompassView(
 
     fun onLocationChanged(compassLocation: CompassLocation) {
         compassModel.onLocationChange(compassLocation)
+    }
+
+    fun updateAzimuthRadians(azimuthInRadians: Double) {
+        this.azimuthInRadians = azimuthInRadians
+        invalidate()
     }
 }

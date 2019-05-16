@@ -16,9 +16,6 @@ class CompassModel : ICompassModel {
     private val rotationMatrix = FloatArray(9)
     private val orientation = FloatArray(3)
 
-    private var lastAccelerometerSet = false
-    private var lastMagnetometerSet = false
-
     private var lastAccelerometerNanos: Long = 0
     private var lastMagnetometerNanos: Long = 0
 
@@ -56,8 +53,6 @@ class CompassModel : ICompassModel {
             (lastMagnetometer[i] + alpha * (eventValues[i] - lastMagnetometer[i])).toFloat()
         }
         System.arraycopy(floatArray, 0, lastMagnetometer, 0, eventValues.size)
-
-        lastMagnetometerSet = true
     }
 
     override fun onAccelerationChange(timeNanos: Long, eventValues: FloatArray) {
@@ -71,8 +66,6 @@ class CompassModel : ICompassModel {
             (lastAccelerometer[i] + alpha * (eventValues[i] - lastAccelerometer[i])).toFloat()
         }
         System.arraycopy(floatArray, 0, lastAccelerometer, 0, eventValues.size)
-
-        lastAccelerometerSet = true
     }
 
     override fun getAzimuthInRadians(): Float {

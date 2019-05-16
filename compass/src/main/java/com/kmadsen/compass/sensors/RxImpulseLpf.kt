@@ -1,6 +1,5 @@
 package com.kmadsen.compass.sensors
 
-import com.kylemadsen.core.logger.L
 import io.reactivex.Flowable
 
 fun Flowable<Measure3d>.lowPassFilter(alpha: Float): Flowable<Measure3d> {
