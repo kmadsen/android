@@ -72,7 +72,8 @@ class CompassModel : ICompassModel {
 
         SensorManager.getRotationMatrix(rotationMatrix, null, lastAccelerometer, lastMagnetometer)
         SensorManager.getOrientation(rotationMatrix, orientation)
-        var azimuthInRadians = orientation[0] - PI
+
+        var azimuthInRadians = PI - orientation[0].toDouble()
 
         lastAzimuthInRadians = azimuthInRadians.mRound(0.5)
         L.i("getAzimuthInRadians $lastAzimuthInRadians magnetometer x=${lastMagnetometer[0]} y=${lastMagnetometer[1]} z=${lastMagnetometer[2]}")

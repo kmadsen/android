@@ -1,6 +1,5 @@
 package com.kmadsen.compass
 
-import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
