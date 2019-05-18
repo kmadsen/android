@@ -12,7 +12,6 @@ import com.kmadsen.compass.sensors.LoggedEvent
 import com.kmadsen.compass.fusedcompass.CompassView
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.sensors.AndroidSensors
-import com.kmadsen.compass.sensors.AzimuthService
 import com.kylemadsen.core.FileLogger
 import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
@@ -31,7 +30,6 @@ class CompassMainActivity : AppCompatActivity() {
 
     private lateinit var compassView: CompassView
 
-    @Inject lateinit var azimuthService: AzimuthService
     @Inject lateinit var locationsController: LocationsController
     @Inject lateinit var androidSensors: AndroidSensors
     @Inject lateinit var sensorManager: SensorManager
@@ -48,12 +46,6 @@ class CompassMainActivity : AppCompatActivity() {
         compassGLSurfaceView = findViewById(R.id.surface_view)
 
         compassView = findViewById(R.id.magnetometer)
-
-//        compositeDisposable.add(azimuthService
-//                .observeAzimuthRadians()
-//                .subscribe { azimuthRadians ->
-//            compassView.updateAzimuthRadians(azimuthRadians)
-//        })
 
         compositeDisposable.add(FileLogger(this).observeWritableFile("accelerometer")
                 .flatMapCompletable { writableFile -> writableFile.writeAccelerometer() }
