@@ -10,27 +10,27 @@ class RxLowPassFilterTestTest {
     @Test
     fun shouldStaySmoothWithZeros() {
         val rateOfChange: TestSubscriber<Measure3d> = Flowable.just(
-                testMeasure3d(0.0f, 0.0f,0.0f, 0L),
-                testMeasure3d(0.0f, 0.0f,0.0f, 1L),
-                testMeasure3d(0.0f, 0.0f,0.0f, 2L)
+                testMeasure3d(0.0f, 0.0f, 0.0f, 0L),
+                testMeasure3d(0.0f, 0.0f, 0.0f, 1L),
+                testMeasure3d(0.0f, 0.0f, 0.0f, 2L)
         ).lowPassFilter(0.1f).test()
 
         rateOfChange.assertValues(
-                testMeasure3d(0.0f, 0.0f,0.0f, 0L),
-                testMeasure3d(0.0f, 0.0f,0.0f, 1L),
-                testMeasure3d(0.0f, 0.0f,0.0f, 2L))
+                testMeasure3d(0.0f, 0.0f, 0.0f, 0L),
+                testMeasure3d(0.0f, 0.0f, 0.0f, 1L),
+                testMeasure3d(0.0f, 0.0f ,0.0f, 2L))
     }
 
     @Test
     fun shouldStaySmoothForLinearLine() {
         val rateOfChange: TestSubscriber<Measure3d> = Flowable.just(
-                testMeasure3d(0.10f, 1.00f,-2.0f, 0L),
-                testMeasure3d(0.10f, 1.00f,-2.0f, 0L),
-                testMeasure3d(0.12f, 1.10f,-2.5f, 1L),
-                testMeasure3d(0.12f, 1.10f,-2.5f, 1L),
-                testMeasure3d(0.12f, 1.10f,-2.5f, 1L),
-                testMeasure3d(0.12f, 1.10f,-2.5f, 1L),
-                testMeasure3d(0.12f, 1.10f,-2.5f, 1L)
+                testMeasure3d(0.10f, 1.00f, -2.0f, 0L),
+                testMeasure3d(0.10f, 1.00f, -2.0f, 0L),
+                testMeasure3d(0.12f, 1.10f, -2.5f, 1L),
+                testMeasure3d(0.12f, 1.10f, -2.5f, 1L),
+                testMeasure3d(0.12f, 1.10f, -2.5f, 1L),
+                testMeasure3d(0.12f, 1.10f, -2.5f, 1L),
+                testMeasure3d(0.12f, 1.10f, -2.5f, 1L)
         ).lowPassFilter(0.2f).doOnNext { } .test()
 
         rateOfChange.assertValueAt(5) { it.x == 0.12f }
