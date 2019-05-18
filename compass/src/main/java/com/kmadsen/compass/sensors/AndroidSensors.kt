@@ -15,7 +15,7 @@ class AndroidSensors(private val sensorManager: SensorManager) {
         return Flowable.create({ emitter ->
             val rotationVectorSensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
             val sensorListener = SensorListener(emitter)
-            sensorManager.registerListener(sensorListener, rotationVectorSensor, 0)
+            sensorManager.registerListener(sensorListener, rotationVectorSensor, toSamplingPeriodUs(100))
             emitter.setCancellable {
                 sensorManager.unregisterListener(sensorListener)
             }
@@ -26,7 +26,7 @@ class AndroidSensors(private val sensorManager: SensorManager) {
         return Flowable.create({ emitter ->
             val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
             val sensorListener = SensorListener(emitter)
-            sensorManager.registerListener(sensorListener, sensor, 0)
+            sensorManager.registerListener(sensorListener, sensor, toSamplingPeriodUs(100))
             emitter.setCancellable {
                 sensorManager.unregisterListener(sensorListener)
             }
@@ -46,6 +46,11 @@ class AndroidSensors(private val sensorManager: SensorManager) {
                 emitter.onNext(LoggedEvent(sensorEvent, recordedAtNanos))
             }
         }
+    }
+
+    // 1/25 = 0.04 or 40000 microseconds
+    private fun toSamplingPeriodUs(signalsPerSecond: Int): Int {
+        return 1000000 / signalsPerSecond
     }
 }
 

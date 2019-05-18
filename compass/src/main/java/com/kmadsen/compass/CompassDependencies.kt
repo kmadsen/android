@@ -1,29 +1,52 @@
 package com.kmadsen.compass
 
 import android.content.Context
+import android.content.res.Resources
 import android.hardware.SensorManager
 import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kmadsen.compass.sensors.AndroidSensors
+import dagger.Component
+import dagger.Module
+import dagger.Provides
 
-class CompassDependencies(
-        val compassMainActivity: CompassMainActivity
-) {
+@Module
+class CompassModule(private val compassMainActivity: CompassMainActivity) {
 
-    val locationPermissions: LocationPermissions by lazy {
-        LocationPermissions()
+    @Provides
+    fun provideResources(): Resources {
+        return compassMainActivity.resources
     }
 
-    val locationsController: LocationsController by lazy {
-        LocationsController(
+    @Provides
+    fun provideLocationPermissions(): LocationPermissions {
+        return LocationPermissions()
+    }
+
+    @Provides
+    fun provideLocationLocationsController(
+            locationPermissions: LocationPermissions
+    ): LocationsController {
+        return LocationsController(
                 locationPermissions,
                 FusedLocationService(compassMainActivity.application)
         )
     }
 
-    val sensorManager: SensorManager = compassMainActivity
-            .getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    @Provides
+    fun provideSensorManager(): SensorManager {
+        return compassMainActivity
+                .getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
 
-    val androidSensors: AndroidSensors = AndroidSensors(sensorManager)
+    @Provides
+    fun provideAndroidSensors(sensorManager: SensorManager): AndroidSensors {
+        return AndroidSensors(sensorManager)
+    }
+}
+
+@Component(modules = [CompassModule::class])
+interface CompassComponent {
+    fun inject(mainActivity: CompassMainActivity)
 }
