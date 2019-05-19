@@ -42,13 +42,17 @@ class CompassMainActivity : AppCompatActivity() {
 
         compassView = findViewById(R.id.magnetometer)
 
-        compositeDisposable.add(azimuthSensor.attachSensorUpdates().subscribe())
-        compositeDisposable.add(azimuthSensor.observeAzimuth()
-                .subscribe {
-                    compassView.updateAzimuthRadians(it.deviceDirectionRadians)
-                })
+        compositeDisposable.add(azimuthSensor.attachSensorUpdates()
+                .subscribe())
 
-        compositeDisposable.add(sensorLogger.attachFileWriting(this).subscribe())
+        compositeDisposable.add(azimuthSensor.observeAzimuth()
+                .subscribe { compassView.updateAzimuthRadians(it.deviceDirectionRadians) })
+
+        compositeDisposable.add(sensorLogger.attachFileWriting(this)
+                .subscribe())
+
+        compositeDisposable.add(androidSensors.observeRotationVector()
+                .subscribe { compassGLSurfaceView.update(it.sensorEvent.values) })
 
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
@@ -60,19 +64,13 @@ class CompassMainActivity : AppCompatActivity() {
                     })
             compositeDisposable.add(locationsController.allFusedLocations()
                     .subscribe { fusedLocation: FusedLocation ->
-                        run {
-                            mapViewController.updatePinLocation(fusedLocation)
-                        }
+                        run { mapViewController.updatePinLocation(fusedLocation) }
                     })
         }
     }
 
     override fun onStart() {
         super.onStart()
-
-        compositeDisposable.add(androidSensors.observeRotationVector()
-                .subscribe { compassGLSurfaceView.update(it.sensorEvent.values) }
-        )
 
         locationsController.onStart(this)
     }

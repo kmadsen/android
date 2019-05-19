@@ -19,13 +19,13 @@ class SensorLogger(
     fun attachFileWriting(context: Context): Completable {
         val accelerometerLogger: Completable = FileLogger(context)
                 .observeWritableFile("accelerometer")
-                .flatMapCompletable { writableFile -> writableFile.writeAccelerometer() }
+                .flatMapCompletable { writableFile -> writableFile.write3dSensor(Sensor.TYPE_ACCELEROMETER) }
         val gyroscopeLogger: Completable = FileLogger(context)
                 .observeWritableFile("gyroscope")
-                .flatMapCompletable { writableFile -> writableFile.writeGyroscope() }
+                .flatMapCompletable { writableFile -> writableFile.write3dSensor(Sensor.TYPE_GYROSCOPE) }
         val magnetometerLogger: Completable = FileLogger(context)
                 .observeWritableFile("magnetometer")
-                .flatMapCompletable { writableFile -> writableFile.writeMagnetometer() }
+                .flatMapCompletable { writableFile -> writableFile.write3dSensor(Sensor.TYPE_MAGNETIC_FIELD) }
 
         return Completable.mergeArray(
                 accelerometerLogger,
@@ -34,8 +34,7 @@ class SensorLogger(
         )
     }
 
-    private fun WritableFile.writeAccelerometer(): Completable {
-        val sensorType: Int = Sensor.TYPE_ACCELEROMETER
+    private fun WritableFile.write3dSensor(sensorType: Int): Completable {
         return androidSensors.observeSensor(sensorType)
                 .doOnSubscribe {
                     val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
@@ -52,61 +51,7 @@ class SensorLogger(
                     writeLine(sensorLine)
                 }
                 .buffer(500).doOnNext {
-                    val startTime = SystemClock.elapsedRealtime()
                     flushBuffer()
-                    L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
-                }
-                .ignoreElements()
-                .onErrorComplete()
-    }
-
-    private fun WritableFile.writeGyroscope(): Completable {
-        val sensorType: Int = Sensor.TYPE_GYROSCOPE
-        return androidSensors.observeSensor(sensorType)
-                .doOnSubscribe {
-                    val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
-                    writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
-                    writeLine("measured_at recorded_at accuracy value_x value_y value_z")
-                }
-                .doOnNext { loggedEvent: LoggedEvent ->
-                    val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
-                            " ${loggedEvent.recordedAtNanos}" +
-                            " ${loggedEvent.sensorEvent.accuracy}" +
-                            " ${loggedEvent.sensorEvent.values[0]}" +
-                            " ${loggedEvent.sensorEvent.values[1]}" +
-                            " ${loggedEvent.sensorEvent.values[2]}"
-                    writeLine(sensorLine)
-                }
-                .buffer(500).doOnNext {
-                    val startTime = SystemClock.elapsedRealtime()
-                    flushBuffer()
-                    L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
-                }
-                .ignoreElements()
-                .onErrorComplete()
-    }
-
-    private fun WritableFile.writeMagnetometer(): Completable {
-        val sensorType: Int = Sensor.TYPE_MAGNETIC_FIELD
-        return androidSensors.observeSensor(sensorType)
-                .doOnSubscribe {
-                    val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
-                    writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
-                    writeLine("measured_at recorded_at accuracy value_x value_y value_z")
-                }
-                .doOnNext { loggedEvent: LoggedEvent ->
-                    val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
-                            " ${loggedEvent.recordedAtNanos}" +
-                            " ${loggedEvent.sensorEvent.accuracy}" +
-                            " ${loggedEvent.sensorEvent.values[0]}" +
-                            " ${loggedEvent.sensorEvent.values[1]}" +
-                            " ${loggedEvent.sensorEvent.values[2]}"
-                    writeLine(sensorLine)
-                }
-                .buffer(50).doOnNext {
-                    val startTime = SystemClock.elapsedRealtime()
-                    flushBuffer()
-                    L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
                 }
                 .ignoreElements()
                 .onErrorComplete()
