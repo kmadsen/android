@@ -7,7 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
-import com.kmadsen.compass.location.CompassLocation
+import com.kmadsen.compass.location.BasicLocation
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -20,7 +20,6 @@ class CompassView(
         attrs: AttributeSet
 ) : View(context, attrs) {
 
-    private val compassModel = CompassModel()
     private var azimuthInRadians: Double = 0.0
 
     private val mPaintLine = Paint()
@@ -28,23 +27,6 @@ class CompassView(
     init {
         mPaintLine.color = Color.BLUE
         mPaintLine.strokeWidth = dpToPx(4.0f)
-    }
-
-    var disposable: Disposable = Disposables.disposed()
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-
-        disposable = Observable.interval(10L, TimeUnit.MILLISECONDS)
-                .doOnNext {
-                    updateAzimuthRadians(compassModel.getAzimuthInRadians().toDouble())
-                }
-                .subscribe()
-    }
-
-    override fun onDetachedFromWindow() {
-        disposable.dispose()
-
-        super.onDetachedFromWindow()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -65,18 +47,6 @@ class CompassView(
 
     private fun dpToPx(dp: Float): Float {
         return dp * Resources.getSystem().displayMetrics.density
-    }
-
-    fun onMagneticFieldChange(timeNanos: Long, eventValues: FloatArray) {
-        compassModel.onMagneticFieldChange(timeNanos, eventValues)
-    }
-
-    fun onAccelerationChange(timeNanos: Long, eventValues: FloatArray) {
-        compassModel.onAccelerationChange(timeNanos, eventValues)
-    }
-
-    fun onLocationChanged(compassLocation: CompassLocation) {
-        compassModel.onLocationChange(compassLocation)
     }
 
     fun updateAzimuthRadians(azimuthInRadians: Double) {

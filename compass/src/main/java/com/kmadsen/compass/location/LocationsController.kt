@@ -38,7 +38,7 @@ class LocationsController constructor(
         locationPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    fun firstValidLocation(): Single<CompassLocation> {
+    fun firstValidLocation(): Single<BasicLocation> {
         return fusedLocationRelay
                     .filter { fusedLocation: FusedLocation -> fusedLocation.location != null }
                     .first(FusedLocation())
@@ -46,9 +46,9 @@ class LocationsController constructor(
                         val location: Location? = fusedLocation.location
                         if (location != null) {
                             val altitudeMeters: Double? = if (location.hasAltitude()) location.altitude else null
-                            return@map CompassLocation(location.time, location.latitude, location.longitude, altitudeMeters)
+                            return@map BasicLocation(location.time, location.latitude, location.longitude, altitudeMeters)
                         }
-                        return@map CompassLocation(0, 0.0, 0.0, null)
+                        return@map BasicLocation(0, 0.0, 0.0, null)
                     }
     }
 

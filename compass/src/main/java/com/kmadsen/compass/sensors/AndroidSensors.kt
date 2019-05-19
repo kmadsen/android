@@ -48,7 +48,33 @@ class AndroidSensors(private val sensorManager: SensorManager) {
         }
     }
 
-    // 1/25 = 0.04 or 40000 microseconds
+    fun observeRawSensor(sensorType: Int): Flowable<SensorEvent> {
+        return Flowable.create({ emitter ->
+            val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
+            val sensorListener = SensorRawListener(emitter)
+            sensorManager.registerListener(sensorListener, sensor, toSamplingPeriodUs(100))
+            emitter.setCancellable {
+                sensorManager.unregisterListener(sensorListener)
+            }
+        }, BackpressureStrategy.BUFFER)
+    }
+
+    class SensorRawListener(
+            private val emitter: FlowableEmitter<SensorEvent>
+    ) : SensorEventListener {
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+
+        }
+
+        override fun onSensorChanged(sensorEvent: SensorEvent) {
+            if (emitter.isCancelled.not()) {
+                emitter.onNext(sensorEvent)
+            }
+        }
+    }
+
+    // 25 signals per second is 40000 microseconds.
+    // 1/25 = 0.04 seconds and 40000 microseconds
     private fun toSamplingPeriodUs(signalsPerSecond: Int): Int {
         return 1000000 / signalsPerSecond
     }

@@ -44,14 +44,6 @@ class FusedLocationService(val application: Application) {
         providerClient.removeLocationUpdates(locationCallback)
     }
 
-    private fun getRawLocationUpdate(): FusedLocation {
-        return FusedLocation(
-                lastLocation,
-                locationAvailability,
-                locationResult
-        )
-    }
-
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationAvailability(locationAvailability: LocationAvailability?) {
             L.i(".onLocationAvailability " + locationAvailability?.toString())
@@ -65,5 +57,13 @@ class FusedLocationService(val application: Application) {
             this@FusedLocationService.locationResult = locationResult
             onRawLocationUpdate.invoke(getRawLocationUpdate())
         }
+    }
+
+    private fun getRawLocationUpdate(): FusedLocation {
+        return FusedLocation(
+                lastLocation,
+                locationAvailability,
+                locationResult
+        )
     }
 }

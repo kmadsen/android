@@ -2,8 +2,9 @@ package com.kmadsen.compass
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.fusedcompass.CompassView
-import com.kmadsen.compass.location.CompassLocation
+import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kmadsen.compass.mapbox.MapViewController
@@ -26,6 +27,7 @@ class CompassMainActivity : AppCompatActivity() {
     @Inject lateinit var locationsController: LocationsController
     @Inject lateinit var androidSensors: AndroidSensors
     @Inject lateinit var sensorLogger: SensorLogger
+    @Inject lateinit var azimuthSensor: AzimuthSensor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,12 @@ class CompassMainActivity : AppCompatActivity() {
 
         compassView = findViewById(R.id.magnetometer)
 
+        compositeDisposable.add(azimuthSensor.attachSensorUpdates().subscribe())
+        compositeDisposable.add(azimuthSensor.observeAzimuth()
+                .subscribe {
+                    compassView.updateAzimuthRadians(it.deviceDirectionRadians)
+                })
+
         compositeDisposable.add(sensorLogger.attachFileWriting(this).subscribe())
 
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
@@ -47,9 +55,8 @@ class CompassMainActivity : AppCompatActivity() {
         mapView.getMapAsync { mapboxMap ->
             mapViewController = MapViewController(mapboxMap)
             compositeDisposable.add(locationsController.firstValidLocation()
-                    .subscribe { compassLocation: CompassLocation ->
-                        mapViewController.centerMap(compassLocation.latitude, compassLocation.longitude)
-                        compassView.onLocationChanged(compassLocation)
+                    .subscribe { basicLocation: BasicLocation ->
+                        mapViewController.centerMap(basicLocation.latitude, basicLocation.longitude)
                     })
             compositeDisposable.add(locationsController.allFusedLocations()
                     .subscribe { fusedLocation: FusedLocation ->
