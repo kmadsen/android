@@ -3,10 +3,12 @@ package com.kmadsen.compass
 import android.content.Context
 import android.content.res.Resources
 import android.hardware.SensorManager
+import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.sensors.SensorLogger
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -43,6 +45,22 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
     @Provides
     fun provideAndroidSensors(sensorManager: SensorManager): AndroidSensors {
         return AndroidSensors(sensorManager)
+    }
+
+    @Provides
+    fun provideSensorLogger(
+            androidSensors: AndroidSensors,
+            sensorManager: SensorManager
+    ): SensorLogger {
+        return SensorLogger(
+                androidSensors,
+                sensorManager
+        )
+    }
+
+    @Provides
+    fun provideAzimuthSensor(androidSensors: AndroidSensors): AzimuthSensor {
+        return AzimuthSensor(androidSensors)
     }
 }
 

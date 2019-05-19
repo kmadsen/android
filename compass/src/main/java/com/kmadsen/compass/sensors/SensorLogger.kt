@@ -1,13 +1,117 @@
 package com.kmadsen.compass.sensors
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorDirectChannel
 import android.hardware.SensorManager
 import android.os.Build
+import android.os.SystemClock
+import com.kylemadsen.core.FileLogger
+import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
+import io.reactivex.Completable
 
-class SensorLogger {
+class SensorLogger(
+        private val androidSensors: AndroidSensors,
+        private val sensorManager: SensorManager
+) {
+    fun attachFileWriting(context: Context): Completable {
+        val accelerometerLogger: Completable = FileLogger(context)
+                .observeWritableFile("accelerometer")
+                .flatMapCompletable { writableFile -> writableFile.writeAccelerometer() }
+        val gyroscopeLogger: Completable = FileLogger(context)
+                .observeWritableFile("gyroscope")
+                .flatMapCompletable { writableFile -> writableFile.writeGyroscope() }
+        val magnetometerLogger: Completable = FileLogger(context)
+                .observeWritableFile("magnetometer")
+                .flatMapCompletable { writableFile -> writableFile.writeMagnetometer() }
+
+        return Completable.mergeArray(
+                accelerometerLogger,
+                gyroscopeLogger,
+                magnetometerLogger
+        )
+    }
+
+    private fun WritableFile.writeAccelerometer(): Completable {
+        val sensorType: Int = Sensor.TYPE_ACCELEROMETER
+        return androidSensors.observeSensor(sensorType)
+                .doOnSubscribe {
+                    val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
+                    writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("measured_at recorded_at accuracy value_x value_y value_z")
+                }
+                .doOnNext { loggedEvent: LoggedEvent ->
+                    val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
+                            " ${loggedEvent.recordedAtNanos}" +
+                            " ${loggedEvent.sensorEvent.accuracy}" +
+                            " ${loggedEvent.sensorEvent.values[0]}" +
+                            " ${loggedEvent.sensorEvent.values[1]}" +
+                            " ${loggedEvent.sensorEvent.values[2]}"
+                    writeLine(sensorLine)
+                }
+                .buffer(500).doOnNext {
+                    val startTime = SystemClock.elapsedRealtime()
+                    flushBuffer()
+                    L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
+                }
+                .ignoreElements()
+                .onErrorComplete()
+    }
+
+    private fun WritableFile.writeGyroscope(): Completable {
+        val sensorType: Int = Sensor.TYPE_GYROSCOPE
+        return androidSensors.observeSensor(sensorType)
+                .doOnSubscribe {
+                    val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
+                    writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("measured_at recorded_at accuracy value_x value_y value_z")
+                }
+                .doOnNext { loggedEvent: LoggedEvent ->
+                    val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
+                            " ${loggedEvent.recordedAtNanos}" +
+                            " ${loggedEvent.sensorEvent.accuracy}" +
+                            " ${loggedEvent.sensorEvent.values[0]}" +
+                            " ${loggedEvent.sensorEvent.values[1]}" +
+                            " ${loggedEvent.sensorEvent.values[2]}"
+                    writeLine(sensorLine)
+                }
+                .buffer(500).doOnNext {
+                    val startTime = SystemClock.elapsedRealtime()
+                    flushBuffer()
+                    L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
+                }
+                .ignoreElements()
+                .onErrorComplete()
+    }
+
+    private fun WritableFile.writeMagnetometer(): Completable {
+        val sensorType: Int = Sensor.TYPE_MAGNETIC_FIELD
+        return androidSensors.observeSensor(sensorType)
+                .doOnSubscribe {
+                    val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
+                    writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("measured_at recorded_at accuracy value_x value_y value_z")
+                }
+                .doOnNext { loggedEvent: LoggedEvent ->
+                    val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
+                            " ${loggedEvent.recordedAtNanos}" +
+                            " ${loggedEvent.sensorEvent.accuracy}" +
+                            " ${loggedEvent.sensorEvent.values[0]}" +
+                            " ${loggedEvent.sensorEvent.values[1]}" +
+                            " ${loggedEvent.sensorEvent.values[2]}"
+                    writeLine(sensorLine)
+                }
+                .buffer(50).doOnNext {
+                    val startTime = SystemClock.elapsedRealtime()
+                    flushBuffer()
+                    L.i("DEBUG_FILE time to flush ${SystemClock.elapsedRealtime() - startTime}")
+                }
+                .ignoreElements()
+                .onErrorComplete()
+    }
+
     companion object {
         @SuppressLint("ObsoleteSdkInt")
         fun logDeviceSensors(sensorManager: SensorManager) {

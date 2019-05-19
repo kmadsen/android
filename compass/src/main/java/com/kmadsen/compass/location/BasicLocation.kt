@@ -1,6 +1,6 @@
 package com.kmadsen.compass.location
 
-data class CompassLocation(
+data class BasicLocation(
         val timeMillis: Long,
         val latitude: Double,
         val longitude: Double,
