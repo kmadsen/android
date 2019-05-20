@@ -52,9 +52,11 @@ dependencies {
     // https://github.com/nhaarman/mockito-kotlin/releases
     def versionMockitoKotlin = '2.0.0-RC1'
     def versionRxKotlin = '2.2.0'
+    def koptional_version = '1.6.0'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "io.reactivex.rxjava2:rxkotlin:$versionRxKotlin"
+    implementation "com.gojuno.koptional:koptional-rxjava2-extensions:$koptional_version"
 
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"

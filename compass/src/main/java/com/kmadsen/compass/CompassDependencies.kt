@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.hardware.SensorManager
 import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.location.LocationPermissions
+import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kmadsen.compass.sensors.AndroidSensors
@@ -12,6 +13,7 @@ import com.kmadsen.compass.sensors.SensorLogger
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import javax.inject.Scope
 
 @Module
 class CompassModule(private val compassMainActivity: CompassMainActivity) {
@@ -22,17 +24,19 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
     }
 
     @Provides
-    fun provideLocationPermissions(): LocationPermissions {
-        return LocationPermissions()
+    @CompassScope
+    fun provideLocationRepository(): LocationRepository {
+        return LocationRepository()
     }
 
     @Provides
     fun provideLocationLocationsController(
-            locationPermissions: LocationPermissions
+            locationRepository: LocationRepository
     ): LocationsController {
         return LocationsController(
-                locationPermissions,
-                FusedLocationService(compassMainActivity.application)
+                LocationPermissions(),
+                FusedLocationService(compassMainActivity.application),
+                locationRepository
         )
     }
 
@@ -50,11 +54,13 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
     @Provides
     fun provideSensorLogger(
             androidSensors: AndroidSensors,
-            sensorManager: SensorManager
+            sensorManager: SensorManager,
+            locationRepository: LocationRepository
     ): SensorLogger {
         return SensorLogger(
                 androidSensors,
-                sensorManager
+                sensorManager,
+                locationRepository
         )
     }
 
@@ -64,7 +70,14 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
     }
 }
 
+@Scope
+@Retention(AnnotationRetention.RUNTIME)
+annotation class CompassScope
+
+@CompassScope
 @Component(modules = [CompassModule::class])
 interface CompassComponent {
     fun inject(mainActivity: CompassMainActivity)
+
 }
+

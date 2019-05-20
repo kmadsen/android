@@ -2,6 +2,7 @@ package com.kmadsen.compass
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.gojuno.koptional.Optional
 import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.fusedcompass.CompassView
 import com.kmadsen.compass.location.BasicLocation
@@ -59,12 +60,14 @@ class CompassMainActivity : AppCompatActivity() {
         mapView.getMapAsync { mapboxMap ->
             mapViewController = MapViewController(mapboxMap)
             compositeDisposable.add(locationsController.firstValidLocation()
-                    .subscribe { basicLocation: BasicLocation ->
-                        mapViewController.centerMap(basicLocation.latitude, basicLocation.longitude)
+                    .subscribe { optionalLocation: Optional<BasicLocation> ->
+                        optionalLocation.toNullable()?.apply {
+                            mapViewController.centerMap(latitude, longitude)
+                        }
                     })
-            compositeDisposable.add(locationsController.allFusedLocations()
-                    .subscribe { fusedLocation: FusedLocation ->
-                        run { mapViewController.updatePinLocation(fusedLocation) }
+            compositeDisposable.add(locationsController.observeLocations()
+                    .subscribe { optionalLocation: Optional<BasicLocation> ->
+                        run { mapViewController.updatePinLocation(optionalLocation) }
                     })
         }
     }

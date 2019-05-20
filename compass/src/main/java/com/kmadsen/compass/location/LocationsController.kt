@@ -1,8 +1,8 @@
 package com.kmadsen.compass.location
 
 import android.app.Activity
-import android.location.Location
-import com.jakewharton.rxrelay2.BehaviorRelay
+import com.gojuno.koptional.None
+import com.gojuno.koptional.Optional
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kylemadsen.core.logger.L
@@ -11,19 +11,21 @@ import io.reactivex.Single
 
 class LocationsController constructor(
         private val locationPermissions: LocationPermissions,
-        private val fusedLocationService: FusedLocationService
+        private val fusedLocationService: FusedLocationService,
+        private val locationRepository: LocationRepository
 ) {
-    private val fusedLocationRelay: BehaviorRelay<FusedLocation> = BehaviorRelay.create()
 
     fun onStart(activity: Activity) {
         locationPermissions.onActivityStart(activity) { isGranted ->
             L.i("permission granted $isGranted")
             if (isGranted.not()) {
+                locationRepository.updateLocation(null)
                 return@onActivityStart
             }
             fusedLocationService.start {
                 fusedLocation: FusedLocation ->
-                fusedLocationRelay.accept(fusedLocation)
+                locationRepository.updateFusedLocation(fusedLocation)
+                locationRepository.updateLocation(fusedLocation.toBasicLocation())
             }
         }
     }
@@ -38,21 +40,33 @@ class LocationsController constructor(
         locationPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    fun firstValidLocation(): Single<BasicLocation> {
-        return fusedLocationRelay
-                    .filter { fusedLocation: FusedLocation -> fusedLocation.location != null }
-                    .first(FusedLocation())
-                    .map { fusedLocation: FusedLocation ->
-                        val location: Location? = fusedLocation.location
-                        if (location != null) {
-                            val altitudeMeters: Double? = if (location.hasAltitude()) location.altitude else null
-                            return@map BasicLocation(location.time, location.latitude, location.longitude, altitudeMeters)
-                        }
-                        return@map BasicLocation(0, 0.0, 0.0, null)
-                    }
+    fun firstValidLocation(): Single<Optional<BasicLocation>> {
+        return locationRepository.observeLocation()
+                .filter { optionalLocation: Optional<BasicLocation> ->
+                    optionalLocation.toNullable() != null
+                }
+                .first(None)
     }
 
-    fun allFusedLocations(): Observable<FusedLocation> {
-        return fusedLocationRelay
+    fun observeLocations(): Observable<Optional<BasicLocation>> {
+        return locationRepository.observeLocation()
     }
 }
+
+private fun FusedLocation.toBasicLocation(): BasicLocation? {
+    if (location == null) return null
+    return BasicLocation(
+            location.time,
+            location.latitude,
+            location.longitude,
+            getNullableValue(location.hasAltitude(), location.altitude),
+            getNullableValue(location.hasBearing(), location.bearing),
+            getNullableValue(location.hasSpeed(), location.speed),
+            getNullableValue(location.hasAccuracy(), location.accuracy)
+    )
+}
+
+fun <ValueType> getNullableValue(hasValue: Boolean, value: ValueType): ValueType? {
+    return if (hasValue) value else null
+}
+

@@ -1,12 +1,11 @@
 package com.kmadsen.compass.mapbox
 
-import android.location.Location
-import com.kmadsen.compass.location.fused.FusedLocation
+import com.gojuno.koptional.Optional
+import com.kmadsen.compass.location.BasicLocation
 import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 
 class MapViewController(private val mapboxMap: MapboxMap) {
@@ -15,13 +14,15 @@ class MapViewController(private val mapboxMap: MapboxMap) {
 
     private var marker: Marker? = null
 
-    fun updatePinLocation(fusedLocation: FusedLocation) {
-        if (fusedLocation.locationResult == null) {
+    fun updatePinLocation(optionalLocation: Optional<BasicLocation>) {
+        val location = optionalLocation.toNullable()
+        if (location == null) {
+            marker?.remove()
             return
         }
+
         val markerOptions = MarkerOptions()
-        val lastLocation: Location = fusedLocation.locationResult.lastLocation
-        val latLng = LatLng(lastLocation.latitude, lastLocation.longitude)
+        val latLng = LatLng(location.latitude, location.longitude)
         if (marker == null) {
             markerOptions.position = latLng
             marker = mapboxMap.addMarker(markerOptions)
@@ -37,5 +38,4 @@ class MapViewController(private val mapboxMap: MapboxMap) {
                 .build()
         mapboxMap.cameraPosition = cameraPosition
     }
-
 }

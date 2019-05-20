@@ -5,8 +5,10 @@ import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorDirectChannel
 import android.hardware.SensorManager
+import android.location.Location
 import android.os.Build
-import android.os.SystemClock
+import com.kmadsen.compass.location.LocationRepository
+import com.kmadsen.compass.location.fused.FusedLocation
 import com.kylemadsen.core.FileLogger
 import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
@@ -14,7 +16,8 @@ import io.reactivex.Completable
 
 class SensorLogger(
         private val androidSensors: AndroidSensors,
-        private val sensorManager: SensorManager
+        private val sensorManager: SensorManager,
+        private val locationRepository: LocationRepository
 ) {
     fun attachFileWriting(context: Context): Completable {
         val accelerometerLogger: Completable = FileLogger(context)
@@ -26,11 +29,15 @@ class SensorLogger(
         val magnetometerLogger: Completable = FileLogger(context)
                 .observeWritableFile("magnetometer")
                 .flatMapCompletable { writableFile -> writableFile.write3dSensor(Sensor.TYPE_MAGNETIC_FIELD) }
+        val locationLogger: Completable = FileLogger(context)
+                .observeWritableFile("gps_locations")
+                .flatMapCompletable { writableFile -> writableFile.writeLocations() }
 
         return Completable.mergeArray(
                 accelerometerLogger,
                 gyroscopeLogger,
-                magnetometerLogger
+                magnetometerLogger,
+                locationLogger
         )
     }
 
@@ -55,6 +62,39 @@ class SensorLogger(
                 }
                 .ignoreElements()
                 .onErrorComplete()
+    }
+
+    private fun WritableFile.writeLocations(): Completable {
+        return locationRepository.observeFusedLocations()
+                .doOnSubscribe {
+                    writeLine("name=GpsLocations vendor=Google current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("isLocationAvailable size time latitude longitude speed bearingDegrees altitude accuracy verticalAccuracy")
+                }
+                .doOnNext { fusedLocation: FusedLocation ->
+                    val sensorLine =
+                            " ${fusedLocation.locationAvailability?.isLocationAvailable}" +
+                            " ${fusedLocation.locationResult?.locations?.size}" +
+                            " ${fusedLocation.location?.time}" +
+                            " ${fusedLocation.location?.latitude}" +
+                            " ${fusedLocation.location?.longitude}" +
+                            " ${fusedLocation.location?.speed}" +
+                            " ${fusedLocation.location?.bearing}" +
+                            " ${fusedLocation.location?.altitude}" +
+                            " ${fusedLocation.location?.accuracy}" +
+                            " ${fusedLocation.location?.getOreoVerticalAccuracyMeters()}"
+                    writeLine(sensorLine)
+                    flushBuffer()
+                }
+                .ignoreElements()
+                .onErrorComplete()
+    }
+
+    private fun Location.getOreoVerticalAccuracyMeters(): Float? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            verticalAccuracyMeters
+        } else {
+            null
+        }
     }
 
     companion object {
