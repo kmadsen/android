@@ -25,23 +25,9 @@ class AzimuthSensor(
     fun attachSensorUpdates(): Completable {
         return Completable.mergeArray(
                 attachAccelerometerUpdates(),
-                attachMagnetometerUpdates()
+                attachMagnetometerUpdates(),
+                attachAzimuthUpdates()
         )
-    }
-
-    fun observeAzimuth(): Observable<Azimuth> {
-        return Observable.interval(0, 10L, TimeUnit.MILLISECONDS)
-                .map {
-                    SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
-                    SensorManager.getOrientation(rotationMatrix, orientation)
-                    val fromNorthRadians = (orientation[0] + PI)
-                    val deviceDirectionRadians = (PI - orientation[0])
-
-                    Azimuth(SystemClock.elapsedRealtime(),
-                            fromNorthRadians,
-                            deviceDirectionRadians)
-                }
-                .doOnNext { locationRepository.updateAzimuth(it) }
     }
 
     private fun attachAccelerometerUpdates(): Completable {
@@ -53,6 +39,21 @@ class AzimuthSensor(
     private fun attachMagnetometerUpdates(): Completable {
         return androidSensors.observeRawSensor(Sensor.TYPE_MAGNETIC_FIELD)
                 .doOnNext { magnetometer.lowPassFilter(it) }
+                .ignoreElements()
+    }
+
+    private fun attachAzimuthUpdates(): Completable {
+        return Observable.interval(0, 10L, TimeUnit.MILLISECONDS)
+                .map {
+                    SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
+                    SensorManager.getOrientation(rotationMatrix, orientation)
+                    val fromNorthRadians = (2.0 * PI - orientation[0]) % (2.0 * PI)
+                    val deviceDirectionRadians = (orientation[0] + 2.0 * PI) % (2.0 * PI)
+                    Azimuth(SystemClock.elapsedRealtime(),
+                            fromNorthRadians,
+                            deviceDirectionRadians)
+                }
+                .doOnNext { locationRepository.updateAzimuth(it) }
                 .ignoreElements()
     }
 }
@@ -77,3 +78,4 @@ fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
 private fun lowPassFilter(currentValue: Float, nextValue: Float, alpha: Float): Float {
     return currentValue + alpha * (nextValue - currentValue)
 }
+

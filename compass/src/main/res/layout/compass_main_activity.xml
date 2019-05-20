@@ -7,10 +7,12 @@
     android:background="@android:color/holo_blue_bright">
 
 
-    <com.kmadsen.compass.CompassGLSurfaceView
-        android:id="@+id/surface_view"
-        android:layout_width="256dp"
-        android:layout_height="256dp"/>
+    <!--<com.kmadsen.compass.CompassGLSurfaceView-->
+        <!--android:id="@+id/surface_view"-->
+        <!--android:layout_width="256dp"-->
+        <!--android:layout_height="256dp"/>-->
+
+
 
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapbox_mapview"
@@ -18,11 +20,17 @@
         android:layout_height="match_parent"
         mapbox:mapbox_styleUrl="@string/mapbox_style_mapbox_streets" />
 
-    <com.kmadsen.compass.fusedcompass.CompassView
-        android:id="@+id/magnetometer"
-        android:layout_gravity="bottom"
+    <com.kmadsen.compass.mapbox.MapOverlayView
+        android:id="@+id/map_overlay_view"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:background="#9FFFFFFF"/>
+        android:layout_height="match_parent"
+        />
+
+    <!--<com.kmadsen.compass.fusedcompass.CompassView-->
+        <!--android:id="@+id/compass_view"-->
+        <!--android:layout_gravity="bottom"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="300dp"-->
+        <!--android:background="#9FFFFFFF"/>-->
 
 </FrameLayout>

@@ -7,11 +7,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
-import com.kmadsen.compass.location.BasicLocation
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
-import java.util.concurrent.TimeUnit
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -39,7 +34,7 @@ class CompassView(
         val centerY: Float = canvas.height.toFloat() / 2.0f
         val radiusPx = dpToPx(50f)
         val pointerX = centerX + radiusPx * sin(azimuthInRadians.toFloat())
-        val pointerY = centerY + radiusPx * cos(azimuthInRadians.toFloat())
+        val pointerY = centerY - radiusPx * cos(azimuthInRadians.toFloat())
 
         canvas.drawLine(centerX, centerY, pointerX, pointerY, mPaintLine)
         canvas.drawCircle(pointerX, pointerY, dpToPx(5F), mPaintLine)

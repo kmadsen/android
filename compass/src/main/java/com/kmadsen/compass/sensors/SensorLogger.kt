@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import android.location.Location
 import android.os.Build
 import com.kmadsen.compass.azimuth.Azimuth
+import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kylemadsen.core.FileLogger
@@ -146,10 +147,6 @@ class SensorLogger(
                 }
                 .ignoreElements()
                 .onErrorComplete()
-    }
-
-    private fun Double.toDegrees(): Double {
-        return this * 180.0 / PI
     }
 
     companion object {

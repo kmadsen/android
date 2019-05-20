@@ -8,6 +8,8 @@ import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.location.fused.FusedLocationService
+import com.kmadsen.compass.mapbox.MapComponent
+import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
 import dagger.Component
@@ -81,6 +83,6 @@ annotation class CompassScope
 @Component(modules = [CompassModule::class])
 interface CompassComponent {
     fun inject(mainActivity: CompassMainActivity)
-
+    fun plus(mapModule: MapModule): MapComponent
 }
 
