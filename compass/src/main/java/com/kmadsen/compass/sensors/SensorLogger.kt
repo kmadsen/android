@@ -7,12 +7,14 @@ import android.hardware.SensorDirectChannel
 import android.hardware.SensorManager
 import android.location.Location
 import android.os.Build
+import com.kmadsen.compass.azimuth.Azimuth
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kylemadsen.core.FileLogger
 import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
 import io.reactivex.Completable
+import kotlin.math.PI
 
 class SensorLogger(
         private val androidSensors: AndroidSensors,
@@ -29,15 +31,23 @@ class SensorLogger(
         val magnetometerLogger: Completable = FileLogger(context)
                 .observeWritableFile("magnetometer")
                 .flatMapCompletable { writableFile -> writableFile.write3dSensor(Sensor.TYPE_MAGNETIC_FIELD) }
+        val pressureLogger: Completable = FileLogger(context)
+                .observeWritableFile("pressure")
+                .flatMapCompletable { writableFile -> writableFile.write1dSensor(Sensor.TYPE_PRESSURE) }
         val locationLogger: Completable = FileLogger(context)
                 .observeWritableFile("gps_locations")
                 .flatMapCompletable { writableFile -> writableFile.writeLocations() }
+        val azimuthLogger: Completable = FileLogger(context)
+                .observeWritableFile("azimuth")
+                .flatMapCompletable { writableFile -> writableFile.writeAzimuth() }
 
         return Completable.mergeArray(
                 accelerometerLogger,
                 gyroscopeLogger,
                 magnetometerLogger,
-                locationLogger
+                pressureLogger,
+                locationLogger,
+                azimuthLogger
         )
     }
 
@@ -55,6 +65,27 @@ class SensorLogger(
                             " ${loggedEvent.sensorEvent.values[0]}" +
                             " ${loggedEvent.sensorEvent.values[1]}" +
                             " ${loggedEvent.sensorEvent.values[2]}"
+                    writeLine(sensorLine)
+                }
+                .buffer(500).doOnNext {
+                    flushBuffer()
+                }
+                .ignoreElements()
+                .onErrorComplete()
+    }
+
+    private fun WritableFile.write1dSensor(sensorType: Int): Completable {
+        return androidSensors.observeSensor(sensorType)
+                .doOnSubscribe {
+                    val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
+                    writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("measured_at recorded_at accuracy value")
+                }
+                .doOnNext { loggedEvent: LoggedEvent ->
+                    val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
+                            " ${loggedEvent.recordedAtNanos}" +
+                            " ${loggedEvent.sensorEvent.accuracy}" +
+                            " ${loggedEvent.sensorEvent.values[0]}"
                     writeLine(sensorLine)
                 }
                 .buffer(500).doOnNext {
@@ -95,6 +126,30 @@ class SensorLogger(
         } else {
             null
         }
+    }
+
+    private fun WritableFile.writeAzimuth(): Completable {
+        return locationRepository.observeAzimuth()
+                .doOnSubscribe {
+                    writeLine("name=GpsLocations vendor=Google current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("recordedAtMilliseconds deviceDirectionRadians deviceDirectionDegrees northDirectionRadians northDirectionDegrees")
+                }
+                .doOnNext { azimuth: Azimuth ->
+                    val sensorLine =
+                            " ${azimuth.recordedAtMilliseconds}" +
+                            " ${azimuth.deviceDirectionRadians}" +
+                            " ${azimuth.deviceDirectionRadians.toDegrees()}" +
+                            " ${azimuth.northDirectionRadians}" +
+                            " ${azimuth.northDirectionRadians.toDegrees()}"
+                    writeLine(sensorLine)
+                    flushBuffer()
+                }
+                .ignoreElements()
+                .onErrorComplete()
+    }
+
+    private fun Double.toDegrees(): Double {
+        return this * 180.0 / PI
     }
 
     companion object {

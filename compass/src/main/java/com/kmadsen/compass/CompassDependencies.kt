@@ -65,8 +65,11 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
     }
 
     @Provides
-    fun provideAzimuthSensor(androidSensors: AndroidSensors): AzimuthSensor {
-        return AzimuthSensor(androidSensors)
+    fun provideAzimuthSensor(
+            androidSensors: AndroidSensors,
+            locationRepository: LocationRepository
+    ): AzimuthSensor {
+        return AzimuthSensor(androidSensors, locationRepository)
     }
 }
 

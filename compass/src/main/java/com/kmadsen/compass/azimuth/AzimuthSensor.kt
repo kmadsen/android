@@ -4,6 +4,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.os.SystemClock
+import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.Measure3d
 import io.reactivex.Completable
@@ -12,7 +13,8 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.PI
 
 class AzimuthSensor(
-        private val androidSensors: AndroidSensors
+        private val androidSensors: AndroidSensors,
+        private val locationRepository: LocationRepository
 ) {
 
     private val accelerometer = Measure3d()
@@ -32,11 +34,14 @@ class AzimuthSensor(
                 .map {
                     SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
                     SensorManager.getOrientation(rotationMatrix, orientation)
-                    val fromNorthRadians = (orientation[0] - PI)
-                    val deviceDirectionRadians = (PI - orientation[0].toDouble())
+                    val fromNorthRadians = (orientation[0] + PI)
+                    val deviceDirectionRadians = (PI - orientation[0])
 
-                    Azimuth(fromNorthRadians, deviceDirectionRadians)
+                    Azimuth(SystemClock.elapsedRealtime(),
+                            fromNorthRadians,
+                            deviceDirectionRadians)
                 }
+                .doOnNext { locationRepository.updateAzimuth(it) }
     }
 
     private fun attachAccelerometerUpdates(): Completable {

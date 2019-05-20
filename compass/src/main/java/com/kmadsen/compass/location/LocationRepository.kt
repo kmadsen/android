@@ -4,6 +4,7 @@ import com.gojuno.koptional.None
 import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
 import com.jakewharton.rxrelay2.BehaviorRelay
+import com.kmadsen.compass.azimuth.Azimuth
 import com.kmadsen.compass.location.fused.FusedLocation
 import io.reactivex.Observable
 
@@ -11,6 +12,7 @@ class LocationRepository {
 
     private val locationRelay: BehaviorRelay<Optional<BasicLocation>> = BehaviorRelay.createDefault(None)
     private val fusedLocationRelay: BehaviorRelay<FusedLocation> = BehaviorRelay.create()
+    private val azimuthRelay: BehaviorRelay<Azimuth> = BehaviorRelay.create()
 
     fun observeLocation(): Observable<Optional<BasicLocation>> {
         return locationRelay
@@ -26,5 +28,13 @@ class LocationRepository {
 
     fun updateFusedLocation(fusedLocation: FusedLocation) {
         fusedLocationRelay.accept(fusedLocation)
+    }
+
+    fun observeAzimuth(): Observable<Azimuth> {
+        return azimuthRelay
+    }
+
+    fun updateAzimuth(azimuth: Azimuth) {
+        azimuthRelay.accept(azimuth)
     }
 }
