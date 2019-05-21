@@ -7,6 +7,7 @@ import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.SensorLogger
+import com.kylemadsen.core.FpsChoreographer
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import io.reactivex.disposables.CompositeDisposable
@@ -36,6 +37,7 @@ class CompassMainActivity : AppCompatActivity() {
 
 //        compassView = findViewById(R.id.compass_view)
 
+        compositeDisposable.add(FpsChoreographer().attach().subscribe())
         compositeDisposable.add(azimuthSensor.attachSensorUpdates()
                 .subscribe())
 
