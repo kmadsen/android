@@ -4,15 +4,21 @@
     tools:ignore="NewApi">
     <aapt:attr name="android:drawable">
         <vector
-            android:width="50dp"
-            android:height="50dp"
-            android:viewportWidth="40.0"
-            android:viewportHeight="40.0">
+            android:width="100dp"
+            android:height="100dp"
+            android:viewportWidth="100.0"
+            android:viewportHeight="100.0">
+
             <path
+                android:name="circle"
                 android:fillColor="#0000FF"
-                android:strokeColor="#FFF"
-                android:strokeWidth="2"
-                android:pathData="M5,35 L20,5 L35,35 L20,30 z"/>
+                android:pathData="M 50,50 m -18,0 a 18,18 0 1,0 36, 0 a 18,18 0 1,0 -36, 0" />
+
+            <path
+                android:name="circle"
+                android:fillColor="#0000FF"
+                android:pathData="M 30,30 Q 50,15 70 30 L 50,5 L 30,30"
+                />
         </vector>
     </aapt:attr>
 </animated-vector>

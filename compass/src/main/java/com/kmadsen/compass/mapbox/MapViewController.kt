@@ -28,8 +28,6 @@ class MapViewController {
 
     private val defaultZoom: Double = 12.0
 
-    private var marker: Marker? = null
-
     fun attach(mapOverlayView: MapOverlayView) {
 
         L.i("onCreate start")
@@ -57,32 +55,11 @@ class MapViewController {
                         deviceDirectionView.translationX = screenLocation.x - deviceDirectionView.right / 2
                         deviceDirectionView.translationY = screenLocation.y - deviceDirectionView.bottom / 2
                     }
-                    updatePinLocation(optionalLocation)
                 })
     }
 
     fun onDestroy() {
         compositeDisposable.clear()
-    }
-
-    private fun updatePinLocation(optionalLocation: Optional<BasicLocation>) {
-        L.i("CompassMainActivity updatePinLocation start")
-
-        val location = optionalLocation.toNullable()
-        if (location == null) {
-            marker?.remove()
-            return
-        }
-
-        val markerOptions = MarkerOptions()
-        val latLng = LatLng(location.latitude, location.longitude)
-        if (marker == null) {
-            markerOptions.position = latLng
-            marker = mapboxMap.addMarker(markerOptions)
-        } else {
-            marker?.position = latLng
-        }
-        L.i("CompassMainActivity updatePinLocation end")
     }
 
     private fun centerMap(latitude: Double, longitude: Double) {
