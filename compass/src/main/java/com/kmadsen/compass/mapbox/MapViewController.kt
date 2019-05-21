@@ -9,8 +9,6 @@ import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationsController
 import com.kylemadsen.core.logger.L
-import com.mapbox.mapboxsdk.annotations.Marker
-import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
