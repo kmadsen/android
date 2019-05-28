@@ -2,7 +2,6 @@ package com.kmadsen.compass
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
@@ -18,8 +17,6 @@ class CompassMainActivity : AppCompatActivity() {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private lateinit var mapViewController: MapViewController
-//    private lateinit var compassGLSurfaceView: CompassGLSurfaceView
-//    private lateinit var compassView: CompassView
 
     @Inject lateinit var locationsController: LocationsController
     @Inject lateinit var sensorLogger: SensorLogger
@@ -33,31 +30,20 @@ class CompassMainActivity : AppCompatActivity() {
                 .build()
         compassComponent.inject(this)
 
-
-//        compassView = findViewById(R.id.compass_view)
-
-        compositeDisposable.add(FpsChoreographer().attach().subscribe())
-
-//        compositeDisposable.add(azimuthSensor.observeAzimuth()
-//                .subscribe { compassView.updateAzimuthRadians(it.deviceDirectionRadians) })
+        compositeDisposable.add(FpsChoreographer().observeFps().subscribe {
+            L.i("doUpdate currentFramesPerSecond=$it")
+        })
 
         compositeDisposable.add(sensorLogger.attachFileWriting(this)
                 .subscribe())
 
-//        compassGLSurfaceView = findViewById(R.id.surface_view)
-//        compositeDisposable.add(androidSensors.observeRotationVector()
-//                .subscribe { compassGLSurfaceView.update(it.sensorEvent.values) })
-
-        L.i("start map")
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { mapboxMap ->
-            L.i("start map loaded")
             val mapComponent = compassComponent.plus(MapModule(mapboxMap))
             mapViewController = MapViewController()
             mapComponent.inject(mapViewController)
             mapViewController.attach(findViewById(R.id.map_overlay_view))
-            L.i("start map all ready")
         }
     }
 
@@ -85,5 +71,3 @@ class CompassMainActivity : AppCompatActivity() {
         locationsController.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
-
-

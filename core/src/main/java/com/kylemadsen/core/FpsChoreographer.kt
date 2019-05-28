@@ -1,19 +1,25 @@
 package com.kylemadsen.core
 
 import android.view.Choreographer
-import com.kylemadsen.core.logger.L
+import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Completable
+import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 
 class FpsChoreographer : Choreographer.FrameCallback {
-    var isAttached: Boolean = false
+    private var isAttached: Boolean = false
+    private var lastUpdateTimeNanos = 0L
+    private var lastUpdateFrameCount = 0
+    private var currentFramesPerSecond = 0.0
 
-    var updateFrequencyMillis = 1000L
-    var lastUpdateTimeNanos = 0L
-    var lastUpdateFrameCount = 0
-    var currentFramesPerSecond = 0.0
+    private val currentFpsRelay: BehaviorRelay<Double> = BehaviorRelay.create()
+    private val updateFrequencyMillis = 1000L
 
-    fun attach(): Completable {
+    fun observeFps(): Observable<Double> {
+        return currentFpsRelay.mergeWith(attach())
+    }
+
+    private fun attach(): Completable {
         return Completable.create {
             isAttached = true
             Choreographer.getInstance().postFrameCallback(this)
@@ -43,7 +49,5 @@ class FpsChoreographer : Choreographer.FrameCallback {
         }
         lastUpdateTimeNanos = frameTimeNanos
         lastUpdateFrameCount = 0
-
-        L.i("doUpdate currentFramesPerSecond=$currentFramesPerSecond")
     }
 }
