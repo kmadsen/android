@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import com.gojuno.koptional.Optional
 import com.kmadsen.compass.R
 import com.kmadsen.compass.azimuth.Azimuth
+import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationRepository
@@ -22,7 +23,7 @@ class MapViewController {
 
     @Inject lateinit var mapboxMap: MapboxMap
     @Inject lateinit var locationsController: LocationsController
-    @Inject lateinit var locationRepository: LocationRepository
+    @Inject lateinit var azimuthSensor: AzimuthSensor
 
     private val defaultZoom: Double = 12.0
 
@@ -30,11 +31,10 @@ class MapViewController {
 
         L.i("onCreate start")
 
-//        Choreographer.getInstance().postFrameCallback {  }
         val layoutInflater = LayoutInflater.from(mapOverlayView.context)
         val deviceDirectionView = layoutInflater.inflate(R.layout.current_location, mapOverlayView, true)
 
-        compositeDisposable.add(locationRepository.observeAzimuth()
+        compositeDisposable.add(azimuthSensor.observeAzimuth()
                 .subscribe { azimuth: Azimuth ->
                     val angle = azimuth.deviceDirectionRadians.toDegrees().toFloat()
                     deviceDirectionView.rotation = angle

@@ -23,7 +23,6 @@ class CompassMainActivity : AppCompatActivity() {
 
     @Inject lateinit var locationsController: LocationsController
     @Inject lateinit var sensorLogger: SensorLogger
-    @Inject lateinit var azimuthSensor: AzimuthSensor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +37,6 @@ class CompassMainActivity : AppCompatActivity() {
 //        compassView = findViewById(R.id.compass_view)
 
         compositeDisposable.add(FpsChoreographer().attach().subscribe())
-        compositeDisposable.add(azimuthSensor.attachSensorUpdates()
-                .subscribe())
 
 //        compositeDisposable.add(azimuthSensor.observeAzimuth()
 //                .subscribe { compassView.updateAzimuthRadians(it.deviceDirectionRadians) })

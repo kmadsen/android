@@ -4,7 +4,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.os.SystemClock
-import com.kmadsen.compass.location.LocationRepository
+import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.Measure3d
 import io.reactivex.Completable
@@ -13,16 +13,21 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.PI
 
 class AzimuthSensor(
-        private val androidSensors: AndroidSensors,
-        private val locationRepository: LocationRepository
+        private val androidSensors: AndroidSensors
 ) {
+
+    private val azimuthRelay: BehaviorRelay<Azimuth> = BehaviorRelay.create()
 
     private val accelerometer = Measure3d()
     private val magnetometer = Measure3d()
     private val rotationMatrix = FloatArray(9)
     private val orientation = FloatArray(3)
 
-    fun attachSensorUpdates(): Completable {
+    fun observeAzimuth(): Observable<Azimuth> {
+        return azimuthRelay.mergeWith(attachSensorUpdates())
+    }
+
+    private fun attachSensorUpdates(): Completable {
         return Completable.mergeArray(
                 attachAccelerometerUpdates(),
                 attachMagnetometerUpdates(),
@@ -47,20 +52,18 @@ class AzimuthSensor(
                 .map {
                     SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
                     SensorManager.getOrientation(rotationMatrix, orientation)
-                    val fromNorthRadians = (2.0 * PI - orientation[0]) % (2.0 * PI)
+                    val northDirectionRadians = (2.0 * PI - orientation[0]) % (2.0 * PI)
                     val deviceDirectionRadians = (orientation[0] + 2.0 * PI) % (2.0 * PI)
-                    Azimuth(SystemClock.elapsedRealtime(),
-                            fromNorthRadians,
-                            deviceDirectionRadians)
+                    Azimuth(
+                            SystemClock.elapsedRealtime(),
+                            northDirectionRadians,
+                            deviceDirectionRadians
+                    )
                 }
-                .doOnNext { locationRepository.updateAzimuth(it) }
+                .doOnNext { azimuthRelay.accept(it) }
                 .ignoreElements()
     }
 }
-
-//fun Double.mRound(factor: Double): Double {
-//    return Math.round(this / factor) * factor
-//}
 
 fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
     val nanosEstimateDelta = (nextEstimate.timestamp - measuredAtNanos)
@@ -70,7 +73,6 @@ fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
     y = lowPassFilter(y, nextEstimate.values[1], alpha)
     z = lowPassFilter(z, nextEstimate.values[2], alpha)
     measuredAtNanos = nextEstimate.timestamp
-    recordedAtNanos = SystemClock.elapsedRealtimeNanos()
     accuracy = nextEstimate.accuracy
     return this
 }
@@ -78,4 +80,3 @@ fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
 private fun lowPassFilter(currentValue: Float, nextValue: Float, alpha: Float): Float {
     return currentValue + alpha * (nextValue - currentValue)
 }
-
