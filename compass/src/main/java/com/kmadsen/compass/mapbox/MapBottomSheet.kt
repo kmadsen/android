@@ -2,6 +2,7 @@ package com.kmadsen.compass.mapbox
 
 import android.content.Context
 import android.content.res.Resources
+import android.os.SystemClock
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -15,6 +16,8 @@ import com.kylemadsen.core.FpsChoreographer
 import com.kylemadsen.core.logger.L
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.compass_map_bottom_sheet.view.*
+import java.time.Clock
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -59,9 +62,11 @@ class MapBottomSheet(
         compositeDisposable.add(FpsChoreographer().observeFps().subscribe {
             fps_text.text = "fps %.2f".format(it)
         })
+        val startTime = System.currentTimeMillis()
         compositeDisposable.add(locationRepository.observeLocation().subscribe {
             it.toNullable()?.apply {
                 location_text.text = "lat, lng = %.5f,%.5f\n".format(latitude, longitude) +
+                        "seconds ${TimeUnit.MILLISECONDS.toSeconds(timeMillis - startTime)}\n" +
                         "accuracy %.2f\n".format(horizontalAccuracyMeters) +
                         "altitude %.2f\n".format(altitudeMeters) +
                         "bearing %.2f\n".format(bearingDegrees) +
