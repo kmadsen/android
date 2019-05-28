@@ -33,8 +33,4 @@ class LocationRepository {
     fun observeAzimuth(): Observable<Azimuth> {
         return azimuthRelay
     }
-
-    fun updateAzimuth(azimuth: Azimuth) {
-        azimuthRelay.accept(azimuth)
-    }
 }
