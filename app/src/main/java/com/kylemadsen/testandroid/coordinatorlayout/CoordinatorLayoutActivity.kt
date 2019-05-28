@@ -1,17 +1,12 @@
 package com.kylemadsen.testandroid.coordinatorlayout
 
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.view.ViewGroup
 import android.widget.Button
-import com.kylemadsen.core.view.ViewController
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.google.android.material.snackbar.Snackbar
 import com.kylemadsen.core.view.ViewGroupController
 import com.kylemadsen.testandroid.R
-import com.kylemadsen.testandroid.animation.AnimationController
-import com.kylemadsen.testandroid.animation.TextToSpeechController
 
 class CoordinatorLayoutActivity : AppCompatActivity() {
 

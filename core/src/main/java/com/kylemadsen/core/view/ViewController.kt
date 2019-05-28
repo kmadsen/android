@@ -1,8 +1,8 @@
 package com.kylemadsen.core.view
 
-import android.support.annotation.IdRes
-import android.support.annotation.LayoutRes
 import android.view.View
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
 
 interface ViewController {
 

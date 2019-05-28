@@ -7,7 +7,6 @@ import com.kylemadsen.core.view.ViewRouter
 import com.kylemadsen.testandroid.animation.AnimationMainActivity
 import com.kylemadsen.testandroid.ar.ArMainActivity
 import com.kylemadsen.testandroid.coordinatorlayout.CoordinatorLayoutActivity
-import com.kylemadsen.testandroid.gnsslogger.GnssMainActivity
 
 class MainViewController(
         private val viewRouter: ViewRouter
@@ -19,11 +18,6 @@ class MainViewController(
         val gotoArButton: View = view.find(R.id.goto_ar_button)
         gotoArButton.setOnClickListener {
             viewRouter.goToActivity(ArMainActivity::class.java)
-        }
-
-        val gotoGnssLoggerButton: View = view.find(R.id.goto_gnss_button)
-        gotoGnssLoggerButton.setOnClickListener {
-            viewRouter.goToActivity(GnssMainActivity::class.java)
         }
 
         val gotoAnimationsButton: View = view.find(R.id.goto_animations_button)

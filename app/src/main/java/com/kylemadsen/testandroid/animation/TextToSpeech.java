@@ -2,17 +2,13 @@ package com.kylemadsen.testandroid.animation;
 
 import android.content.Context;
 import android.speech.tts.UtteranceProgressListener;
-
 import com.jakewharton.rxrelay2.BehaviorRelay;
 import com.kylemadsen.core.logger.L;
 import com.kylemadsen.testandroid.utils.Unit;
-
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.reactivex.Observable;
 
-import static android.speech.tts.TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID;
+import java.util.UUID;
+
 import static android.speech.tts.TextToSpeech.QUEUE_FLUSH;
 import static android.speech.tts.TextToSpeech.SUCCESS;
 
@@ -30,19 +26,10 @@ public class TextToSpeech {
 
     public Observable<TextToSpeechResult> observeSpeak(final String phrase) {
         final String utteranceId = UUID.randomUUID().toString();
-        final HashMap<String, String> params = new HashMap<>(1);
-        params.put(KEY_PARAM_UTTERANCE_ID, utteranceId);
         return Observable.just(utteranceId)
-                .doOnNext(value -> textToSpeech.speak(phrase, QUEUE_FLUSH, params))
+                .doOnNext(value -> textToSpeech.speak(phrase, QUEUE_FLUSH, null, utteranceId))
                 .flatMap(this::observeResultsAndInterruptions)
                 .distinctUntilChanged();
-    }
-
-    public void speak(final String phrase) {
-        final String utteranceId = UUID.randomUUID().toString();
-        final HashMap<String, String> params = new HashMap<>(1);
-        params.put(KEY_PARAM_UTTERANCE_ID, utteranceId);
-        textToSpeech.speak(phrase, QUEUE_FLUSH, params);
     }
 
     private Observable<TextToSpeechResult> observeResultsAndInterruptions(String utteranceId) {

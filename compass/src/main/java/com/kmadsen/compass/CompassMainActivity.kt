@@ -1,7 +1,7 @@
 package com.kmadsen.compass
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController

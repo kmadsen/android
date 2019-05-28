@@ -1,9 +1,8 @@
 package com.kylemadsen.testandroid;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.LinearLayout;
-
+import androidx.appcompat.app.AppCompatActivity;
 import com.kylemadsen.core.view.ViewGroupController;
 import com.kylemadsen.core.view.ViewRouter;
 

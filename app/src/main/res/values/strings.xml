@@ -5,7 +5,6 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
-    <string name="activity_main_goto_gnss">Go to GNSS Logger</string>
     <string name="activity_main_ar_gnss">Go to AR</string>
     <string name="activity_main_animations">Go to Animations</string>
     <string name="activity_main_compass">Go to Compass</string>

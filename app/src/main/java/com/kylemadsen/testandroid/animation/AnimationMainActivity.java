@@ -1,9 +1,8 @@
 package com.kylemadsen.testandroid.animation;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
-
+import androidx.appcompat.app.AppCompatActivity;
 import com.kylemadsen.core.view.ViewGroupController;
 import com.kylemadsen.testandroid.R;
 

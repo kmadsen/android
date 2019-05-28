@@ -3,14 +3,14 @@ package com.kylemadsen.testandroid.coordinatorlayout
 import android.content.Context
 import android.graphics.Rect
 import android.os.Parcelable
-import android.support.annotation.ColorInt
-import android.support.annotation.FloatRange
-import android.support.design.widget.CoordinatorLayout
-import android.support.v4.view.ViewCompat
-import android.support.v4.view.WindowInsetsCompat
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.annotation.ColorInt
+import androidx.annotation.FloatRange
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.kylemadsen.core.logger.L
 
 abstract class DebugBehavior<ViewType : View>(context: Context, attrs: AttributeSet)
@@ -106,8 +106,8 @@ abstract class DebugBehavior<ViewType : View>(context: Context, attrs: Attribute
     }
 
     override fun onNestedScrollAccepted(coordinatorLayout: CoordinatorLayout,
-                               child: ViewType, directTargetChild: View, target: View,
-                               @ViewCompat.ScrollAxis axes: Int, @ViewCompat.NestedScrollType type: Int) {
+                                        child: ViewType, directTargetChild: View, target: View,
+                                        @ViewCompat.ScrollAxis axes: Int, @ViewCompat.NestedScrollType type: Int) {
         super.onNestedScrollAccepted(coordinatorLayout, child, directTargetChild, target, axes, type)
         log("onNestedScrollAccepted")
     }
@@ -148,7 +148,8 @@ abstract class DebugBehavior<ViewType : View>(context: Context, attrs: Attribute
     }
 
     override fun onApplyWindowInsets(coordinatorLayout: CoordinatorLayout,
-                            child: ViewType, insets: WindowInsetsCompat): WindowInsetsCompat {
+                            child: ViewType, insets: WindowInsetsCompat
+    ): WindowInsetsCompat {
         log("WindowInsetsCompat = onApplyWindowInsets")
         return super.onApplyWindowInsets(coordinatorLayout, child, insets)
     }
@@ -165,7 +166,7 @@ abstract class DebugBehavior<ViewType : View>(context: Context, attrs: Attribute
         super.onRestoreInstanceState(parent, child, state)
     }
 
-    override fun onSaveInstanceState(parent: CoordinatorLayout, child: ViewType): Parcelable {
+    override fun onSaveInstanceState(parent: CoordinatorLayout, child: ViewType): Parcelable? {
         log("onSaveInstanceState")
         return super.onSaveInstanceState(parent, child)
     }

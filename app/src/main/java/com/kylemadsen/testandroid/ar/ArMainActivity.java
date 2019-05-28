@@ -1,12 +1,11 @@
 package com.kylemadsen.testandroid.ar;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
-
+import androidx.appcompat.app.AppCompatActivity;
 import com.kylemadsen.core.logger.L;
-import com.kylemadsen.testandroid.R;
 import com.kylemadsen.core.view.ViewGroupController;
+import com.kylemadsen.testandroid.R;
 
 public class ArMainActivity extends AppCompatActivity {
 

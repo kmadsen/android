@@ -1,8 +1,8 @@
 package com.kylemadsen.core.view
 
-import android.support.annotation.MainThread
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.MainThread
 
 import java.util.ArrayList
 
