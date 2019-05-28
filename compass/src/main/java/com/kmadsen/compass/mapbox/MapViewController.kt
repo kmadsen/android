@@ -7,13 +7,14 @@ import com.kmadsen.compass.azimuth.Azimuth
 import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.BasicLocation
-import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationsController
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.withLatestFrom
 import javax.inject.Inject
 
 
@@ -35,23 +36,23 @@ class MapViewController {
         val deviceDirectionView = layoutInflater.inflate(R.layout.current_location, mapOverlayView, true)
 
         compositeDisposable.add(azimuthSensor.observeAzimuth()
-                .subscribe { azimuth: Azimuth ->
-                    val angle = azimuth.deviceDirectionRadians.toDegrees().toFloat()
-                    deviceDirectionView.rotation = angle
+                .withLatestFrom(locationsController.observeLocations())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { azimuthLocationPair: Pair<Azimuth, Optional<BasicLocation>> ->
+                    azimuthLocationPair.second.toNullable()?.apply {
+                        val screenLocation = mapboxMap.projection.toScreenLocation(LatLng(latitude, longitude))
+                        deviceDirectionView.translationX = screenLocation.x - deviceDirectionView.right / 2
+                        deviceDirectionView.translationY = screenLocation.y - deviceDirectionView.bottom / 2
+
+                        val angle = azimuthLocationPair.first.deviceDirectionRadians.toDegrees().toFloat()
+                        deviceDirectionView.rotation = angle
+                    }
                 })
 
         compositeDisposable.add(locationsController.firstValidLocation()
                 .subscribe { optionalLocation: Optional<BasicLocation> ->
                     optionalLocation.toNullable()?.apply {
                         centerMap(latitude, longitude)
-                    }
-                })
-        compositeDisposable.add(locationsController.observeLocations()
-                .subscribe { optionalLocation: Optional<BasicLocation> ->
-                    optionalLocation.toNullable()?.apply {
-                        val screenLocation = mapboxMap.projection.toScreenLocation(LatLng(latitude, longitude))
-                        deviceDirectionView.translationX = screenLocation.x - deviceDirectionView.right / 2
-                        deviceDirectionView.translationY = screenLocation.y - deviceDirectionView.bottom / 2
                     }
                 })
     }

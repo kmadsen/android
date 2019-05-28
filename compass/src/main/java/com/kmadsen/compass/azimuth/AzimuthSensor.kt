@@ -48,7 +48,7 @@ class AzimuthSensor(
     }
 
     private fun attachAzimuthUpdates(): Completable {
-        return Observable.interval(0, 10L, TimeUnit.MILLISECONDS)
+        return Observable.interval(0, toMillisecondPeriod(60), TimeUnit.MILLISECONDS)
                 .map {
                     SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
                     SensorManager.getOrientation(rotationMatrix, orientation)
@@ -64,6 +64,8 @@ class AzimuthSensor(
                 .ignoreElements()
     }
 }
+
+fun toMillisecondPeriod(framesPerSecond: Long): Long = TimeUnit.SECONDS.toMillis(1) / framesPerSecond
 
 fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
     val nanosEstimateDelta = (nextEstimate.timestamp - measuredAtNanos)
