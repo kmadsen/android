@@ -4,8 +4,8 @@ data class BasicLocation(
         val timeMillis: Long,
         val latitude: Double,
         val longitude: Double,
+        val horizontalAccuracyMeters: Float?,
         val altitudeMeters: Double?,
         val bearingDegrees: Float?,
-        val speedMetersPerSecond: Float?,
-        val locationAccuracyMeters: Float?
+        val speedMetersPerSecond: Float?
 )

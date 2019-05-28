@@ -57,7 +57,7 @@ class MapViewController {
                 })
     }
 
-    fun onDestroy() {
+    fun detach() {
         compositeDisposable.clear()
     }
 

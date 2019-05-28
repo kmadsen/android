@@ -8,6 +8,7 @@ import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationsController
 import com.kmadsen.compass.location.fused.FusedLocationService
+import com.kmadsen.compass.mapbox.MapBottomSheet
 import com.kmadsen.compass.mapbox.MapComponent
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.sensors.AndroidSensors
@@ -68,9 +69,10 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
 
     @Provides
     fun provideAzimuthSensor(
-            androidSensors: AndroidSensors
+            androidSensors: AndroidSensors,
+            locationRepository: LocationRepository
     ): AzimuthSensor {
-        return AzimuthSensor(androidSensors)
+        return AzimuthSensor(androidSensors, locationRepository)
     }
 }
 
@@ -83,5 +85,6 @@ annotation class CompassScope
 interface CompassComponent {
     fun inject(mainActivity: CompassMainActivity)
     fun plus(mapModule: MapModule): MapComponent
+    fun inject(bottomSheet: MapBottomSheet)
 }
 

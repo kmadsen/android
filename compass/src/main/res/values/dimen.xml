@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bottom_sheet_peek_height">120dp</dimen>
+    <dimen name="bottom_sheet_card_margin">8dp</dimen>
+    <dimen name="bottom_sheet_card_height">180dp</dimen>
+
+    <dimen name="text_size_title">20sp</dimen>
+    <dimen name="text_size_normal">16sp</dimen>
+    <dimen name="text_size_secondary">14sp</dimen>
+
+    <dimen name="map_pin_size">30dp</dimen>
+</resources>
