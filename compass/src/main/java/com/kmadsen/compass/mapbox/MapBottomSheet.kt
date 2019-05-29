@@ -1,10 +1,7 @@
 package com.kmadsen.compass.mapbox
 
 import android.content.Context
-import android.content.res.Resources
-import android.os.SystemClock
 import android.util.AttributeSet
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -13,10 +10,8 @@ import com.kmadsen.compass.R
 import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.LocationRepository
 import com.kylemadsen.core.FpsChoreographer
-import com.kylemadsen.core.logger.L
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.compass_map_bottom_sheet.view.*
-import java.time.Clock
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -61,15 +56,15 @@ class MapBottomSheet(
                 2 * resources.getDimension(R.dimen.bottom_sheet_card_margin).toInt()
 
         compositeDisposable.add(FpsChoreographer().observeFps().subscribe {
-            fps_text.text = "fps %.2f".format(it)
+            fps_text.text = "app fps %.2f".format(it)
         })
         compositeDisposable.add(locationRepository.observeLocation().subscribe {
             it.toNullable()?.apply {
                 location_text.text = "lat, lng = %.5f,%.5f\n".format(latitude, longitude) +
-                        "accuracy %.2f\n".format(horizontalAccuracyMeters) +
-                        "altitude %.2f\n".format(altitudeMeters) +
-                        "bearing %.2f\n".format(bearingDegrees) +
-                        "speed %.2f".format(speedMetersPerSecond)
+                        "  accuracy ${horizontalAccuracyMeters.formatDecimal()}\n" +
+                        "  altitude ${altitudeMeters.formatDecimal()}\n" +
+                        "  bearing ${bearingDegrees.formatDecimal()}\n" +
+                        "  speed ${speedMetersPerSecond.formatDecimal()}"
                 lastLocationReceivedTimeMillis = System.currentTimeMillis()
             }
         })
@@ -91,6 +86,7 @@ class MapBottomSheet(
     }
 }
 
-fun Resources.convertDpToPixel(dp: Float): Int {
-    return (dp * (displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
+private fun <Value> Value.formatDecimal(): String {
+    this ?: return "null"
+    return "%.2f".format(this)
 }
