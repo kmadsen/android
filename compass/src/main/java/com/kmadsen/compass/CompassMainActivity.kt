@@ -2,11 +2,10 @@ package com.kmadsen.compass
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.kmadsen.compass.location.LocationsController
+import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.SensorLogger
-import com.kylemadsen.core.FpsChoreographer
 import com.mapbox.mapboxsdk.maps.MapView
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.compass_main_activity.*
@@ -18,7 +17,7 @@ class CompassMainActivity : AppCompatActivity() {
 
     private lateinit var mapViewController: MapViewController
 
-    @Inject lateinit var locationsController: LocationsController
+    @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var sensorLogger: SensorLogger
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,11 +45,11 @@ class CompassMainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        locationsController.onStart(this)
+        locationSensor.onStart(this)
     }
 
     override fun onStop() {
-        locationsController.onStop()
+        locationSensor.onStop()
         super.onStop()
     }
 
@@ -65,6 +64,6 @@ class CompassMainActivity : AppCompatActivity() {
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        locationsController.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        locationSensor.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

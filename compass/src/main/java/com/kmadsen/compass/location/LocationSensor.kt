@@ -9,7 +9,7 @@ import com.kylemadsen.core.logger.L
 import io.reactivex.Observable
 import io.reactivex.Single
 
-class LocationsController constructor(
+class LocationSensor constructor(
         private val locationPermissions: LocationPermissions,
         private val fusedLocationService: FusedLocationService,
         private val locationRepository: LocationRepository

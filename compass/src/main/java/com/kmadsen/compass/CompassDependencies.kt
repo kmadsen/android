@@ -6,7 +6,7 @@ import android.hardware.SensorManager
 import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationRepository
-import com.kmadsen.compass.location.LocationsController
+import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kmadsen.compass.mapbox.MapBottomSheet
 import com.kmadsen.compass.mapbox.MapComponent
@@ -35,8 +35,8 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
     @Provides
     fun provideLocationLocationsController(
             locationRepository: LocationRepository
-    ): LocationsController {
-        return LocationsController(
+    ): LocationSensor {
+        return LocationSensor(
                 LocationPermissions(),
                 FusedLocationService(compassMainActivity.application),
                 locationRepository
