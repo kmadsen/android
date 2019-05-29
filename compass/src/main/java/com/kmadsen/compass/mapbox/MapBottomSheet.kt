@@ -30,6 +30,7 @@ class MapBottomSheet(
     @Inject lateinit var locationRepository: LocationRepository
 
     private lateinit var standardBottomSheetBehavior: BottomSheetBehavior<View>
+    private var lastLocationReceivedTimeMillis = 0L
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -62,19 +63,25 @@ class MapBottomSheet(
         compositeDisposable.add(FpsChoreographer().observeFps().subscribe {
             fps_text.text = "fps %.2f".format(it)
         })
-        val startTime = System.currentTimeMillis()
         compositeDisposable.add(locationRepository.observeLocation().subscribe {
             it.toNullable()?.apply {
                 location_text.text = "lat, lng = %.5f,%.5f\n".format(latitude, longitude) +
-                        "seconds ${TimeUnit.MILLISECONDS.toSeconds(timeMillis - startTime)}\n" +
                         "accuracy %.2f\n".format(horizontalAccuracyMeters) +
                         "altitude %.2f\n".format(altitudeMeters) +
                         "bearing %.2f\n".format(bearingDegrees) +
                         "speed %.2f".format(speedMetersPerSecond)
+                lastLocationReceivedTimeMillis = System.currentTimeMillis()
             }
         })
         compositeDisposable.add(locationRepository.observeAzimuth().subscribe {
-            azimuth_text.text = "azimuth %.2f".format(it.deviceDirectionRadians.toDegrees())
+            val staleStringMessage = if (lastLocationReceivedTimeMillis > 0) {
+                val staleSeconds = (System.currentTimeMillis() - lastLocationReceivedTimeMillis) / TimeUnit.SECONDS.toMillis(1).toDouble()
+                "stale seconds = %.2f\n".format(staleSeconds)
+            } else {
+                ""
+            }
+            azimuth_text.text = (staleStringMessage +
+                    "azimuth %.2f").format(it.deviceDirectionRadians.toDegrees())
         })
     }
 
