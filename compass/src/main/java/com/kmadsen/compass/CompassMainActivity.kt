@@ -2,14 +2,13 @@ package com.kmadsen.compass
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.kmadsen.compass.location.LocationsController
+import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.SensorLogger
-import com.kylemadsen.core.FpsChoreographer
-import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.compass_main_activity.*
 import javax.inject.Inject
 
 class CompassMainActivity : AppCompatActivity() {
@@ -18,7 +17,7 @@ class CompassMainActivity : AppCompatActivity() {
 
     private lateinit var mapViewController: MapViewController
 
-    @Inject lateinit var locationsController: LocationsController
+    @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var sensorLogger: SensorLogger
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,10 +28,7 @@ class CompassMainActivity : AppCompatActivity() {
                 .compassModule(CompassModule(this))
                 .build()
         compassComponent.inject(this)
-
-        compositeDisposable.add(FpsChoreographer().observeFps().subscribe {
-            L.i("doUpdate currentFramesPerSecond=$it")
-        })
+        compassComponent.inject(bottom_sheet)
 
         compositeDisposable.add(sensorLogger.attachFileWriting(this)
                 .subscribe())
@@ -49,17 +45,17 @@ class CompassMainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        locationsController.onStart(this)
+        locationSensor.onStart(this)
     }
 
     override fun onStop() {
-        locationsController.onStop()
+        locationSensor.onStop()
         super.onStop()
     }
 
     override fun onDestroy() {
         compositeDisposable.clear()
-        mapViewController.onDestroy()
+        mapViewController.detach()
         super.onDestroy()
     }
 
@@ -68,6 +64,6 @@ class CompassMainActivity : AppCompatActivity() {
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        locationsController.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        locationSensor.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

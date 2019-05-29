@@ -52,7 +52,6 @@ class FusedLocationService(val application: Application) {
         }
 
         override fun onLocationResult(locationResult: LocationResult?) {
-            L.i("onLocationResult count=${locationResult?.locations?.size} result=${locationResult?.toString()}")
             this@FusedLocationService.lastLocation = locationResult?.lastLocation
             this@FusedLocationService.locationResult = locationResult
             onRawLocationUpdate.invoke(getRawLocationUpdate())

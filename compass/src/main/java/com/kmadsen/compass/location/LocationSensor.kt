@@ -9,7 +9,7 @@ import com.kylemadsen.core.logger.L
 import io.reactivex.Observable
 import io.reactivex.Single
 
-class LocationsController constructor(
+class LocationSensor constructor(
         private val locationPermissions: LocationPermissions,
         private val fusedLocationService: FusedLocationService,
         private val locationRepository: LocationRepository
@@ -59,10 +59,10 @@ private fun FusedLocation.toBasicLocation(): BasicLocation? {
             location.time,
             location.latitude,
             location.longitude,
+            getNullableValue(location.hasAccuracy(), location.accuracy),
             getNullableValue(location.hasAltitude(), location.altitude),
             getNullableValue(location.hasBearing(), location.bearing),
-            getNullableValue(location.hasSpeed(), location.speed),
-            getNullableValue(location.hasAccuracy(), location.accuracy)
+            getNullableValue(location.hasSpeed(), location.speed)
     )
 }
 

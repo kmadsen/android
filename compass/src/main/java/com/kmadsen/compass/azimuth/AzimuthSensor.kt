@@ -5,6 +5,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.os.SystemClock
 import com.jakewharton.rxrelay2.BehaviorRelay
+import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.Measure3d
 import io.reactivex.Completable
@@ -13,10 +14,9 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.PI
 
 class AzimuthSensor(
-        private val androidSensors: AndroidSensors
+        private val androidSensors: AndroidSensors,
+        private val locationRepository: LocationRepository
 ) {
-
-    private val azimuthRelay: BehaviorRelay<Azimuth> = BehaviorRelay.create()
 
     private val accelerometer = Measure3d()
     private val magnetometer = Measure3d()
@@ -24,7 +24,7 @@ class AzimuthSensor(
     private val orientation = FloatArray(3)
 
     fun observeAzimuth(): Observable<Azimuth> {
-        return azimuthRelay.mergeWith(attachSensorUpdates())
+        return locationRepository.observeAzimuth().mergeWith(attachSensorUpdates())
     }
 
     private fun attachSensorUpdates(): Completable {
@@ -48,7 +48,7 @@ class AzimuthSensor(
     }
 
     private fun attachAzimuthUpdates(): Completable {
-        return Observable.interval(0, toMillisecondPeriod(60), TimeUnit.MILLISECONDS)
+        return Observable.interval(0, toMillisecondPeriod(30), TimeUnit.MILLISECONDS)
                 .map {
                     SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
                     SensorManager.getOrientation(rotationMatrix, orientation)
@@ -60,7 +60,7 @@ class AzimuthSensor(
                             deviceDirectionRadians
                     )
                 }
-                .doOnNext { azimuthRelay.accept(it) }
+                .doOnNext { locationRepository.updateAzimuth(it) }
                 .ignoreElements()
     }
 }

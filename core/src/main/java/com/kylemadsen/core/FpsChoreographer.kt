@@ -2,6 +2,7 @@ package com.kylemadsen.core
 
 import android.view.Choreographer
 import com.jakewharton.rxrelay2.BehaviorRelay
+import com.kylemadsen.core.logger.L
 import io.reactivex.Completable
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
@@ -47,6 +48,7 @@ class FpsChoreographer : Choreographer.FrameCallback {
         } else {
             0.0
         }
+        currentFpsRelay.accept(currentFramesPerSecond)
         lastUpdateTimeNanos = frameTimeNanos
         lastUpdateFrameCount = 0
     }

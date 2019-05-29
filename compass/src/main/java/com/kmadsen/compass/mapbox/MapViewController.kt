@@ -7,7 +7,7 @@ import com.kmadsen.compass.azimuth.Azimuth
 import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.BasicLocation
-import com.kmadsen.compass.location.LocationsController
+import com.kmadsen.compass.location.LocationSensor
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -23,7 +23,7 @@ class MapViewController {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     @Inject lateinit var mapboxMap: MapboxMap
-    @Inject lateinit var locationsController: LocationsController
+    @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var azimuthSensor: AzimuthSensor
 
     private val defaultZoom: Double = 12.0
@@ -36,7 +36,7 @@ class MapViewController {
         val deviceDirectionView = layoutInflater.inflate(R.layout.current_location, mapOverlayView, true)
 
         compositeDisposable.add(azimuthSensor.observeAzimuth()
-                .withLatestFrom(locationsController.observeLocations())
+                .withLatestFrom(locationSensor.observeLocations())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { azimuthLocationPair: Pair<Azimuth, Optional<BasicLocation>> ->
                     azimuthLocationPair.second.toNullable()?.apply {
@@ -49,7 +49,7 @@ class MapViewController {
                     }
                 })
 
-        compositeDisposable.add(locationsController.firstValidLocation()
+        compositeDisposable.add(locationSensor.firstValidLocation()
                 .subscribe { optionalLocation: Optional<BasicLocation> ->
                     optionalLocation.toNullable()?.apply {
                         centerMap(latitude, longitude)
@@ -57,7 +57,7 @@ class MapViewController {
                 })
     }
 
-    fun onDestroy() {
+    fun detach() {
         compositeDisposable.clear()
     }
 
