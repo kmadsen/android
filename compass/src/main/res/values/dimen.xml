@@ -2,7 +2,7 @@
 <resources>
     <dimen name="bottom_sheet_peek_height">120dp</dimen>
     <dimen name="bottom_sheet_card_margin">8dp</dimen>
-    <dimen name="bottom_sheet_card_height">180dp</dimen>
+    <dimen name="bottom_sheet_card_height">220dp</dimen>
 
     <dimen name="text_size_title">20sp</dimen>
     <dimen name="text_size_normal">16sp</dimen>
