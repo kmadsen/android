@@ -4,10 +4,8 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.os.SystemClock
-import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
-import com.kmadsen.compass.sensors.Measure3d
 import io.reactivex.Completable
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
@@ -29,9 +27,9 @@ class AzimuthSensor(
 
     private fun attachSensorUpdates(): Completable {
         return Completable.mergeArray(
-                attachAccelerometerUpdates(),
-                attachMagnetometerUpdates(),
-                attachAzimuthUpdates()
+            attachAccelerometerUpdates(),
+            attachMagnetometerUpdates(),
+            attachAzimuthUpdates()
         )
     }
 

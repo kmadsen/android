@@ -1,84 +1,110 @@
-package com.kmadsen.compass.azimuth
+package com.kmadsen.compass.walking
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
-import android.hardware.SensorManager
 import android.os.SystemClock
-import com.jakewharton.rxrelay2.BehaviorRelay
+import android.util.TimeUtils
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
-import com.kmadsen.compass.sensors.Measure3d
+import com.kylemadsen.core.logger.L
 import io.reactivex.Completable
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
-import kotlin.math.PI
+import java.util.function.BiFunction
+import kotlin.math.max
+import kotlin.math.pow
 
 class WalkingSensor(
         private val androidSensors: AndroidSensors,
         private val locationRepository: LocationRepository
 ) {
 
-    private val accelerometer = Measure3d()
-    private val magnetometer = Measure3d()
-    private val rotationMatrix = FloatArray(9)
-    private val orientation = FloatArray(3)
+    private var stepCountSinceBoot: Int = 0
+    private var stepElapsedRealtimeNanos: Long = 0L
+    private var stepCountSinceWalkingStart: Int = 0
+    private var walkingStartElapsedRealtimeNanos: Long = 0L
+    private var walkingStaleSeconds: Double = 0.0
+    private var currentStepsPerSecond = 0.0
 
     fun observeWalkingState(): Observable<WalkingState> {
-        return locationRepository.observeAzimuth().mergeWith(attachSensorUpdates())
+        return locationRepository.observeWalkingState().mergeWith(attachSensorUpdates())
     }
 
     private fun attachSensorUpdates(): Completable {
         return Completable.mergeArray(
-                attachAccelerometerUpdates(),
-                attachMagnetometerUpdates(),
-                attachAzimuthUpdates()
+            attachStepCounterUpdates(),
+            attachStepDetector(),
+            attachWalkingStateUpdates()
         )
     }
 
-    private fun attachAccelerometerUpdates(): Completable {
-        return androidSensors.observeRawSensor(Sensor.TYPE_ACCELEROMETER)
-                .doOnNext { accelerometer.lowPassFilter(it) }
+    private fun attachStepCounterUpdates(): Completable {
+        return androidSensors.observeRawSensor(Sensor.TYPE_STEP_COUNTER)
+                .doOnNext {
+                    stepCountSinceBoot = it.values[0].toInt()
+                    stepElapsedRealtimeNanos = it.timestamp
+                    if (stepCountSinceWalkingStart == 0 || stepCountSinceBoot == stepCountSinceWalkingStart) {
+                        stepCountSinceWalkingStart = stepCountSinceBoot
+                        walkingStartElapsedRealtimeNanos = stepElapsedRealtimeNanos
+                    }
+                }
                 .ignoreElements()
     }
 
-    private fun attachMagnetometerUpdates(): Completable {
-        return androidSensors.observeRawSensor(Sensor.TYPE_MAGNETIC_FIELD)
-                .doOnNext { magnetometer.lowPassFilter(it) }
-                .ignoreElements()
+    private fun attachStepDetector(): Completable {
+        return androidSensors.observeRawSensor(Sensor.TYPE_STEP_DETECTOR)
+            .doOnNext {
+                // TODO any reason to care about this?
+            }
+            .ignoreElements()
     }
 
-    private fun attachAzimuthUpdates(): Completable {
-        return Observable.interval(0, toMillisecondPeriod(30), TimeUnit.MILLISECONDS)
-                .map {
-                    SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
-                    SensorManager.getOrientation(rotationMatrix, orientation)
-                    val northDirectionRadians = (2.0 * PI - orientation[0]) % (2.0 * PI)
-                    val deviceDirectionRadians = (orientation[0] + 2.0 * PI) % (2.0 * PI)
-                    Azimuth(
-                            SystemClock.elapsedRealtime(),
-                            northDirectionRadians,
-                            deviceDirectionRadians
+    private fun attachWalkingStateUpdates(): Completable {
+        return Observable.interval(1, toMillisecondPeriod(10), TimeUnit.MILLISECONDS)
+            .mergeWith(attachStepDetector())
+            .map {
+                val recordedAtNanos = SystemClock.elapsedRealtimeNanos()
+                walkingStaleSeconds = (recordedAtNanos - stepElapsedRealtimeNanos) / TimeUnit.SECONDS.toNanos(1).toDouble()
+                if (walkingStaleSeconds > 10) {
+                    stepCountSinceWalkingStart = 0
+                    walkingStartElapsedRealtimeNanos = 0
+                    WalkingState(
+                        SystemClock.elapsedRealtime(),
+                        TimeUnit.NANOSECONDS.toMillis(stepElapsedRealtimeNanos),
+                        walkingStaleSeconds,
+                        0,
+                        0.0,
+                        0.0,
+                        currentStepsPerSecond
+                    )
+                } else {
+                    val walkingSteps = stepCountSinceBoot - stepCountSinceWalkingStart
+                    val walkingSeconds = TimeUnit.NANOSECONDS.toMillis(stepElapsedRealtimeNanos - walkingStartElapsedRealtimeNanos) / TimeUnit.SECONDS.toMillis(1).toDouble()
+                    val realtimeWalkingSeconds = (recordedAtNanos - walkingStartElapsedRealtimeNanos) / TimeUnit.SECONDS.toNanos(1).toDouble()
+                    val walkingStepsPerSecond = if (realtimeWalkingSeconds < 0.001) 0.0 else walkingSteps / realtimeWalkingSeconds
+                    WalkingState(
+                        SystemClock.elapsedRealtime(),
+                        TimeUnit.NANOSECONDS.toMillis(stepElapsedRealtimeNanos),
+                        walkingStaleSeconds,
+                        walkingSteps,
+                        walkingSeconds,
+                        walkingStepsPerSecond,
+                        currentStepsPerSecond
                     )
                 }
-                .doOnNext { locationRepository.updateAzimuth(it) }
-                .ignoreElements()
+            }
+            .doOnNext { locationRepository.updateWalkingState(it) }
+            .throttleLatest(1, TimeUnit.SECONDS)
+            .scan(WalkingStep(0, 0, 0.0)) { previous: WalkingStep, walkingState: WalkingState ->
+                val timeDeltaMillis = (walkingState.measuredAtMilliseconds - previous.recordedAtMilliseconds)
+                currentStepsPerSecond = if (previous.recordedAtMilliseconds != 0L && timeDeltaMillis > 0L) {
+                    val numSteps = walkingState.walkingSteps - previous.recordedWalkingSteps
+                    numSteps * TimeUnit.SECONDS.toMillis(1) / timeDeltaMillis.toDouble()
+                } else { 0.0 }
+                WalkingStep(walkingState.measuredAtMilliseconds, walkingState.walkingSteps, currentStepsPerSecond)
+            }
+            .ignoreElements()
     }
 }
 
 fun toMillisecondPeriod(framesPerSecond: Long): Long = TimeUnit.SECONDS.toMillis(1) / framesPerSecond
-
-fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
-    val nanosEstimateDelta = (nextEstimate.timestamp - measuredAtNanos)
-    val delayEstimateNanos = TimeUnit.MILLISECONDS.toNanos(500).toDouble()
-    val alpha = Math.min(0.9, (nanosEstimateDelta / delayEstimateNanos)).toFloat()
-    x = lowPassFilter(x, nextEstimate.values[0], alpha)
-    y = lowPassFilter(y, nextEstimate.values[1], alpha)
-    z = lowPassFilter(z, nextEstimate.values[2], alpha)
-    measuredAtNanos = nextEstimate.timestamp
-    accuracy = nextEstimate.accuracy
-    return this
-}
-
-private fun lowPassFilter(currentValue: Float, nextValue: Float, alpha: Float): Float {
-    return currentValue + alpha * (nextValue - currentValue)
-}

@@ -1,14 +1,11 @@
-package com.kmadsen.compass.azimuth
+package com.kmadsen.compass.walking
 
-import kotlin.math.PI
-
-/**
- * Azimuth is a representation for directionality.
- *
- * Degree values are between 0-360. 0 is north. 90 is East. 180 is South. 270 is West.
- */
 data class WalkingState(
         val recordedAtMilliseconds: Long,
-        val northDirectionRadians: Double,
-        val deviceDirectionRadians: Double
+        val measuredAtMilliseconds: Long,
+        val walkingStaleSeconds: Double,
+        val walkingSteps: Int,
+        val walkingSeconds: Double,
+        val stepsPerSecond: Double,
+        val pace: Double
 )

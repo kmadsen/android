@@ -45,7 +45,7 @@
             />
 
             <TextView
-                android:id="@+id/step_count_text"
+                android:id="@+id/walking_state_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"

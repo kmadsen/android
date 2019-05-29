@@ -1,8 +1,6 @@
 package com.kmadsen.compass.mapbox
 
 import android.content.Context
-import android.hardware.Sensor
-import android.os.SystemClock
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +10,7 @@ import com.kmadsen.compass.R
 import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.walking.WalkingSensor
 import com.kylemadsen.core.FpsChoreographer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -28,11 +27,11 @@ class MapBottomSheet(
 
     @Inject lateinit var locationRepository: LocationRepository
     @Inject lateinit var androidSensors: AndroidSensors
+    @Inject lateinit var walkingSensor: WalkingSensor
 
     private lateinit var standardBottomSheetBehavior: BottomSheetBehavior<View>
     private var lastLocationReceivedTimeMillis = 0L
 
-    private var lastStepReceivedTimeNanos = 0L
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -82,31 +81,17 @@ class MapBottomSheet(
             } else {
                 ""
             }
-            val staleStepStringMessage = if (lastStepReceivedTimeNanos > 0) {
-                val staleSeconds = (SystemClock.elapsedRealtimeNanos() - lastStepReceivedTimeNanos) / TimeUnit.SECONDS.toNanos(1).toDouble()
-                "stale step seconds = %.2f\n".format(staleSeconds)
-            } else {
-                ""
-            }
             azimuth_text.text =
                 staleLocationStringMessage +
-                staleStepStringMessage +
                 "azimuth %.2f".format(it.deviceDirectionRadians.toDegrees())
         })
-        compositeDisposable.add(androidSensors.observeRawSensor(Sensor.TYPE_STEP_COUNTER).observeOn(AndroidSchedulers.mainThread()).subscribe {
-            val notWalkingThresholdSeconds = 10
-            val currentStepsPerSecond = (it.timestamp - lastStepReceivedTimeNanos) / TimeUnit.SECONDS.toNanos(1).toDouble()
-//            val currentStepsPerSecond = if (TimeUnit.NANOSECONDS.toSeconds(deltaSinceUpdateNanos) > notWalkingThresholdSeconds) {
-//                deltaSinceUpdateNanos / TimeUnit.SECONDS.toNanos(1).toDouble()
-//            } else {
-//                0.0
-//            }
-
-            step_count_text.text = "step count ${it.values[0]} steps per second $currentStepsPerSecond"
-            lastStepReceivedTimeNanos = it.timestamp
+        compositeDisposable.add(walkingSensor.observeWalkingState().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            walking_state_text.text = "walking stale seconds ${it.walkingStaleSeconds.formatDecimal()}\n" +
+                    "walking steps ${it.walkingSteps}\n" +
+                    "walking seconds ${it.walkingSeconds}\n" +
+                    "walking steps per second ${it.stepsPerSecond.formatDecimal()}\n" +
+                    "walking pace ${it.pace.formatDecimal()}"
         })
-
-        // TYPE_STEP_DETECTOR
     }
 
     override fun onDetachedFromWindow() {

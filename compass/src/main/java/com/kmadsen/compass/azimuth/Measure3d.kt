@@ -1,4 +1,4 @@
-package com.kmadsen.compass.sensors
+package com.kmadsen.compass.azimuth
 
 data class Measure3d(
         val values: FloatArray,
