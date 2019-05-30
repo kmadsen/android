@@ -13,6 +13,7 @@ import com.kmadsen.compass.mapbox.MapComponent
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
+import com.kmadsen.compass.walking.WalkingStateSensor
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -73,6 +74,14 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
             locationRepository: LocationRepository
     ): AzimuthSensor {
         return AzimuthSensor(androidSensors, locationRepository)
+    }
+
+    @Provides
+    fun provideWalkingSensor(
+        androidSensors: AndroidSensors,
+        locationRepository: LocationRepository
+    ): WalkingStateSensor {
+        return WalkingStateSensor(androidSensors, locationRepository)
     }
 }
 
