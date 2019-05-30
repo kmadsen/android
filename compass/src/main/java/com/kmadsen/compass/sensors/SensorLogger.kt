@@ -133,7 +133,7 @@ class SensorLogger(
         return locationRepository.observeAzimuth()
                 .doOnSubscribe {
                     writeLine("name=GpsLocations vendor=Google current_time_ms=${System.currentTimeMillis()}")
-                    writeLine("recordedAtMilliseconds deviceDirectionRadians deviceDirectionDegrees northDirectionRadians northDirectionDegrees")
+                    writeLine("recordedAtMs deviceDirectionRadians deviceDirectionDegrees northDirectionRadians northDirectionDegrees")
                 }
                 .doOnNext { azimuth: Azimuth ->
                     val sensorLine =

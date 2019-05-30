@@ -13,7 +13,7 @@ import com.kmadsen.compass.mapbox.MapComponent
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
-import com.kmadsen.compass.walking.WalkingSensor
+import com.kmadsen.compass.walking.WalkingStateSensor
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -80,8 +80,8 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
     fun provideWalkingSensor(
         androidSensors: AndroidSensors,
         locationRepository: LocationRepository
-    ): WalkingSensor {
-        return WalkingSensor(androidSensors, locationRepository)
+    ): WalkingStateSensor {
+        return WalkingStateSensor(androidSensors, locationRepository)
     }
 }
 
