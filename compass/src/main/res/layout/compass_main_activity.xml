@@ -12,6 +12,11 @@
         android:layout_height="match_parent"
         app:mapbox_styleUrl="@string/mapbox_style_mapbox_streets" />
 
+    <com.kmadsen.compass.CompassGLSurfaceView
+        android:id="@+id/map_gl_surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <com.kmadsen.compass.mapbox.MapOverlayView
         android:id="@+id/map_overlay_view"
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.kmadsen.compass.mapbox
 
+import com.kmadsen.compass.CompassGLSurfaceView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import dagger.Module
 import dagger.Provides
@@ -23,4 +24,5 @@ annotation class MapScope
 @Subcomponent(modules = [MapModule::class])
 interface MapComponent {
     fun inject(mapViewController: MapViewController)
+    fun inject(compassGLSurfaceView: CompassGLSurfaceView)
 }
