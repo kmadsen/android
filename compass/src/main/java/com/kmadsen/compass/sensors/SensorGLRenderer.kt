@@ -56,8 +56,6 @@ class SensorGLRenderer: GLSurfaceView.Renderer {
     override fun onDrawFrame(unused: GL10) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
 
-//        //translate the Matrix
-//        Matrix.translateM(finalMVPMatrix, 0,  721f, 1212f, 0f)
         Matrix.setIdentityM(modelMatrix, 0) // initialize to identity matrix
 
         val translateX = -(position.x - width / 2f) * 20 / height - 1
@@ -70,43 +68,9 @@ class SensorGLRenderer: GLSurfaceView.Renderer {
         // Combine the rotation matrix with the projection and camera view
         Matrix.multiplyMM(finalMVPMatrix, 0, mvpMatrix, 0, modelMatrix, 0)
 
-
         // Draw cube.
         cube!!.draw(finalMVPMatrix)
     }
-
-//    override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
-//        val ratio = width.toFloat() / height
-//
-//        L.i("onSurfaceChanged width $width height $height ratio $ratio")
-//
-//
-//        GLES20.glViewport(0, 0, width, height)
-//        // This projection matrix is applied to object coordinates in the onDrawFrame() method.
-//        Matrix.orthoM(orthoMatrix, 0,
-//            0.0f, width.toFloat(),
-//            0.0f, height.toFloat(),
-//            3.0f, 7.0f)
-//
-//        // modelView = projection x view
-//        Matrix.multiplyMM(mvpMatrix, 0, orthoMatrix, 0, viewMatrix, 0)
-//    }
-//
-//    override fun onDrawFrame(unused: GL10) {
-//        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
-//
-//        // Combine the rotation matrix with the projection and camera view
-//        //translate the Matrix
-//        Matrix.translateM(finalMVPMatrix, 0,  721f, 1212f, 0f)
-//        // Calculate the projection and view transformation
-//        Matrix.multiplyMM(finalMVPMatrix, 0, finalMVPMatrix, 0, finalMVPMatrix, 0);
-//
-////        Matrix.multiplyMM(finalMVPMatrix, 0, mvpMatrix, 0, rotationMatrix, 0)
-//
-//        // Draw cube.
-//        cube!!.draw(finalMVPMatrix)
-//    }
-
 
     fun update(rotation: FloatArray) {
         SensorManager.getRotationMatrixFromVector(rotationMatrix, rotation)
