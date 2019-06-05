@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
+import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
 import com.mapbox.mapboxsdk.maps.MapView
 import io.reactivex.disposables.CompositeDisposable
@@ -16,9 +17,11 @@ class CompassMainActivity : AppCompatActivity() {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private lateinit var mapViewController: MapViewController
+    private lateinit var compassGLSurfaceView: CompassGLSurfaceView
 
     @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var sensorLogger: SensorLogger
+    @Inject lateinit var androidSensors: AndroidSensors
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +36,9 @@ class CompassMainActivity : AppCompatActivity() {
         compositeDisposable.add(sensorLogger.attachFileWriting(this)
                 .subscribe())
 
+        compassGLSurfaceView = map_gl_surface_view
+        compassGLSurfaceView.setZOrderMediaOverlay(true)
+
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { mapboxMap ->
@@ -40,6 +46,9 @@ class CompassMainActivity : AppCompatActivity() {
             mapViewController = MapViewController()
             mapComponent.inject(mapViewController)
             mapViewController.attach(findViewById(R.id.map_overlay_view))
+
+            mapComponent.inject(compassGLSurfaceView)
+            compassGLSurfaceView.attach()
         }
     }
 
@@ -55,6 +64,7 @@ class CompassMainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         compositeDisposable.clear()
+        compassGLSurfaceView.detach()
         mapViewController.detach()
         super.onDestroy()
     }
