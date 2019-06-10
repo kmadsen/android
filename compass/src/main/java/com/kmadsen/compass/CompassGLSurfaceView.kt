@@ -2,13 +2,11 @@ package com.kmadsen.compass
 
 import android.content.Context
 import android.graphics.PixelFormat
-import android.hardware.SensorManager
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import com.gojuno.koptional.Optional
 import com.kmadsen.compass.azimuth.Azimuth
 import com.kmadsen.compass.azimuth.AzimuthSensor
-import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.sensors.AndroidSensors

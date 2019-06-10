@@ -22,7 +22,9 @@ class AzimuthSensor(
     private val orientation = FloatArray(3)
 
     fun observeAzimuth(): Observable<Azimuth> {
-        return locationRepository.observeAzimuth().mergeWith(attachSensorUpdates())
+        return locationRepository.observeAzimuth()
+            .startWith(Azimuth(0L, null))
+            .mergeWith(attachSensorUpdates())
     }
 
     private fun attachSensorUpdates(): Completable {
@@ -50,17 +52,18 @@ class AzimuthSensor(
                 .map {
                     SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
                     SensorManager.getOrientation(rotationMatrix, orientation)
-                    val northDirectionRadians = (2.0 * PI - orientation[0]) % (2.0 * PI)
-                    val deviceDirectionRadians = (orientation[0] + 2.0 * PI) % (2.0 * PI)
                     Azimuth(
-                            SystemClock.elapsedRealtime(),
-                            northDirectionRadians,
-                            deviceDirectionRadians
+                        SystemClock.elapsedRealtime(),
+                        orientation[0].toNormalizedDegrees()
                     )
                 }
                 .doOnNext { locationRepository.updateAzimuth(it) }
                 .ignoreElements()
     }
+}
+
+fun Float.toNormalizedDegrees(): Double {
+    return (this * 180.0 / PI + 360.0) % 360.0
 }
 
 fun toMillisecondPeriod(framesPerSecond: Long): Long = TimeUnit.SECONDS.toMillis(1) / framesPerSecond

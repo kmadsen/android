@@ -1,11 +1,12 @@
 package com.kmadsen.compass.mapbox
 
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
 import com.gojuno.koptional.Optional
 import com.kmadsen.compass.R
 import com.kmadsen.compass.azimuth.Azimuth
 import com.kmadsen.compass.azimuth.AzimuthSensor
-import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationSensor
 import com.kylemadsen.core.logger.L
@@ -34,18 +35,25 @@ class MapViewController {
 
         val layoutInflater = LayoutInflater.from(mapOverlayView.context)
         val deviceDirectionView = layoutInflater.inflate(R.layout.current_location, mapOverlayView, true)
+        val rotationView = deviceDirectionView.findViewById<ImageView>(R.id.location_direction)
 
-        compositeDisposable.add(azimuthSensor.observeAzimuth()
-                .withLatestFrom(locationSensor.observeLocations())
+        compositeDisposable.add(locationSensor.observeLocations()
+                .withLatestFrom(azimuthSensor.observeAzimuth())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { azimuthLocationPair: Pair<Azimuth, Optional<BasicLocation>> ->
-                    azimuthLocationPair.second.toNullable()?.apply {
+                .subscribe { azimuthLocationPair: Pair<Optional<BasicLocation>, Azimuth> ->
+                    azimuthLocationPair.first.toNullable()?.apply {
                         val screenLocation = mapboxMap.projection.toScreenLocation(LatLng(latitude, longitude))
                         deviceDirectionView.translationX = screenLocation.x - deviceDirectionView.right / 2
                         deviceDirectionView.translationY = screenLocation.y - deviceDirectionView.bottom / 2
 
-                        val angle = azimuthLocationPair.first.deviceDirectionRadians.toDegrees().toFloat()
-                        deviceDirectionView.rotation = angle
+                        val angle = azimuthLocationPair.second.deviceDirectionDegrees
+                        L.i("")
+                        if (angle == null) {
+                            rotationView.visibility = View.GONE
+                        } else {
+                            deviceDirectionView.rotation = angle.toFloat()
+                            rotationView.visibility = View.VISIBLE
+                        }
                     }
                 })
 

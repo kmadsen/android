@@ -1,7 +1,5 @@
 package com.kmadsen.compass.azimuth
 
-import kotlin.math.PI
-
 /**
  * Azimuth is a representation for directionality.
  *
@@ -9,10 +7,5 @@ import kotlin.math.PI
  */
 data class Azimuth(
         val recordedAtMilliseconds: Long,
-        val northDirectionRadians: Double,
-        val deviceDirectionRadians: Double
+        val deviceDirectionDegrees: Double?
 )
-
-fun Double.toDegrees(): Double {
-    return this * 180.0 / PI
-}

@@ -8,14 +8,12 @@ import android.hardware.SensorManager
 import android.location.Location
 import android.os.Build
 import com.kmadsen.compass.azimuth.Azimuth
-import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kylemadsen.core.FileLogger
 import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
 import io.reactivex.Completable
-import kotlin.math.PI
 
 class SensorLogger(
         private val androidSensors: AndroidSensors,
@@ -133,15 +131,13 @@ class SensorLogger(
         return locationRepository.observeAzimuth()
                 .doOnSubscribe {
                     writeLine("name=GpsLocations vendor=Google current_time_ms=${System.currentTimeMillis()}")
-                    writeLine("recordedAtMs deviceDirectionRadians deviceDirectionDegrees northDirectionRadians northDirectionDegrees")
+                    writeLine("recordedAtMs deviceDirectionDegrees deviceDirectionDegrees northDirectionRadians northDirectionDegrees")
                 }
                 .doOnNext { azimuth: Azimuth ->
                     val sensorLine =
                             " ${azimuth.recordedAtMilliseconds}" +
-                            " ${azimuth.deviceDirectionRadians}" +
-                            " ${azimuth.deviceDirectionRadians.toDegrees()}" +
-                            " ${azimuth.northDirectionRadians}" +
-                            " ${azimuth.northDirectionRadians.toDegrees()}"
+                            " ${azimuth.deviceDirectionDegrees}" +
+                            " ${azimuth.deviceDirectionDegrees}"
                     writeLine(sensorLine)
                     flushBuffer()
                 }
