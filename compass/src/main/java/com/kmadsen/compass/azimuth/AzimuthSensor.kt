@@ -50,6 +50,8 @@ class AzimuthSensor(
     private fun attachAzimuthUpdates(): Completable {
         return Observable.interval(0, toMillisecondPeriod(30), TimeUnit.MILLISECONDS)
                 .map {
+                    if (it % 200 < 100) return@map Azimuth(0L, null)
+
                     SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
                     SensorManager.getOrientation(rotationMatrix, orientation)
                     Azimuth(
