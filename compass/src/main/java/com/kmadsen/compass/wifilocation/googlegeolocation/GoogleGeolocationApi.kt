@@ -120,7 +120,7 @@ data class GoogleGeolocateLocationDTO(
 */
 
 data class GoogleGeolocateErrorResponseDTO(
-    @SerializedName("error") val location: GoogleGeolocateErrorDTO?
+    @SerializedName("error") val error: GoogleGeolocateErrorDTO?
 )
 
 data class GoogleGeolocateErrorDTO(

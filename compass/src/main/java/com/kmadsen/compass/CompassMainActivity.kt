@@ -22,7 +22,6 @@ class CompassMainActivity : AppCompatActivity() {
     private lateinit var compassGLSurfaceView: CompassGLSurfaceView
 
     @Inject lateinit var locationSensor: LocationSensor
-    @Inject lateinit var wifiLocationScanner: WifiLocationScanner
     @Inject lateinit var sensorLogger: SensorLogger
     @Inject lateinit var androidSensors: AndroidSensors
 
@@ -53,11 +52,6 @@ class CompassMainActivity : AppCompatActivity() {
             mapComponent.inject(compassGLSurfaceView)
             compassGLSurfaceView.attach()
         }
-
-//        L.i("WIFI SCAN observe wifi locations")
-//        compositeDisposable.add(wifiLocationScanner.observeWifiLocations(this).subscribe {
-//            L.i("WIFI SCAN location $it")
-//        })
     }
 
     override fun onStart() {

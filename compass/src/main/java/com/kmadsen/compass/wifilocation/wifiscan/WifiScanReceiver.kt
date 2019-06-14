@@ -87,7 +87,7 @@ class WifiScanReceiver(
     }
 
     private fun fromScanResults(scanResults: List<ScanResult>): WifiScan {
-        val maxNetworks = 25
+        val maxNetworks = 100
         val maxStaleSeconds = 10
 
         val displayTimeMs: Long = System.currentTimeMillis()

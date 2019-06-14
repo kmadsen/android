@@ -7,6 +7,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kmadsen.compass.azimuth.Azimuth
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kmadsen.compass.walking.WalkingState
+import com.kmadsen.compass.wifilocation.WifiLocationResponse
 import io.reactivex.Observable
 
 class LocationRepository {
@@ -15,6 +16,7 @@ class LocationRepository {
     private val fusedLocationRelay: BehaviorRelay<FusedLocation> = BehaviorRelay.create()
     private val azimuthRelay: BehaviorRelay<Azimuth> = BehaviorRelay.create()
     private val walkingStateRelay: BehaviorRelay<WalkingState> = BehaviorRelay.create()
+    private val wifiLocationRelay: BehaviorRelay<WifiLocationResponse> = BehaviorRelay.create()
 
     fun observeLocation(): Observable<Optional<BasicLocation>> {
         return locationRelay
@@ -48,4 +50,11 @@ class LocationRepository {
         walkingStateRelay.accept(walkingState)
     }
 
+    fun observeWifiLocation(): Observable<WifiLocationResponse> {
+        return wifiLocationRelay
+    }
+
+    fun updateWifiLocation(wifiLocationResponse: WifiLocationResponse) {
+        wifiLocationRelay.accept(wifiLocationResponse)
+    }
 }

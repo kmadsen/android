@@ -6,6 +6,7 @@ import android.hardware.SensorManager
 import android.os.SystemClock
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.time.toMillisecondPeriod
 import io.reactivex.Completable
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
@@ -67,8 +68,6 @@ class AzimuthSensor(
 fun Float.toNormalizedDegrees(): Double {
     return (this * 180.0 / PI + 360.0) % 360.0
 }
-
-fun toMillisecondPeriod(framesPerSecond: Long): Long = TimeUnit.SECONDS.toMillis(1) / framesPerSecond
 
 fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
     val nanosEstimateDelta = (nextEstimate.timestamp - measuredAtNanos)

@@ -58,7 +58,7 @@ class SensorGLRenderer: GLSurfaceView.Renderer {
 
         Matrix.setIdentityM(modelMatrix, 0) // initialize to identity matrix
 
-        val translateX = -(position.x - width / 2f) * 20 / height - 1
+        val translateX = -(position.x - width / 2f) * 20 / height
         val translateY = -(position.y - height / 2f) * 20 / height
         Matrix.translateM(modelMatrix, 0, translateX, translateY, 0f) // translation to the left
 

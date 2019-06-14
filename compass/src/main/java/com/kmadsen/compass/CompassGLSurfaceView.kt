@@ -12,6 +12,8 @@ import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.sensors.AndroidSensors
 
 import com.kmadsen.compass.sensors.SensorGLRenderer
+import com.kmadsen.compass.wifilocation.WifiLocationResponse
+import com.kmadsen.compass.wifilocation.WifiLocationScanner
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -28,6 +30,7 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
     @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var azimuthSensor: AzimuthSensor
     @Inject lateinit var androidSensors: AndroidSensors
+    @Inject lateinit var wifiLocationScanner: WifiLocationScanner
 
     private val glSurfaceRenderer: SensorGLRenderer = SensorGLRenderer()
 
@@ -46,10 +49,10 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
         })
 
         compositeDisposable.add(azimuthSensor.observeAzimuth()
-            .withLatestFrom(locationSensor.observeLocations())
+            .withLatestFrom(wifiLocationScanner.observeWifiLocations(context))
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { azimuthLocationPair: Pair<Azimuth, Optional<BasicLocation>> ->
-                azimuthLocationPair.second.toNullable()?.apply {
+            .subscribe { azimuthLocationPair: Pair<Azimuth, WifiLocationResponse> ->
+                azimuthLocationPair.second.wifiLocation?.apply {
                     val screenLocation = mapboxMap.projection.toScreenLocation(LatLng(latitude, longitude))
                     glSurfaceRenderer.updateLocationPosition(screenLocation)
                 }

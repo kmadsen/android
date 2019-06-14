@@ -4,6 +4,8 @@ import android.hardware.Sensor
 import android.os.SystemClock
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.time.nanosToSeconds
+import com.kmadsen.compass.time.toMillisecondPeriod
 import io.reactivex.Completable
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
@@ -83,7 +85,3 @@ class WalkingStateSensor(
             .ignoreElements()
     }
 }
-
-fun Long.nanosToSeconds(): Double = TimeUnit.NANOSECONDS.toMillis(this) / TimeUnit.SECONDS.toMillis(1).toDouble()
-
-fun toMillisecondPeriod(framesPerSecond: Long): Long = TimeUnit.SECONDS.toMillis(1) / framesPerSecond

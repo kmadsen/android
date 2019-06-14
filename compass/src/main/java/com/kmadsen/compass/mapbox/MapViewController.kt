@@ -3,9 +3,6 @@ package com.kmadsen.compass.mapbox
 import android.animation.TimeInterpolator
 import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.AlphaAnimation
-import android.view.animation.AnimationSet
-import android.view.animation.TranslateAnimation
 import android.widget.ImageView
 import androidx.core.view.animation.PathInterpolatorCompat
 import com.gojuno.koptional.Optional
@@ -14,6 +11,7 @@ import com.kmadsen.compass.azimuth.Azimuth
 import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationSensor
+import com.kmadsen.compass.wifilocation.WifiLocationScanner
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -30,6 +28,7 @@ class MapViewController {
     @Inject lateinit var mapboxMap: MapboxMap
     @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var azimuthSensor: AzimuthSensor
+    @Inject lateinit var wifiLocationScanner: WifiLocationScanner
 
     private val defaultZoom: Double = 12.0
     private var isShowingDirection: Boolean = false
@@ -61,6 +60,17 @@ class MapViewController {
                         }
                     }
                 })
+
+//        val wifiLocationView = layoutInflater.inflate(R.layout.current_wifi_location, mapOverlayView, false)
+//        compositeDisposable.add(wifiLocationScanner.observeWifiLocations(wifiLocationView.context)
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe {
+//                it.wifiLocation?.apply {
+//                    val screenLocation = mapboxMap.projection.toScreenLocation(LatLng(latitude, longitude))
+//                    wifiLocationView.translationX = screenLocation.x - deviceDirectionView.right / 2
+//                    wifiLocationView.translationY = screenLocation.y - deviceDirectionView.bottom / 2
+//                }
+//            })
 
         compositeDisposable.add(locationSensor.firstValidLocation()
                 .subscribe { optionalLocation: Optional<BasicLocation> ->
@@ -120,6 +130,6 @@ class MapViewController {
         val ENTER: TimeInterpolator = PathInterpolatorCompat.create(0f, 0f, 0.15f, 1f)
         val EXIT: TimeInterpolator = PathInterpolatorCompat.create(0.45f, 0f, 1f, 1f)
 
-        val DURATION_SHORT = 200L
+        const val DURATION_SHORT = 200L
     }
 }

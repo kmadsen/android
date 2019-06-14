@@ -53,6 +53,15 @@
                 android:textColor="#ff000000"
             />
 
+            <TextView
+                android:id="@+id/wifi_location_response"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="#ff000000"
+            />
+
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
