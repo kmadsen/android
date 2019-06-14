@@ -7,6 +7,8 @@ import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
+import com.kmadsen.compass.wifilocation.WifiLocationScanner
+import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.compass_main_activity.*
@@ -20,6 +22,7 @@ class CompassMainActivity : AppCompatActivity() {
     private lateinit var compassGLSurfaceView: CompassGLSurfaceView
 
     @Inject lateinit var locationSensor: LocationSensor
+    @Inject lateinit var wifiLocationScanner: WifiLocationScanner
     @Inject lateinit var sensorLogger: SensorLogger
     @Inject lateinit var androidSensors: AndroidSensors
 
@@ -50,6 +53,11 @@ class CompassMainActivity : AppCompatActivity() {
             mapComponent.inject(compassGLSurfaceView)
             compassGLSurfaceView.attach()
         }
+
+//        L.i("WIFI SCAN observe wifi locations")
+//        compositeDisposable.add(wifiLocationScanner.observeWifiLocations(this).subscribe {
+//            L.i("WIFI SCAN location $it")
+//        })
     }
 
     override fun onStart() {

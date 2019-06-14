@@ -3,7 +3,10 @@ package com.kmadsen.compass
 import android.content.Context
 import android.content.res.Resources
 import android.hardware.SensorManager
+import android.net.wifi.WifiManager
 import com.kmadsen.compass.azimuth.AzimuthSensor
+import com.kmadsen.compass.wifilocation.googlegeolocation.GoogleGeolocationApi
+import com.kmadsen.compass.wifilocation.googlegeolocation.GoogleGeolocationApiService
 import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationSensor
@@ -14,9 +17,13 @@ import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
 import com.kmadsen.compass.walking.WalkingStateSensor
+import com.kmadsen.compass.wifilocation.WifiLocationScanner
+import com.kmadsen.compass.wifilocation.wifiscan.WifiScanReceiver
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Scope
 
 @Module
@@ -82,6 +89,40 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
         locationRepository: LocationRepository
     ): WalkingStateSensor {
         return WalkingStateSensor(androidSensors, locationRepository)
+    }
+
+    @Provides
+    fun googleGeolocationApiService(
+        resources: Resources
+    ) : GoogleGeolocationApiService {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://www.googleapis.com")
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build()
+
+        val googleGeolocationApi = retrofit.create(GoogleGeolocationApi::class.java)
+
+        return GoogleGeolocationApiService(
+            googleGeolocationApi,
+            resources.getString(R.string.compass_google_geolocation_api)
+        )
+    }
+
+    @Provides
+    fun provideWifiScanReceiver(): WifiScanReceiver {
+        val wifiManager = compassMainActivity.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        return WifiScanReceiver(wifiManager)
+    }
+
+    @Provides
+    fun provideWifiLocationScanner(
+        wifiScanReceiver: WifiScanReceiver,
+        geolocationApiService: GoogleGeolocationApiService
+    ): WifiLocationScanner {
+        return WifiLocationScanner(
+            wifiScanReceiver,
+            geolocationApiService
+        )
     }
 }
 

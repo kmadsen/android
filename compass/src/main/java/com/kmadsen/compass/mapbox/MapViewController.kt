@@ -1,11 +1,13 @@
 package com.kmadsen.compass.mapbox
 
+import android.animation.TimeInterpolator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.AnimationSet
 import android.view.animation.TranslateAnimation
 import android.widget.ImageView
+import androidx.core.view.animation.PathInterpolatorCompat
 import com.gojuno.koptional.Optional
 import com.kmadsen.compass.R
 import com.kmadsen.compass.azimuth.Azimuth
@@ -30,6 +32,7 @@ class MapViewController {
     @Inject lateinit var azimuthSensor: AzimuthSensor
 
     private val defaultZoom: Double = 12.0
+    private var isShowingDirection: Boolean = false
 
     fun attach(mapOverlayView: MapOverlayView) {
 
@@ -51,10 +54,10 @@ class MapViewController {
 
                         val angle = azimuthLocationPair.first.deviceDirectionDegrees
                         if (angle == null) {
-                            slideDown(rotationView)
+                            hideDirection(rotationView)
                         } else {
                             deviceDirectionView.rotation = angle.toFloat()
-                            slideUp(rotationView)
+                            showDirection(rotationView)
                         }
                     }
                 })
@@ -83,59 +86,40 @@ class MapViewController {
         L.i("CompassMainActivity centerMap end")
     }
 
+    private fun showDirection(view: View) {
+        if (isShowingDirection) return
 
-    var isShowingRotation: Boolean = false
-
-    // slide the view from below itself to the current position
-    private fun slideUp(view: View) {
-        if (isShowingRotation) return
-        isShowingRotation = true
-
-        val translateAnimation = TranslateAnimation(
-            0f, // fromXDelta
-            0f, // toXDelta
-            view.height.toFloat() / 2.0f,
-            0.0f
-        ) // toYDelta
-        translateAnimation.duration = 500
-        translateAnimation.fillAfter = true
-
-        val alphaAnimation = AlphaAnimation(0.0f, 1.0f)
-        alphaAnimation.duration = 500
-        alphaAnimation.fillAfter = true
-
-        val animationSet = AnimationSet(true)
-        animationSet.addAnimation(translateAnimation)
-        animationSet.addAnimation(alphaAnimation)
-        animationSet.fillAfter = true
-
+        isShowingDirection = true
         view.visibility = View.VISIBLE
-        view.startAnimation(animationSet)
+        view.scaleX = 0f
+        view.scaleY = 0f
+        view.alpha = 0f
+        view.animate()
+            .scaleX(1f)
+            .scaleY(1f)
+            .alpha(1f)
+            .setInterpolator(ENTER)
+            .setDuration(DURATION_SHORT)
+            .start()
     }
 
-    // slide the view from its current position to below itself
-    private fun slideDown(view: View) {
-        if (view.visibility == View.GONE || !isShowingRotation) return
-        isShowingRotation = false
+    private fun hideDirection(view: View) {
+        if (view.visibility == View.GONE || !isShowingDirection) return
 
-        val translateAnimation = TranslateAnimation(
-            0f, // fromXDelta
-            0f, // toXDelta
-            0.0f,
-            view.height.toFloat() / 2.0f
-        ) // toYDelta
-        translateAnimation.duration = 500
-        translateAnimation.fillAfter = true
+        isShowingDirection = false
+        view.animate()
+            .scaleX(0f)
+            .scaleY(0f)
+            .alpha(0f)
+            .setInterpolator(EXIT)
+            .setDuration(DURATION_SHORT)
+            .start()
+    }
 
-        val alphaAnimation = AlphaAnimation(1.0f, 0.0f)
-        alphaAnimation.duration = 500
-        alphaAnimation.fillAfter = true
+    companion object {
+        val ENTER: TimeInterpolator = PathInterpolatorCompat.create(0f, 0f, 0.15f, 1f)
+        val EXIT: TimeInterpolator = PathInterpolatorCompat.create(0.45f, 0f, 1f, 1f)
 
-        val animationSet = AnimationSet(true)
-        animationSet.addAnimation(translateAnimation)
-        animationSet.addAnimation(alphaAnimation)
-        animationSet.fillAfter = true
-
-        view.startAnimation(animationSet)
+        val DURATION_SHORT = 200L
     }
 }

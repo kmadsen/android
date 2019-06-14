@@ -51,7 +51,6 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
             .subscribe { azimuthLocationPair: Pair<Azimuth, Optional<BasicLocation>> ->
                 azimuthLocationPair.second.toNullable()?.apply {
                     val screenLocation = mapboxMap.projection.toScreenLocation(LatLng(latitude, longitude))
-                    L.i("SensorGLRenderer screen location = ${screenLocation.x}, ${screenLocation.y}")
                     glSurfaceRenderer.updateLocationPosition(screenLocation)
                 }
             })
