@@ -61,17 +61,6 @@ class MapViewController {
                     }
                 })
 
-//        val wifiLocationView = layoutInflater.inflate(R.layout.current_wifi_location, mapOverlayView, false)
-//        compositeDisposable.add(wifiLocationScanner.observeWifiLocations(wifiLocationView.context)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                it.wifiLocation?.apply {
-//                    val screenLocation = mapboxMap.projection.toScreenLocation(LatLng(latitude, longitude))
-//                    wifiLocationView.translationX = screenLocation.x - deviceDirectionView.right / 2
-//                    wifiLocationView.translationY = screenLocation.y - deviceDirectionView.bottom / 2
-//                }
-//            })
-
         compositeDisposable.add(locationSensor.firstValidLocation()
                 .subscribe { optionalLocation: Optional<BasicLocation> ->
                     optionalLocation.toNullable()?.apply {

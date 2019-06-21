@@ -32,4 +32,3 @@ private class Receiver(
         emitter.onNext(intent)
     }
 }
-
