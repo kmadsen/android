@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
-import com.kmadsen.compass.sensors.rx.RxAndroidSensors
+import com.kmadsen.compass.native.NativeLib
 import com.kmadsen.compass.sensors.SensorLogger
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
+import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
 import io.reactivex.disposables.CompositeDisposable
@@ -39,6 +41,9 @@ class CompassMainActivity : AppCompatActivity() {
 
 //        compassGLSurfaceView = map_gl_surface_view
 //        compassGLSurfaceView.setZOrderMediaOverlay(true)
+
+        val resultMultiply = NativeLib.multiply(2, 5)
+        L.i("2 * 5 = $resultMultiply")
 
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
@@ -78,4 +83,5 @@ class CompassMainActivity : AppCompatActivity() {
 
         locationSensor.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
 }
