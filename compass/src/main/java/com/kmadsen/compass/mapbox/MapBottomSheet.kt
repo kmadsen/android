@@ -7,11 +7,13 @@ import android.view.View
 import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kmadsen.compass.R
-import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.time.millisToSeconds
+import com.kmadsen.compass.time.nanosToSeconds
 import com.kmadsen.compass.walking.WalkingStateSensor
 import com.kylemadsen.core.FpsChoreographer
+import com.kylemadsen.core.logger.L
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.compass_map_bottom_sheet.view.*
@@ -79,13 +81,22 @@ class MapBottomSheet(
             }
             azimuth_text.text =
                 staleLocationStringMessage +
-                "azimuth %.2f".format(it.deviceDirectionRadians.toDegrees())
+                "azimuth %.2f".format(it.deviceDirectionDegrees)
         })
         compositeDisposable.add(walkingStateSensor.observeWalkingState().observeOn(AndroidSchedulers.mainThread()).subscribe {
             walking_state_text.text = "walking stale seconds ${it.realtimeNotWalkingSeconds}\n" +
-                    "walking steps ${it.walkingSteps}\n" +
-                    "walking seconds ${it.realtimeWalkingSeconds}\n" +
-                    "walking pace ${it.walkingStepsPerSecond.formatDecimal()}"
+                    "  walking steps ${it.walkingSteps}\n" +
+                    "  walking seconds ${it.realtimeWalkingSeconds}\n" +
+                    "  walking pace ${it.walkingStepsPerSecond.formatDecimal()}"
+        })
+
+        L.i("WIFI SCAN observe wifi locations")
+        compositeDisposable.add(locationRepository.observeWifiLocation().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            L.i("WIFI SCAN location $it")
+            wifi_location_response.text = "wifi recorded at ${it.recordedAtMs}\n" +
+                "  wifi location ${it.wifiLocation}\n" +
+                "  wifi location error ${it.errorMessage}\n" +
+                "  wifi scan size ${it.wifiScan.wifiAccessPoints.size}\n"
         })
     }
 

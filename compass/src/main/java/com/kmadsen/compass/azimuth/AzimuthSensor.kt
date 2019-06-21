@@ -6,6 +6,7 @@ import android.hardware.SensorManager
 import android.os.SystemClock
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.time.toMillisecondPeriod
 import io.reactivex.Completable
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
@@ -22,7 +23,9 @@ class AzimuthSensor(
     private val orientation = FloatArray(3)
 
     fun observeAzimuth(): Observable<Azimuth> {
-        return locationRepository.observeAzimuth().mergeWith(attachSensorUpdates())
+        return locationRepository.observeAzimuth()
+            .startWith(Azimuth(0L, null))
+            .mergeWith(attachSensorUpdates())
     }
 
     private fun attachSensorUpdates(): Completable {
@@ -50,12 +53,9 @@ class AzimuthSensor(
                 .map {
                     SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
                     SensorManager.getOrientation(rotationMatrix, orientation)
-                    val northDirectionRadians = (2.0 * PI - orientation[0]) % (2.0 * PI)
-                    val deviceDirectionRadians = (orientation[0] + 2.0 * PI) % (2.0 * PI)
                     Azimuth(
-                            SystemClock.elapsedRealtime(),
-                            northDirectionRadians,
-                            deviceDirectionRadians
+                        SystemClock.elapsedRealtime(),
+                        orientation[0].toNormalizedDegrees()
                     )
                 }
                 .doOnNext { locationRepository.updateAzimuth(it) }
@@ -63,7 +63,9 @@ class AzimuthSensor(
     }
 }
 
-fun toMillisecondPeriod(framesPerSecond: Long): Long = TimeUnit.SECONDS.toMillis(1) / framesPerSecond
+fun Float.toNormalizedDegrees(): Double {
+    return (this * 180.0 / PI + 360.0) % 360.0
+}
 
 fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
     val nanosEstimateDelta = (nextEstimate.timestamp - measuredAtNanos)

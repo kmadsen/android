@@ -7,15 +7,9 @@
     android:layout_gravity="center">
 
     <ImageView
-        android:id="@+id/location_direction"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:srcCompat="@drawable/ic_current_location_direction" />
-
-    <ImageView
         android:id="@+id/location_dot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:srcCompat="@drawable/ic_current_location" />
+        app:srcCompat="@drawable/ic_current_wifi_location" />
 
 </FrameLayout>

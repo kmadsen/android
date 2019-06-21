@@ -2,18 +2,18 @@ package com.kmadsen.compass
 
 import android.content.Context
 import android.graphics.PixelFormat
-import android.hardware.SensorManager
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import com.gojuno.koptional.Optional
 import com.kmadsen.compass.azimuth.Azimuth
 import com.kmadsen.compass.azimuth.AzimuthSensor
-import com.kmadsen.compass.azimuth.toDegrees
 import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.sensors.AndroidSensors
 
 import com.kmadsen.compass.sensors.SensorGLRenderer
+import com.kmadsen.compass.wifilocation.WifiLocationResponse
+import com.kmadsen.compass.wifilocation.WifiLocationScanner
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -30,6 +30,7 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
     @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var azimuthSensor: AzimuthSensor
     @Inject lateinit var androidSensors: AndroidSensors
+    @Inject lateinit var wifiLocationScanner: WifiLocationScanner
 
     private val glSurfaceRenderer: SensorGLRenderer = SensorGLRenderer()
 
@@ -48,12 +49,11 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
         })
 
         compositeDisposable.add(azimuthSensor.observeAzimuth()
-            .withLatestFrom(locationSensor.observeLocations())
+            .withLatestFrom(wifiLocationScanner.observeWifiLocations(context))
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { azimuthLocationPair: Pair<Azimuth, Optional<BasicLocation>> ->
-                azimuthLocationPair.second.toNullable()?.apply {
+            .subscribe { azimuthLocationPair: Pair<Azimuth, WifiLocationResponse> ->
+                azimuthLocationPair.second.wifiLocation?.apply {
                     val screenLocation = mapboxMap.projection.toScreenLocation(LatLng(latitude, longitude))
-                    L.i("SensorGLRenderer screen location = ${screenLocation.x}, ${screenLocation.y}")
                     glSurfaceRenderer.updateLocationPosition(screenLocation)
                 }
             })

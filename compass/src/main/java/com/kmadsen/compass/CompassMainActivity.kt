@@ -7,6 +7,8 @@ import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
+import com.kmadsen.compass.wifilocation.WifiLocationScanner
+import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.compass_main_activity.*
