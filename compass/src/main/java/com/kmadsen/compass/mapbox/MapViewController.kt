@@ -28,7 +28,6 @@ class MapViewController {
     @Inject lateinit var mapboxMap: MapboxMap
     @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var azimuthSensor: AzimuthSensor
-    @Inject lateinit var wifiLocationScanner: WifiLocationScanner
 
     private val defaultZoom: Double = 12.0
     private var isShowingDirection: Boolean = false
@@ -42,7 +41,7 @@ class MapViewController {
         val rotationView = deviceDirectionView.findViewById<ImageView>(R.id.location_direction)
         rotationView.visibility = View.GONE
 
-        compositeDisposable.add(azimuthSensor.observeAzimuth()
+        compositeDisposable.add(azimuthSensor.observeAzimuth(mapOverlayView.context)
                 .withLatestFrom(locationSensor.observeLocations())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { azimuthLocationPair: Pair<Azimuth, Optional<BasicLocation>> ->

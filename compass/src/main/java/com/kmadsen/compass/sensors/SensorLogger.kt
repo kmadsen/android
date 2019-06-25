@@ -8,12 +8,15 @@ import android.hardware.SensorManager
 import android.location.Location
 import android.os.Build
 import com.kmadsen.compass.azimuth.Azimuth
+import com.kmadsen.compass.azimuth.Measure3d
+import com.kmadsen.compass.azimuth.lowPassFilter
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kylemadsen.core.FileLogger
 import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
 import io.reactivex.Completable
+import java.util.concurrent.TimeUnit
 
 class SensorLogger(
         private val androidSensors: AndroidSensors,
@@ -30,6 +33,9 @@ class SensorLogger(
         val magnetometerLogger: Completable = FileLogger(context)
                 .observeWritableFile("magnetometer")
                 .flatMapCompletable { writableFile -> writableFile.write3dSensor(Sensor.TYPE_MAGNETIC_FIELD) }
+        val magnetometerFilteredLogger: Completable = FileLogger(context)
+                .observeWritableFile("magnetometer_filtered")
+                .flatMapCompletable { writableFile -> writableFile.writeFiltered3dSensor(Sensor.TYPE_MAGNETIC_FIELD) }
         val pressureLogger: Completable = FileLogger(context)
                 .observeWritableFile("pressure")
                 .flatMapCompletable { writableFile -> writableFile.write1dSensor(Sensor.TYPE_PRESSURE) }
@@ -44,10 +50,48 @@ class SensorLogger(
                 accelerometerLogger,
                 gyroscopeLogger,
                 magnetometerLogger,
+                magnetometerFilteredLogger,
                 pressureLogger,
                 locationLogger,
                 azimuthLogger
         )
+    }
+
+    private fun WritableFile.writeFiltered3dSensor(sensorType: Int): Completable {
+        val magnetometer = Measure3d()
+        return androidSensors.observeSensor(sensorType)
+            .doOnSubscribe {
+                val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
+                writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
+                writeLine("measured_at recorded_at accuracy value_x value_y value_z")
+            }
+            .doOnNext { loggedEvent: LoggedEvent ->
+                magnetometer.lowPassFilter(loggedEvent)
+                val sensorLine = "${loggedEvent.sensorEvent.timestamp}" +
+                    " ${magnetometer.recordedAtNanos}" +
+                    " ${magnetometer.accuracy}" +
+                    " ${magnetometer.values[0]}" +
+                    " ${magnetometer.values[1]}" +
+                    " ${magnetometer.values[2]}"
+                writeLine(sensorLine)
+            }
+            .buffer(500).doOnNext {
+                flushBuffer()
+            }
+            .ignoreElements()
+            .onErrorComplete()
+    }
+
+    fun Measure3d.lowPassFilter(nextEstimate: LoggedEvent): Measure3d {
+        val nanosEstimateDelta = (nextEstimate.sensorEvent.timestamp - measuredAtNanos)
+        val delayEstimateNanos = TimeUnit.MILLISECONDS.toNanos(500).toDouble()
+        val alpha = Math.min(0.9, (nanosEstimateDelta / delayEstimateNanos)).toFloat()
+        x = lowPassFilter(x, nextEstimate.sensorEvent.values[0], alpha)
+        y = lowPassFilter(y, nextEstimate.sensorEvent.values[1], alpha)
+        z = lowPassFilter(z, nextEstimate.sensorEvent.values[2], alpha)
+        measuredAtNanos = nextEstimate.sensorEvent.timestamp
+        accuracy = nextEstimate.sensorEvent.accuracy
+        return this
     }
 
     private fun WritableFile.write3dSensor(sensorType: Int): Completable {
