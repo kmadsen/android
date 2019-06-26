@@ -41,7 +41,7 @@ class MapViewController {
         val rotationView = deviceDirectionView.findViewById<ImageView>(R.id.location_direction)
         rotationView.visibility = View.GONE
 
-        compositeDisposable.add(azimuthSensor.observeAzimuth(mapOverlayView.context)
+        compositeDisposable.add(azimuthSensor.observeAzimuth()
                 .withLatestFrom(locationSensor.observeLocations())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { azimuthLocationPair: Pair<Azimuth, Optional<BasicLocation>> ->
