@@ -1,11 +1,17 @@
 package com.kmadsen.compass.azimuth
 
+import kotlin.math.sqrt
+
 
 data class Vector3d(
     val values: DoubleArray
 ) {
     constructor(x: Double, y: Double, z: Double)
         : this(doubleArrayOf(x, y, z))
+
+    constructor(values: FloatArray) : this(
+        doubleArrayOf(values[0].toDouble(), values[1].toDouble(), values[2].toDouble())
+    )
 
     var x: Double
         get() = values[0]
@@ -18,7 +24,7 @@ data class Vector3d(
         set(value) { values[2] = value }
 
     fun length(): Double {
-        return Math.sqrt(x*x + y*y + z*z)
+        return sqrt(x*x + y*y + z*z)
     }
 
     fun normalize(): Vector3d {

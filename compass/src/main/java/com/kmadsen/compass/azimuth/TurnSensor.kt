@@ -8,7 +8,7 @@ import io.reactivex.functions.BiFunction
 import kotlin.math.PI
 
 
-class TurnCalculator(
+class TurnSensor(
     private val androidSensors: AndroidSensors
 ) {
 

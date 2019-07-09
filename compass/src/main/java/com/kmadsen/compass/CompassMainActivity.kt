@@ -36,8 +36,8 @@ class CompassMainActivity : AppCompatActivity() {
         compositeDisposable.add(sensorLogger.attachFileWriting(this)
                 .subscribe())
 
-        compassGLSurfaceView = map_gl_surface_view
-        compassGLSurfaceView.setZOrderMediaOverlay(true)
+//        compassGLSurfaceView = map_gl_surface_view
+//        compassGLSurfaceView.setZOrderMediaOverlay(true)
 
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
@@ -48,7 +48,7 @@ class CompassMainActivity : AppCompatActivity() {
             mapViewController.attach(findViewById(R.id.map_overlay_view))
 
             mapComponent.inject(compassGLSurfaceView)
-            compassGLSurfaceView.attach()
+//            compassGLSurfaceView.attach()
         }
     }
 

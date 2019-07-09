@@ -17,6 +17,7 @@ import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
 import io.reactivex.Completable
 import java.util.concurrent.TimeUnit
+import kotlin.math.min
 
 class SensorLogger(
         private val androidSensors: AndroidSensors,
@@ -27,6 +28,9 @@ class SensorLogger(
         val accelerometerLogger: Completable = FileLogger(context)
                 .observeWritableFile("accelerometer")
                 .flatMapCompletable { writableFile -> writableFile.write3dSensor(Sensor.TYPE_ACCELEROMETER) }
+        val gravityLogger: Completable = FileLogger(context)
+                .observeWritableFile("gravity")
+                .flatMapCompletable { writableFile -> writableFile.write3dSensor(Sensor.TYPE_GRAVITY) }
         val gyroscopeLogger: Completable = FileLogger(context)
                 .observeWritableFile("gyroscope")
                 .flatMapCompletable { writableFile -> writableFile.write3dSensor(Sensor.TYPE_GYROSCOPE) }
@@ -48,6 +52,7 @@ class SensorLogger(
 
         return Completable.mergeArray(
                 accelerometerLogger,
+                gravityLogger,
                 gyroscopeLogger,
                 magnetometerLogger,
                 magnetometerFilteredLogger,
@@ -85,7 +90,7 @@ class SensorLogger(
     fun Measure3d.lowPassFilter(nextEstimate: LoggedEvent): Measure3d {
         val nanosEstimateDelta = (nextEstimate.sensorEvent.timestamp - measuredAtNanos)
         val delayEstimateNanos = TimeUnit.MILLISECONDS.toNanos(500).toDouble()
-        val alpha = Math.min(0.9, (nanosEstimateDelta / delayEstimateNanos)).toFloat()
+        val alpha = min(0.9, (nanosEstimateDelta / delayEstimateNanos)).toFloat()
         x = lowPassFilter(x, nextEstimate.sensorEvent.values[0], alpha)
         y = lowPassFilter(y, nextEstimate.sensorEvent.values[1], alpha)
         z = lowPassFilter(z, nextEstimate.sensorEvent.values[2], alpha)

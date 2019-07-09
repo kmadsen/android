@@ -50,7 +50,7 @@ class AndroidSensors(private val sensorManager: SensorManager) {
 
     fun observeRawSensor(sensorType: Int): Flowable<SensorEvent> {
         return Flowable.create({ emitter ->
-            val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
+            val sensor: Sensor = sensorManager.getDefaultSensor(sensorType) ?: return@create
             val sensorListener = SensorRawListener(emitter)
             sensorManager.registerListener(sensorListener, sensor, toSamplingPeriodUs(100))
             emitter.setCancellable {
