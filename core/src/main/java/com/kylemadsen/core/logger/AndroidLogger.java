@@ -98,12 +98,12 @@ public enum AndroidLogger implements ILogger {
         long threadId = Thread.currentThread().getId();
         String tag = createTag();
         if (message.length() < 4000) {
-            String formattedMessage = String.format(Locale.ENGLISH, "%s_%d_%d: %s", tag, threadId, currentTimeMillis(), message);
+            String formattedMessage = String.format(Locale.ENGLISH, "%d_%d: %s", threadId, currentTimeMillis(), message);
             Log.println(priority, tag, formattedMessage);
         } else {
             String[] lines = message.split("\n");
             for (String line : lines) {
-                String formattedMessage = String.format(Locale.ENGLISH, "%s_%d_%d: %s", tag, threadId, currentTimeMillis(), line);
+                String formattedMessage = String.format(Locale.ENGLISH, "%d_%d: %s", threadId, currentTimeMillis(), line);
                 Log.println(priority, tag, formattedMessage);
             }
         }

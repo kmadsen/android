@@ -1,5 +1,7 @@
 package com.kmadsen.compass.azimuth
 
+import kotlin.math.sqrt
+
 data class Measure3d(
         val values: FloatArray,
         var measuredAtNanos: Long,
@@ -26,6 +28,15 @@ data class Measure3d(
     var z: Float
         get() = values[2]
         set(value) { values[2] = value }
+
+    fun normalized(): FloatArray {
+        val clone = values.clone()
+        val magnitude = sqrt(clone[0]*clone[0] + clone[1]*clone[1] + clone[2]*clone[2])
+        clone[0] /= magnitude
+        clone[1] /= magnitude
+        clone[2] /= magnitude
+        return clone
+    }
 
     override fun toString(): String {
         return "Measure3d(x=${values[0]}, y=${values[1]}, z=${values[2]}," +

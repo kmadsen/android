@@ -7,8 +7,6 @@ import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
-import com.kmadsen.compass.wifilocation.WifiLocationScanner
-import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.compass_main_activity.*
@@ -38,8 +36,8 @@ class CompassMainActivity : AppCompatActivity() {
         compositeDisposable.add(sensorLogger.attachFileWriting(this)
                 .subscribe())
 
-        compassGLSurfaceView = map_gl_surface_view
-        compassGLSurfaceView.setZOrderMediaOverlay(true)
+//        compassGLSurfaceView = map_gl_surface_view
+//        compassGLSurfaceView.setZOrderMediaOverlay(true)
 
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
@@ -50,7 +48,7 @@ class CompassMainActivity : AppCompatActivity() {
             mapViewController.attach(findViewById(R.id.map_overlay_view))
 
             mapComponent.inject(compassGLSurfaceView)
-            compassGLSurfaceView.attach()
+//            compassGLSurfaceView.attach()
         }
     }
 
@@ -66,7 +64,7 @@ class CompassMainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         compositeDisposable.clear()
-        compassGLSurfaceView.detach()
+//        compassGLSurfaceView.detach()
         mapViewController.detach()
         super.onDestroy()
     }

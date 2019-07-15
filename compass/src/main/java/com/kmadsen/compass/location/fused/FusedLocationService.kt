@@ -8,7 +8,7 @@ import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.kylemadsen.core.logger.L
 import java.util.concurrent.TimeUnit
 
-class FusedLocationService(val application: Application) {
+class FusedLocationService(private val application: Application) {
 
     private val locationRequest: LocationRequest = LocationRequest.create()
             .setPriority(PRIORITY_HIGH_ACCURACY)
