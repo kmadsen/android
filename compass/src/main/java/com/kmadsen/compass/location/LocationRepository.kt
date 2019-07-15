@@ -56,7 +56,7 @@ class LocationRepository {
         deviceDirectionRelay.accept(deviceDirectionMeasure1d)
     }
 
-    fun observeDeviceDirection(deviceDirectionMeasure1d: Measure1d): Observable<Measure1d> {
+    fun observeDeviceDirection(): Observable<Measure1d> {
         return deviceDirectionRelay
     }
 
