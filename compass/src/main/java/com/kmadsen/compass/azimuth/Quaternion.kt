@@ -1,5 +1,7 @@
 package com.kmadsen.compass.azimuth
 
+import kotlin.math.sqrt
+
 data class Quaternion(
     val values: DoubleArray
 ) {
@@ -20,7 +22,7 @@ data class Quaternion(
         get() = values[3]
         set(value) { values[3] = value }
 
-    fun length(): Double = Math.sqrt(x*x + y*y + z*z + w*w)
+    fun length(): Double = sqrt(x*x + y*y + z*z + w*w)
 
     fun normalize(): Quaternion {
         val length = length()
@@ -33,6 +35,20 @@ data class Quaternion(
         return this
     }
 
-    // creates a vector out of the quaternion
     fun vector3d(): Vector3d = Vector3d(x, y, z)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Quaternion
+
+        if (!values.contentEquals(other.values)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return values.contentHashCode()
+    }
 }
