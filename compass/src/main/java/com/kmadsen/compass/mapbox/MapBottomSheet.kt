@@ -9,8 +9,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kmadsen.compass.R
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
-import com.kmadsen.compass.time.millisToSeconds
-import com.kmadsen.compass.time.nanosToSeconds
 import com.kmadsen.compass.walking.WalkingStateSensor
 import com.kylemadsen.core.FpsChoreographer
 import com.kylemadsen.core.logger.L
@@ -81,7 +79,7 @@ class MapBottomSheet(
             }
             azimuth_text.text =
                 staleLocationStringMessage +
-                "azimuth %.2f".format(it.deviceDirectionDegrees)
+                "azimuth %.2f".format(it.value)
         })
         compositeDisposable.add(walkingStateSensor.observeWalkingState().observeOn(AndroidSchedulers.mainThread()).subscribe {
             walking_state_text.text = "walking stale seconds ${it.realtimeNotWalkingSeconds}\n" +

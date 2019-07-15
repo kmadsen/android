@@ -7,11 +7,10 @@ import android.widget.ImageView
 import androidx.core.view.animation.PathInterpolatorCompat
 import com.gojuno.koptional.Optional
 import com.kmadsen.compass.R
-import com.kmadsen.compass.azimuth.Azimuth
-import com.kmadsen.compass.azimuth.AzimuthSensor
+import com.kmadsen.compass.azimuth.DeviceDirectionSensor
+import com.kmadsen.compass.azimuth.Measure1d
 import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationSensor
-import com.kmadsen.compass.wifilocation.WifiLocationScanner
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -27,7 +26,7 @@ class MapViewController {
 
     @Inject lateinit var mapboxMap: MapboxMap
     @Inject lateinit var locationSensor: LocationSensor
-    @Inject lateinit var azimuthSensor: AzimuthSensor
+    @Inject lateinit var deviceDirectionSensor: DeviceDirectionSensor
 
     private val defaultZoom: Double = 12.0
     private var isShowingDirection: Boolean = false
@@ -41,16 +40,16 @@ class MapViewController {
         val rotationView = deviceDirectionView.findViewById<ImageView>(R.id.location_direction)
         rotationView.visibility = View.GONE
 
-        compositeDisposable.add(azimuthSensor.observeAzimuth()
+        compositeDisposable.add(deviceDirectionSensor.observeHorizontalDirection()
                 .withLatestFrom(locationSensor.observeLocations())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { azimuthLocationPair: Pair<Azimuth, Optional<BasicLocation>> ->
+                .subscribe { azimuthLocationPair: Pair<Measure1d, Optional<BasicLocation>> ->
                     azimuthLocationPair.second.toNullable()?.apply {
                         val screenLocation = mapboxMap.projection.toScreenLocation(LatLng(latitude, longitude))
                         deviceDirectionView.translationX = screenLocation.x - deviceDirectionView.right / 2
                         deviceDirectionView.translationY = screenLocation.y - deviceDirectionView.bottom / 2
 
-                        val angle = azimuthLocationPair.first.deviceDirectionDegrees
+                        val angle = azimuthLocationPair.first.value
                         if (angle == null) {
                             hideDirection(rotationView)
                         } else {

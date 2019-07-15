@@ -7,7 +7,7 @@ import android.hardware.SensorDirectChannel
 import android.hardware.SensorManager
 import android.location.Location
 import android.os.Build
-import com.kmadsen.compass.azimuth.Azimuth
+import com.kmadsen.compass.azimuth.Measure1d
 import com.kmadsen.compass.azimuth.Measure3d
 import com.kmadsen.compass.azimuth.lowPassFilter
 import com.kmadsen.compass.location.LocationRepository
@@ -179,14 +179,14 @@ class SensorLogger(
     private fun WritableFile.writeAzimuth(): Completable {
         return locationRepository.observeAzimuth()
                 .doOnSubscribe {
-                    writeLine("name=GpsLocations vendor=Google current_time_ms=${System.currentTimeMillis()}")
-                    writeLine("recordedAtMs deviceDirectionDegrees deviceDirectionDegrees northDirectionRadians northDirectionDegrees")
+                    writeLine("name=AzimuthSensor vendor=kmadsen current_time_ms=${System.currentTimeMillis()}")
+                    writeLine("recordedAtMs value azimuthDegrees")
                 }
-                .doOnNext { azimuth: Azimuth ->
+                .doOnNext { measure1d: Measure1d ->
                     val sensorLine =
-                            " ${azimuth.recordedAtMilliseconds}" +
-                            " ${azimuth.deviceDirectionDegrees}" +
-                            " ${azimuth.deviceDirectionDegrees}"
+                            " ${measure1d.recordedAtMs}" +
+                            " ${measure1d.value}" +
+                            " ${measure1d.value}"
                     writeLine(sensorLine)
                     flushBuffer()
                 }

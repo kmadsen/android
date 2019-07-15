@@ -7,7 +7,6 @@ import android.os.SystemClock
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.time.toMillisecondPeriod
-import com.kylemadsen.core.logger.L
 import io.reactivex.Completable
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
@@ -16,7 +15,6 @@ import kotlin.math.min
 
 class AzimuthSensor(
         private val androidSensors: AndroidSensors,
-        private val turnSensor: TurnSensor,
         private val locationRepository: LocationRepository
 ) {
 
@@ -25,9 +23,8 @@ class AzimuthSensor(
     private val rotationMatrix = FloatArray(9)
     private val orientation = FloatArray(3)
 
-    fun observeAzimuth(): Observable<Azimuth> {
+    fun observeAzimuth(): Observable<Measure1d> {
         return locationRepository.observeAzimuth()
-            .startWith(Azimuth(0L, null))
             .mergeWith(attachSensorUpdates())
     }
 
@@ -35,21 +32,8 @@ class AzimuthSensor(
         return Completable.mergeArray(
             attachAccelerometerUpdates(),
             attachMagnetometerUpdates(),
-            attachTurnCalculator(),
             attachAzimuthUpdates()
         )
-    }
-
-    private fun attachTurnCalculator(): Completable {
-        return turnSensor.observeTurn()
-//            .doOnNext { turnDegrees ->
-//                val azimuth = Azimuth(
-//                    SystemClock.elapsedRealtime(),
-//                    turnDegrees
-//                )
-//                locationRepository.updateAzimuth(azimuth)
-//            }
-            .ignoreElements()
     }
 
     private fun attachAccelerometerUpdates(): Completable {
@@ -72,9 +56,9 @@ class AzimuthSensor(
                     SensorManager.getOrientation(rotationMatrix, orientation)
                     orientation[0].toNormalizedDegrees()
                 } else null
-                Azimuth(
+                Measure1d(
                     SystemClock.elapsedRealtime(),
-                    deviceDirectionDegrees
+                    deviceDirectionDegrees?.toFloat()
                 )
             }
             .doOnNext { locationRepository.updateAzimuth(it) }

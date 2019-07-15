@@ -2,21 +2,23 @@ package com.kmadsen.compass.azimuth
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
+import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
+import com.kylemadsen.core.time.DeviceClock
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import kotlin.math.PI
 
 
 class TurnSensor(
-    private val androidSensors: AndroidSensors
+    private val androidSensors: AndroidSensors,
+    private val locationRepository: LocationRepository
 ) {
+    fun observeTurn(startDegrees: Double = 0.0): Observable<Measure1d> {
+        var turnDegrees = startDegrees.toNormalizedRadians()
+        var lastTurnSample = 0.0
+        var lastTimeNanos = 0L
 
-    var turnDegrees = 0.0
-    var lastTurnSample = 0.0
-    var lastTimeNanos = 0L
-
-    fun observeTurn(): Observable<Double> {
         return androidSensors.observeRawSensor(Sensor.TYPE_GRAVITY)
             .withLatestFrom(androidSensors.observeRawSensor(Sensor.TYPE_GYROSCOPE),
                 BiFunction { gravityEvent: SensorEvent, gyroEvent: SensorEvent ->
@@ -40,11 +42,23 @@ class TurnSensor(
                     turnDegrees
             })
             .map {
-                // to normalized degrees
-                (it * 180.0 / PI + 360.0) % 360.0
+                val value = it.toNormalizedDegrees()
+                Measure1d(DeviceClock.elapsedMillis(), value.toFloat())
+            }
+            .doOnNext {
+                locationRepository.updateTurnDegrees(it)
             }
             .toObservable()
     }
+}
+
+fun Double.toNormalizedRadians(): Double {
+    val twoPi = PI * 2.0
+    return (this * PI / 180.0 + twoPi) % twoPi
+}
+
+fun Double.toNormalizedDegrees(): Double {
+    return (this * 180.0 / PI + 360.0) % 360.0
 }
 
 private fun rotateToGravityDown(gravity: Vector3d, gyro: Vector3d): Vector3d {

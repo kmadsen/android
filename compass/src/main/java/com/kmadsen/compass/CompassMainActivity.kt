@@ -64,7 +64,7 @@ class CompassMainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         compositeDisposable.clear()
-        compassGLSurfaceView.detach()
+//        compassGLSurfaceView.detach()
         mapViewController.detach()
         super.onDestroy()
     }
