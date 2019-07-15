@@ -44,20 +44,20 @@ class LocationRepository {
         azimuthRelay.accept(azimuthMeasure1d)
     }
 
-    fun updateTurnDegrees(turnDegreesMeasure1d: Measure1d) {
-        turnRelay.accept(turnDegreesMeasure1d)
-    }
-
     fun observeTurnDegrees(): Observable<Measure1d> {
         return turnRelay
     }
 
-    fun updateDeviceDirection(deviceDirectionMeasure1d: Measure1d) {
-        deviceDirectionRelay.accept(deviceDirectionMeasure1d)
+    fun updateTurnDegrees(turnDegreesMeasure1d: Measure1d) {
+        turnRelay.accept(turnDegreesMeasure1d)
     }
 
     fun observeDeviceDirection(): Observable<Measure1d> {
         return deviceDirectionRelay
+    }
+
+    fun updateDeviceDirection(deviceDirectionMeasure1d: Measure1d) {
+        deviceDirectionRelay.accept(deviceDirectionMeasure1d)
     }
 
     fun observeWalkingState(): Observable<WalkingState> {

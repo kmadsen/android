@@ -49,6 +49,12 @@ class SensorLogger(
         val azimuthLogger: Completable = FileLogger(context)
                 .observeWritableFile("azimuth")
                 .flatMapCompletable { writableFile -> writableFile.writeAzimuth() }
+        val turnLogger: Completable = FileLogger(context)
+                .observeWritableFile("turn")
+                .flatMapCompletable { writableFile -> writableFile.writeTurn() }
+        val directionLogger: Completable = FileLogger(context)
+                .observeWritableFile("direction")
+                .flatMapCompletable { writableFile -> writableFile.writeDeviceDirection() }
 
         return Completable.mergeArray(
                 accelerometerLogger,
@@ -58,7 +64,9 @@ class SensorLogger(
                 magnetometerFilteredLogger,
                 pressureLogger,
                 locationLogger,
-                azimuthLogger
+                azimuthLogger,
+                turnLogger,
+                directionLogger
         )
     }
 
@@ -192,6 +200,42 @@ class SensorLogger(
                 }
                 .ignoreElements()
                 .onErrorComplete()
+    }
+
+    private fun WritableFile.writeTurn(): Completable {
+        return locationRepository.observeTurnDegrees()
+            .doOnSubscribe {
+                writeLine("name=TurnSensor vendor=kmadsen current_time_ms=${System.currentTimeMillis()}")
+                writeLine("recordedAtMs value turnDegrees")
+            }
+            .doOnNext { measure1d: Measure1d ->
+                val sensorLine =
+                        " ${measure1d.recordedAtMs}" +
+                        " ${measure1d.value}" +
+                        " ${measure1d.value}"
+                writeLine(sensorLine)
+                flushBuffer()
+            }
+            .ignoreElements()
+            .onErrorComplete()
+    }
+
+    private fun WritableFile.writeDeviceDirection(): Completable {
+        return locationRepository.observeDeviceDirection()
+            .doOnSubscribe {
+                writeLine("name=DeviceDirectionSensor vendor=kmadsen current_time_ms=${System.currentTimeMillis()}")
+                writeLine("recordedAtMs value deviceDirectionDegrees")
+            }
+            .doOnNext { measure1d: Measure1d ->
+                val sensorLine =
+                        " ${measure1d.recordedAtMs}" +
+                        " ${measure1d.value}" +
+                        " ${measure1d.value}"
+                writeLine(sensorLine)
+                flushBuffer()
+            }
+            .ignoreElements()
+            .onErrorComplete()
     }
 
     companion object {
