@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.hardware.SensorManager
 import android.net.wifi.WifiManager
 import com.kmadsen.compass.azimuth.AzimuthSensor
+import com.kmadsen.compass.azimuth.TurnSensor
 import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationSensor
@@ -77,11 +78,19 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
     }
 
     @Provides
+    fun provideTurnSensor(
+        androidSensors: AndroidSensors
+    ): TurnSensor {
+        return TurnSensor(androidSensors)
+    }
+
+    @Provides
     fun provideAzimuthSensor(
             androidSensors: AndroidSensors,
+            turnSensor: TurnSensor,
             locationRepository: LocationRepository
     ): AzimuthSensor {
-        return AzimuthSensor(androidSensors, locationRepository)
+        return AzimuthSensor(androidSensors, turnSensor, locationRepository)
     }
 
     @Provides

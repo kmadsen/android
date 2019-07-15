@@ -16,12 +16,12 @@ import kotlin.math.min
 
 class AzimuthSensor(
         private val androidSensors: AndroidSensors,
+        private val turnSensor: TurnSensor,
         private val locationRepository: LocationRepository
 ) {
 
     private val accelerometer = Measure3d()
     private val magnetometer = Measure3d()
-    private val turnCalculator = TurnSensor(androidSensors)
     private val rotationMatrix = FloatArray(9)
     private val orientation = FloatArray(3)
 
@@ -41,7 +41,7 @@ class AzimuthSensor(
     }
 
     private fun attachTurnCalculator(): Completable {
-        return turnCalculator.observeTurn()
+        return turnSensor.observeTurn()
 //            .doOnNext { turnDegrees ->
 //                val azimuth = Azimuth(
 //                    SystemClock.elapsedRealtime(),
@@ -67,22 +67,11 @@ class AzimuthSensor(
     private fun attachAzimuthUpdates(): Completable {
         return Observable.interval(0, toMillisecondPeriod(30), TimeUnit.MILLISECONDS)
             .map {
-                val accelerometerVector3d = Vector3d(accelerometer.values)
-                val accelerometerLength = accelerometerVector3d.length()
-                L.i("azimuth acc %s", accelerometerVector3d.values.joinToString())
-                L.i("azimuth acc length %s", accelerometerLength)
-                L.i("azimuth acc norm %s", accelerometerVector3d.normalize().values.joinToString())
-                val magnetometerVector3d = Vector3d(magnetometer.values)
-                L.i("azimuth mag %s", magnetometerVector3d.values.joinToString())
-                val magnetometerLength = magnetometerVector3d.length()
-                L.i("azimuth mag length %s", magnetometerLength)
-                L.i("azimuth mag norm %s", magnetometerVector3d.normalize().values.joinToString())
-                SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
-                SensorManager.getOrientation(rotationMatrix, orientation)
-                val deviceDirectionDegrees = orientation[0].toNormalizedDegrees()
-//                val deviceDirectionDegrees = if (magnetometerLength < 50f && magnetometerLength > 40f) {
-//                    orientation[0].toNormalizedDegrees()
-//                } else null
+                val isValid = SensorManager.getRotationMatrix(rotationMatrix, null, accelerometer.values, magnetometer.values)
+                val deviceDirectionDegrees = if (isValid) {
+                    SensorManager.getOrientation(rotationMatrix, orientation)
+                    orientation[0].toNormalizedDegrees()
+                } else null
                 Azimuth(
                     SystemClock.elapsedRealtime(),
                     deviceDirectionDegrees
@@ -101,13 +90,9 @@ fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
     val nanosEstimateDelta = (nextEstimate.timestamp - measuredAtNanos)
     val delayEstimateNanos = TimeUnit.MILLISECONDS.toNanos(500).toDouble()
     val alpha = min(0.9, (nanosEstimateDelta / delayEstimateNanos)).toFloat()
-    val transX = (nextEstimate.values[0] + 40.4648245f)
-    val transY = (nextEstimate.values[1] + 8.752111499999998f)
-    val transZ = (nextEstimate.values[2] + 69.4366635f)
-
-    x = lowPassFilter(x, transX, alpha)
-    y = lowPassFilter(y, transY, alpha)
-    z = lowPassFilter(z, transZ, alpha)
+    x = lowPassFilter(x, nextEstimate.values[0], alpha)
+    y = lowPassFilter(y, nextEstimate.values[1], alpha)
+    z = lowPassFilter(z, nextEstimate.values[2], alpha)
     measuredAtNanos = nextEstimate.timestamp
     recordedAtNanos = SystemClock.elapsedRealtimeNanos()
     accuracy = nextEstimate.accuracy
