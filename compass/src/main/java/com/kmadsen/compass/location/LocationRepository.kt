@@ -17,6 +17,7 @@ class LocationRepository {
     private val azimuthRelay: BehaviorRelay<Measure1d> = BehaviorRelay.create()
     private val turnRelay: BehaviorRelay<Measure1d> = BehaviorRelay.create()
     private val deviceDirectionRelay: BehaviorRelay<Measure1d> = BehaviorRelay.create()
+    private val altitudeMetersRelay: BehaviorRelay<Measure1d> = BehaviorRelay.create()
     private val walkingStateRelay: BehaviorRelay<WalkingState> = BehaviorRelay.create()
     private val wifiLocationRelay: BehaviorRelay<WifiLocationResponse> = BehaviorRelay.create()
 
@@ -58,6 +59,14 @@ class LocationRepository {
 
     fun updateDeviceDirection(deviceDirectionMeasure1d: Measure1d) {
         deviceDirectionRelay.accept(deviceDirectionMeasure1d)
+    }
+
+    fun observeAltitudeMeters(): Observable<Measure1d> {
+        return altitudeMetersRelay
+    }
+
+    fun updateAltitudeMeters(altitudeMeters: Measure1d) {
+        altitudeMetersRelay.accept(altitudeMeters)
     }
 
     fun observeWalkingState(): Observable<WalkingState> {

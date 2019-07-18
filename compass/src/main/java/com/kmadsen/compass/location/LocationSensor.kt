@@ -57,6 +57,7 @@ private fun FusedLocation.toBasicLocation(): BasicLocation? {
     if (location == null) return null
     return BasicLocation(
             location.time,
+            location.elapsedRealtimeNanos,
             location.latitude,
             location.longitude,
             getNullableValue(location.hasAccuracy(), location.accuracy),

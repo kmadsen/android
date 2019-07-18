@@ -1,4 +1,4 @@
-package com.kmadsen.compass.time
+package com.kylemadsen.core.time
 
 import java.util.concurrent.TimeUnit
 

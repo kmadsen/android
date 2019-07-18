@@ -6,7 +6,7 @@ import android.hardware.SensorManager
 import android.os.SystemClock
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.sensors.AndroidSensors
-import com.kmadsen.compass.time.toMillisecondPeriod
+import com.kylemadsen.core.time.toMillisecondPeriod
 import io.reactivex.Completable
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit

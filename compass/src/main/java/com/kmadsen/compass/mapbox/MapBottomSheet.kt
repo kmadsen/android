@@ -1,6 +1,7 @@
 package com.kmadsen.compass.mapbox
 
 import android.content.Context
+import android.hardware.Sensor
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.LinearLayout
 import com.gojuno.koptional.Optional
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kmadsen.compass.R
+import com.kmadsen.compass.azimuth.AltitudeSensor
 import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.azimuth.Measure1d
 import com.kmadsen.compass.location.BasicLocation
@@ -35,6 +37,7 @@ class MapBottomSheet(
 
     @Inject lateinit var locationRepository: LocationRepository
     @Inject lateinit var androidSensors: AndroidSensors
+    @Inject lateinit var altitudeSensor: AltitudeSensor
     @Inject lateinit var walkingStateSensor: WalkingStateSensor
 
     private lateinit var standardBottomSheetBehavior: BottomSheetBehavior<View>
@@ -74,7 +77,21 @@ class MapBottomSheet(
                     "  altitude ${it.basicLocation?.altitudeMeters.formatDecimal()}\n" +
                     "  bearing ${it.basicLocation?.bearingDegrees.formatDecimal()}\n" +
                     "  speed ${it.basicLocation?.speedMetersPerSecond.formatDecimal()}\n" +
-                    "  staleSeconds ${it.staleSeconds.formatDecimal()}"
+                    "  stale clock1=${it.staleSeconds.formatDecimal()} clock2=${it.staleDisplaySeconds.formatDecimal()}"
+        })
+
+        var firstAltitudeMeters: Float? = null
+        var firstAltitudeMetersMeasuredMs: Long? = null
+        compositeDisposable.add(altitudeSensor.observeAltitude().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            if (firstAltitudeMeters == null) {
+                firstAltitudeMeters = it.value
+                firstAltitudeMetersMeasuredMs = it.recordedAtMs
+            }
+            val deltaSinceOpen = it.value!! - firstAltitudeMeters!!
+            val deltaSecondsSinceOpen = (DeviceClock.elapsedMillis() - firstAltitudeMetersMeasuredMs!!) / TimeUnit.SECONDS.toMillis(1).toDouble()
+            pressure_text.text = "altitude meters ${it.value!!.formatDecimal()}   feet ${it.value.metersToFeet().formatDecimal()}\n" +
+                    "  delta meters ${deltaSinceOpen.formatDecimal()}        feet ${deltaSinceOpen.metersToFeet().formatDecimal()}\n" +
+                    "  delta seconds ${deltaSecondsSinceOpen.toFloat().formatDecimal()}"
         })
 
         compositeDisposable.add(observeDeviceDirection().observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -118,13 +135,17 @@ class MapBottomSheet(
             locationRepository.observeLocation(),
             BiFunction { _, t2 ->
                 val basicLocation = t2.toNullable()
-                val staleMillis = if (basicLocation != null) {
+                val staleDisplayMillis = if (basicLocation != null) {
                     DeviceClock.displayMillis() - basicLocation.timeMillis
                 } else {
                     DeviceClock.elapsedMillis() - startElapsedMs
                 }
+                val staleMillis = if (basicLocation != null) {
+                    DeviceClock.elapsedMillis() - TimeUnit.NANOSECONDS.toMillis(basicLocation.elapsedRealtimeNanos)
+                } else staleDisplayMillis
+                val staleDisplaySeconds = staleDisplayMillis / TimeUnit.SECONDS.toMillis(1).toDouble()
                 val staleSeconds = staleMillis / TimeUnit.SECONDS.toMillis(1).toDouble()
-                SensorLocation(basicLocation, staleSeconds)
+                SensorLocation(basicLocation, staleDisplaySeconds, staleSeconds)
             }
         )
     }
@@ -134,6 +155,8 @@ class MapBottomSheet(
         super.onDetachedFromWindow()
     }
 }
+
+private fun Float.metersToFeet(): Float = this * 3.28084f
 
 private fun <Value> Value.formatDecimal(): String {
     this ?: return "null"
