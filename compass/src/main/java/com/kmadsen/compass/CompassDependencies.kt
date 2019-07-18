@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.hardware.SensorManager
 import android.net.wifi.WifiManager
+import com.kmadsen.compass.azimuth.AltitudeSensor
 import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.azimuth.DeviceDirectionSensor
 import com.kmadsen.compass.azimuth.TurnSensor
@@ -101,6 +102,14 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
         locationRepository: LocationRepository
     ): DeviceDirectionSensor {
         return DeviceDirectionSensor(azimuthSensor, turnSensor, locationRepository)
+    }
+
+    @Provides
+    fun provideAltitudeSensor(
+        androidSensors: AndroidSensors,
+        locationRepository: LocationRepository
+    ): AltitudeSensor {
+        return AltitudeSensor(androidSensors, locationRepository)
     }
 
     @Provides

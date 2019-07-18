@@ -40,9 +40,6 @@ class SensorLogger(
         val magnetometerFilteredLogger: Completable = FileLogger(context)
                 .observeWritableFile("magnetometer_filtered")
                 .flatMapCompletable { writableFile -> writableFile.writeFiltered3dSensor(Sensor.TYPE_MAGNETIC_FIELD) }
-        val pressureLogger: Completable = FileLogger(context)
-                .observeWritableFile("pressure")
-                .flatMapCompletable { writableFile -> writableFile.write1dSensor(Sensor.TYPE_PRESSURE) }
         val locationLogger: Completable = FileLogger(context)
                 .observeWritableFile("gps_locations")
                 .flatMapCompletable { writableFile -> writableFile.writeLocations() }
@@ -55,6 +52,12 @@ class SensorLogger(
         val directionLogger: Completable = FileLogger(context)
                 .observeWritableFile("direction")
                 .flatMapCompletable { writableFile -> writableFile.writeDeviceDirection() }
+        val pressureLogger: Completable = FileLogger(context)
+                .observeWritableFile("pressure")
+                .flatMapCompletable { writableFile -> writableFile.write1dSensor(Sensor.TYPE_PRESSURE) }
+        val altitudeLogger: Completable = FileLogger(context)
+                .observeWritableFile("altitude")
+                .flatMapCompletable { writableFile -> writableFile.writeAltitude() }
 
         return Completable.mergeArray(
                 accelerometerLogger,
@@ -66,7 +69,8 @@ class SensorLogger(
                 locationLogger,
                 azimuthLogger,
                 turnLogger,
-                directionLogger
+                directionLogger,
+                altitudeLogger
         )
     }
 
@@ -188,12 +192,11 @@ class SensorLogger(
         return locationRepository.observeAzimuth()
                 .doOnSubscribe {
                     writeLine("name=AzimuthSensor vendor=kmadsen current_time_ms=${System.currentTimeMillis()}")
-                    writeLine("recordedAtMs value azimuthDegrees")
+                    writeLine("recordedAtMs azimuthDegrees")
                 }
                 .doOnNext { measure1d: Measure1d ->
                     val sensorLine =
                             " ${measure1d.recordedAtMs}" +
-                            " ${measure1d.value}" +
                             " ${measure1d.value}"
                     writeLine(sensorLine)
                     flushBuffer()
@@ -224,12 +227,28 @@ class SensorLogger(
         return locationRepository.observeDeviceDirection()
             .doOnSubscribe {
                 writeLine("name=DeviceDirectionSensor vendor=kmadsen current_time_ms=${System.currentTimeMillis()}")
-                writeLine("recordedAtMs value deviceDirectionDegrees")
+                writeLine("recordedAtMs deviceDirectionDegrees")
             }
             .doOnNext { measure1d: Measure1d ->
                 val sensorLine =
                         " ${measure1d.recordedAtMs}" +
-                        " ${measure1d.value}" +
+                        " ${measure1d.value}"
+                writeLine(sensorLine)
+                flushBuffer()
+            }
+            .ignoreElements()
+            .onErrorComplete()
+    }
+
+    private fun WritableFile.writeAltitude(): Completable {
+        return locationRepository.observeAltitudeMeters()
+            .doOnSubscribe {
+                writeLine("name=AltitudeSensor vendor=kmadsen current_time_ms=${System.currentTimeMillis()}")
+                writeLine("recordedAtMs altitudeMeters")
+            }
+            .doOnNext { measure1d: Measure1d ->
+                val sensorLine =
+                    " ${measure1d.recordedAtMs}" +
                         " ${measure1d.value}"
                 writeLine(sensorLine)
                 flushBuffer()
