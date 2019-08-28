@@ -15,12 +15,15 @@ class AltitudeSensor(
     fun observeAltitude(): Observable<Measure1d> {
         return androidSensors.observeRawSensor(Sensor.TYPE_PRESSURE)
             .map {
-                val altitudeMeters = SensorManager
-                    .getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, it.values[0])
+                val altitudeMeters = getAltitude(it.values[0])
                 Measure1d(TimeUnit.NANOSECONDS.toMillis(it.timestamp), altitudeMeters)
             }.toObservable()
             .doAfterNext {
                 locationRepository.updateAltitudeMeters(it)
             }
+    }
+
+    private fun getAltitude(pressure: Float): Float {
+        return SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure)
     }
 }
