@@ -1,7 +1,9 @@
 package com.kylemadsen.testandroid
 
 import android.view.View
+import android.widget.TextView
 import com.kmadsen.compass.CompassMainActivity
+import com.kylemadsen.core.time.DeviceClock
 import com.kylemadsen.core.view.ViewController
 import com.kylemadsen.core.view.ViewRouter
 import com.kylemadsen.testandroid.animation.AnimationMainActivity
@@ -34,6 +36,9 @@ class MainViewController(
         gotoCoordinatorLayoutButton.setOnClickListener {
             viewRouter.goToActivity(CoordinatorLayoutActivity::class.java)
         }
+
+        val clockInfoText: TextView = view.find(R.id.clock_info)
+        clockInfoText.text = DeviceClock.getClockDriftInfo()
     }
 
     override fun detach() {
