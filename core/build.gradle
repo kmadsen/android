@@ -47,3 +47,6 @@ dependencies {
 
     api 'com.jakewharton.rxrelay2:rxrelay:2.1.0'
 }
+
+dependencies {
+    api 'com.squareup.retrofit2:converter-gson:2.5.0'}

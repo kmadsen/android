@@ -1,7 +1,11 @@
 package com.kylemadsen.testandroid
 
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import com.kmadsen.compass.CompassMainActivity
+import com.kylemadsen.core.logger.L
+import com.kylemadsen.core.time.DeviceClock
 import com.kylemadsen.core.view.ViewController
 import com.kylemadsen.core.view.ViewRouter
 import com.kylemadsen.testandroid.animation.AnimationMainActivity
@@ -33,6 +37,14 @@ class MainViewController(
         val gotoCoordinatorLayoutButton: View = view.find(R.id.goto_layout_button)
         gotoCoordinatorLayoutButton.setOnClickListener {
             viewRouter.goToActivity(CoordinatorLayoutActivity::class.java)
+        }
+
+        val clockInfoText: TextView = view.find(R.id.clock_info)
+        clockInfoText.text = DeviceClock.getClockDriftInfo()
+        val resetDriftButton: Button = view.find(R.id.clock_info_rest)
+        resetDriftButton.setOnClickListener {
+            DeviceClock.resetClockDriftInfo()
+            clockInfoText.text = DeviceClock.getClockDriftInfo()
         }
     }
 

@@ -25,6 +25,17 @@
         android:layout_height="wrap_content"
         android:text="@string/activity_main_coordinator_layout" />
 
+    <TextView
+        android:id="@+id/clock_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/clock_info_rest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_main_clock_drift_info"
+        />
 
 </merge>

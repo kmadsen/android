@@ -9,6 +9,7 @@
     <string name="activity_main_animations">Go to Animations</string>
     <string name="activity_main_compass">Go to Compass</string>
     <string name="activity_main_coordinator_layout">Go to Coordinator Layout</string>
+    <string name="activity_main_clock_drift_info">Reset clock drift info</string>
 
     <string name="ar_availability_checking">Checking</string>
     <string name="ar_availability_supported">Supported</string>
