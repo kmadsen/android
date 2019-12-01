@@ -68,7 +68,7 @@ dependencies {
     implementation "android.arch.lifecycle:reactivestreams:$lifecycle_version"
 
     // 'api' so the main app doesn't have to also include it as a dependency
-    api 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.3.0'
+    api 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.4.0'
 }
 repositories {
     mavenCentral()

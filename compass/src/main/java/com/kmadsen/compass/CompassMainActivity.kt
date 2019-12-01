@@ -8,6 +8,7 @@ import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.AndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
 import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.Style
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.compass_main_activity.*
 import javax.inject.Inject
@@ -17,7 +18,7 @@ class CompassMainActivity : AppCompatActivity() {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private lateinit var mapViewController: MapViewController
-    private lateinit var compassGLSurfaceView: CompassGLSurfaceView
+//    private lateinit var compassGLSurfaceView: CompassGLSurfaceView
 
     @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var sensorLogger: SensorLogger
@@ -47,7 +48,8 @@ class CompassMainActivity : AppCompatActivity() {
             mapComponent.inject(mapViewController)
             mapViewController.attach(findViewById(R.id.map_overlay_view))
 
-            mapComponent.inject(compassGLSurfaceView)
+            mapboxMap.setStyle(Style.TRAFFIC_DAY)
+//            mapComponent.inject(compassGLSurfaceView)
 //            compassGLSurfaceView.attach()
         }
     }

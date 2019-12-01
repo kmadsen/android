@@ -11,6 +11,7 @@ import com.kylemadsen.core.view.ViewRouter
 import com.kylemadsen.testandroid.animation.AnimationMainActivity
 import com.kylemadsen.testandroid.ar.ArMainActivity
 import com.kylemadsen.testandroid.coordinatorlayout.CoordinatorLayoutActivity
+import com.kylemadsen.testandroid.worldview.WorldViewActivity
 
 class MainViewController(
         private val viewRouter: ViewRouter
@@ -37,6 +38,10 @@ class MainViewController(
         val gotoCoordinatorLayoutButton: View = view.find(R.id.goto_layout_button)
         gotoCoordinatorLayoutButton.setOnClickListener {
             viewRouter.goToActivity(CoordinatorLayoutActivity::class.java)
+        }
+
+        view.find<View>(R.id.goto_world_view).setOnClickListener {
+            viewRouter.goToActivity(WorldViewActivity::class.java)
         }
 
         val clockInfoText: TextView = view.find(R.id.clock_info)
