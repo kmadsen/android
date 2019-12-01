@@ -1,8 +1,10 @@
 package com.kylemadsen.testandroid
 
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import com.kmadsen.compass.CompassMainActivity
+import com.kylemadsen.core.logger.L
 import com.kylemadsen.core.time.DeviceClock
 import com.kylemadsen.core.view.ViewController
 import com.kylemadsen.core.view.ViewRouter
@@ -39,6 +41,11 @@ class MainViewController(
 
         val clockInfoText: TextView = view.find(R.id.clock_info)
         clockInfoText.text = DeviceClock.getClockDriftInfo()
+        val resetDriftButton: Button = view.find(R.id.clock_info_rest)
+        resetDriftButton.setOnClickListener {
+            DeviceClock.resetClockDriftInfo()
+            clockInfoText.text = DeviceClock.getClockDriftInfo()
+        }
     }
 
     override fun detach() {

@@ -2,7 +2,7 @@ package com.kylemadsen.core.time
 
 import com.google.gson.annotations.SerializedName
 
-data class DeviceBootInstant(
+data class DeviceBootTime(
     @SerializedName("bootDeviceTimeMs") val bootDeviceTimeMs: Long,
     @SerializedName("deviceTimeMs") val deviceTimeMs: Long,
     @SerializedName("bootGnssTimeMs") val bootGnssTimeMs: Long?,
@@ -11,7 +11,7 @@ data class DeviceBootInstant(
 ) {
     override fun toString(): String {
         return "" +
-            "DeviceBootInstant(\n" +
+            "DeviceBootTime(\n" +
             "  bootDeviceTimeMs=$bootDeviceTimeMs,\n" +
             "  deviceTimeMs=$deviceTimeMs,\n" +
             "  bootGnssTimeMs=$bootGnssTimeMs,\n" +

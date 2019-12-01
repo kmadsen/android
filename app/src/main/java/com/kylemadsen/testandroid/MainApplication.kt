@@ -7,6 +7,7 @@ import com.google.gson.Gson
 
 import com.kylemadsen.core.logger.AndroidLogger
 import com.kylemadsen.core.logger.L
+import com.kylemadsen.core.time.DeviceBootTimeProvider
 import com.kylemadsen.core.time.DeviceClock
 import com.mapbox.mapboxsdk.Mapbox
 
@@ -30,8 +31,10 @@ class MainApplication : Application() {
     }
 
     private fun initDeviceClock() {
-        val gson = Gson()
-        val clockPreferences = getSharedPreferences("device_clock", Context.MODE_PRIVATE)
-        DeviceClock.initialize(gson, clockPreferences)
+        val deviceBootTimeProvider = DeviceBootTimeProvider(
+            gson = Gson(),
+            clockPreferences = getSharedPreferences("device_clock", Context.MODE_PRIVATE)
+        )
+        DeviceClock.initialize(deviceBootTimeProvider)
     }
 }
