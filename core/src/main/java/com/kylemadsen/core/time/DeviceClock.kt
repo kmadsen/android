@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.SystemClock
 import androidx.annotation.RequiresApi
 import java.time.Instant
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object DeviceClock {
@@ -33,6 +34,15 @@ object DeviceClock {
 
     fun delta(elapsedMillis: Long): Long {
         return elapsedMillis() - elapsedMillis
+    }
+
+    fun currentTimeDisplay(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val instant = currentTimeNanosInstant(System.currentTimeMillis(), SystemClock.elapsedRealtimeNanos())
+            "${instant.toEpochMilli()}.${instant.nano}"
+        } else {
+            "${System.currentTimeMillis()}.0"
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
