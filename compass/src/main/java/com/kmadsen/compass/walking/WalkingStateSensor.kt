@@ -3,7 +3,7 @@ package com.kmadsen.compass.walking
 import android.hardware.Sensor
 import android.os.SystemClock
 import com.kmadsen.compass.location.LocationRepository
-import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kylemadsen.core.time.nanosToSeconds
 import com.kylemadsen.core.time.toMillisecondPeriod
 import io.reactivex.Completable
@@ -11,7 +11,7 @@ import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 
 class WalkingStateSensor(
-    private val androidSensors: AndroidSensors,
+    private val rxAndroidSensors: RxAndroidSensors,
     private val locationRepository: LocationRepository
 ) {
 
@@ -34,7 +34,7 @@ class WalkingStateSensor(
     }
 
     private fun attachStepCounterUpdates(): Completable {
-        return androidSensors.observeRawSensor(Sensor.TYPE_STEP_COUNTER)
+        return rxAndroidSensors.observeRawSensor(Sensor.TYPE_STEP_COUNTER)
             .doOnNext {
                 stepCountSinceDeviceBoot = it.values[0].toInt()
                 lastStepMeasuredAtNanos = it.timestamp

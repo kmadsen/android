@@ -3,17 +3,17 @@ package com.kmadsen.compass.azimuth
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import com.kmadsen.compass.location.LocationRepository
-import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 
 class AltitudeSensor(
-    val androidSensors: AndroidSensors,
+    val rxAndroidSensors: RxAndroidSensors,
     val locationRepository: LocationRepository
 ) {
 
     fun observeAltitude(): Observable<Measure1d> {
-        return androidSensors.observeRawSensor(Sensor.TYPE_PRESSURE)
+        return rxAndroidSensors.observeRawSensor(Sensor.TYPE_PRESSURE)
             .map {
                 val altitudeMeters = getAltitude(it.values[0])
                 Measure1d(TimeUnit.NANOSECONDS.toMillis(it.timestamp), altitudeMeters)

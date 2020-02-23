@@ -12,6 +12,8 @@ import com.kmadsen.compass.azimuth.Measure3d
 import com.kmadsen.compass.azimuth.lowPassFilter
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.fused.FusedLocation
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
+import com.kmadsen.compass.sensors.rx.LoggedEvent
 import com.kylemadsen.core.FileLogger
 import com.kylemadsen.core.WritableFile
 import com.kylemadsen.core.logger.L
@@ -20,9 +22,9 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
 class SensorLogger(
-        private val androidSensors: AndroidSensors,
-        private val sensorManager: SensorManager,
-        private val locationRepository: LocationRepository
+    private val rxAndroidSensors: RxAndroidSensors,
+    private val sensorManager: SensorManager,
+    private val locationRepository: LocationRepository
 ) {
     fun attachFileWriting(context: Context): Completable {
         val accelerometerLogger: Completable = FileLogger(context)
@@ -76,7 +78,7 @@ class SensorLogger(
 
     private fun WritableFile.writeFiltered3dSensor(sensorType: Int): Completable {
         val magnetometer = Measure3d()
-        return androidSensors.observeSensor(sensorType)
+        return rxAndroidSensors.observeSensor(sensorType)
             .doOnSubscribe {
                 val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
                 writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
@@ -112,7 +114,7 @@ class SensorLogger(
     }
 
     private fun WritableFile.write3dSensor(sensorType: Int): Completable {
-        return androidSensors.observeSensor(sensorType)
+        return rxAndroidSensors.observeSensor(sensorType)
                 .doOnSubscribe {
                     val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
                     writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")
@@ -135,7 +137,7 @@ class SensorLogger(
     }
 
     private fun WritableFile.write1dSensor(sensorType: Int): Completable {
-        return androidSensors.observeSensor(sensorType)
+        return rxAndroidSensors.observeSensor(sensorType)
                 .doOnSubscribe {
                     val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
                     writeLine("name=${sensor.name} vendor=${sensor.vendor} current_time_ms=${System.currentTimeMillis()}")

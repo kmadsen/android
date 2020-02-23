@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
-import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
@@ -22,7 +22,7 @@ class CompassMainActivity : AppCompatActivity() {
 
     @Inject lateinit var locationSensor: LocationSensor
     @Inject lateinit var sensorLogger: SensorLogger
-    @Inject lateinit var androidSensors: AndroidSensors
+    @Inject lateinit var rxAndroidSensors: RxAndroidSensors
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

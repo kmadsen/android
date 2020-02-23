@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.PixelFormat
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
-import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kmadsen.compass.sensors.SensorGLRenderer
 import com.kmadsen.compass.wifilocation.WifiLocationResponse
 import com.kmadsen.compass.wifilocation.WifiLocationScanner
@@ -19,7 +19,7 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     @Inject lateinit var mapboxMap: MapboxMap
-    @Inject lateinit var androidSensors: AndroidSensors
+    @Inject lateinit var rxAndroidSensors: RxAndroidSensors
     @Inject lateinit var wifiLocationScanner: WifiLocationScanner
 
     private val glSurfaceRenderer: SensorGLRenderer = SensorGLRenderer()
@@ -34,7 +34,7 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
     }
 
     fun attach() {
-        compositeDisposable.add(androidSensors.observeRotationVector().subscribe {
+        compositeDisposable.add(rxAndroidSensors.observeRotationVector().subscribe {
             glSurfaceRenderer.update(it.sensorEvent.values)
         })
 

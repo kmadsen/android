@@ -5,7 +5,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.os.SystemClock
 import com.kmadsen.compass.location.LocationRepository
-import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kylemadsen.core.time.toMillisecondPeriod
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -14,8 +14,8 @@ import kotlin.math.PI
 import kotlin.math.min
 
 class AzimuthSensor(
-        private val androidSensors: AndroidSensors,
-        private val locationRepository: LocationRepository
+    private val androidSensors: RxAndroidSensors,
+    private val locationRepository: LocationRepository
 ) {
 
     private val accelerometer = Measure3d()

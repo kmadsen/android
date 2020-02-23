@@ -1,21 +1,17 @@
 package com.kmadsen.compass.mapbox
 
 import android.content.Context
-import android.hardware.Sensor
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import com.gojuno.koptional.Optional
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kmadsen.compass.R
 import com.kmadsen.compass.azimuth.AltitudeSensor
-import com.kmadsen.compass.azimuth.AzimuthSensor
 import com.kmadsen.compass.azimuth.Measure1d
-import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.sensor.SensorLocation
-import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kmadsen.compass.walking.WalkingStateSensor
 import com.kylemadsen.core.FpsChoreographer
 import com.kylemadsen.core.logger.L
@@ -36,7 +32,7 @@ class MapBottomSheet(
 ) : LinearLayout(context, attrs) {
 
     @Inject lateinit var locationRepository: LocationRepository
-    @Inject lateinit var androidSensors: AndroidSensors
+    @Inject lateinit var rxAndroidSensors: RxAndroidSensors
     @Inject lateinit var altitudeSensor: AltitudeSensor
     @Inject lateinit var walkingStateSensor: WalkingStateSensor
 

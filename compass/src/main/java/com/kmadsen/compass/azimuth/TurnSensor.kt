@@ -3,7 +3,7 @@ package com.kmadsen.compass.azimuth
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import com.kmadsen.compass.location.LocationRepository
-import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kylemadsen.core.time.DeviceClock
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -11,7 +11,7 @@ import kotlin.math.PI
 
 
 class TurnSensor(
-    private val androidSensors: AndroidSensors,
+    private val rxAndroidSensors: RxAndroidSensors,
     private val locationRepository: LocationRepository
 ) {
     fun observeTurn(startDegrees: Double = 0.0): Observable<Measure1d> {
@@ -19,8 +19,8 @@ class TurnSensor(
         var lastTurnSample = 0.0
         var lastTimeNanos = 0L
 
-        return androidSensors.observeRawSensor(Sensor.TYPE_GRAVITY)
-            .withLatestFrom(androidSensors.observeRawSensor(Sensor.TYPE_GYROSCOPE),
+        return rxAndroidSensors.observeRawSensor(Sensor.TYPE_GRAVITY)
+            .withLatestFrom(rxAndroidSensors.observeRawSensor(Sensor.TYPE_GYROSCOPE),
                 BiFunction { gravityEvent: SensorEvent, gyroEvent: SensorEvent ->
                     val gravity = Vector3d(
                         -gravityEvent.values[0].toDouble(),

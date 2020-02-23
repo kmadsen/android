@@ -1,20 +1,22 @@
-package com.kmadsen.compass.sensors
+package com.kmadsen.compass.sensors.rx
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.SystemClock
-import com.kylemadsen.core.logger.L
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.FlowableEmitter
 
-class AndroidSensors(private val sensorManager: SensorManager) {
+class RxAndroidSensors(private val sensorManager: SensorManager) {
     fun observeRotationVector(): Flowable<LoggedEvent> {
         return Flowable.create({ emitter ->
             val rotationVectorSensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
-            val sensorListener = SensorListener(emitter)
+            val sensorListener =
+                SensorListener(
+                    emitter
+                )
             sensorManager.registerListener(sensorListener, rotationVectorSensor, toSamplingPeriodUs(100))
             emitter.setCancellable {
                 sensorManager.unregisterListener(sensorListener)
@@ -25,7 +27,10 @@ class AndroidSensors(private val sensorManager: SensorManager) {
     fun observeSensor(sensorType: Int): Flowable<LoggedEvent> {
         return Flowable.create({ emitter ->
             val sensor: Sensor = sensorManager.getDefaultSensor(sensorType)
-            val sensorListener = SensorListener(emitter)
+            val sensorListener =
+                SensorListener(
+                    emitter
+                )
             sensorManager.registerListener(sensorListener, sensor, toSamplingPeriodUs(100))
             emitter.setCancellable {
                 sensorManager.unregisterListener(sensorListener)
@@ -43,7 +48,12 @@ class AndroidSensors(private val sensorManager: SensorManager) {
         override fun onSensorChanged(sensorEvent: SensorEvent) {
             if (emitter.isCancelled.not()) {
                 val recordedAtNanos: Long = SystemClock.elapsedRealtimeNanos()
-                emitter.onNext(LoggedEvent(sensorEvent, recordedAtNanos))
+                emitter.onNext(
+                    LoggedEvent(
+                        sensorEvent,
+                        recordedAtNanos
+                    )
+                )
             }
         }
     }
@@ -51,7 +61,10 @@ class AndroidSensors(private val sensorManager: SensorManager) {
     fun observeRawSensor(sensorType: Int): Flowable<SensorEvent> {
         return Flowable.create({ emitter ->
             val sensor: Sensor = sensorManager.getDefaultSensor(sensorType) ?: return@create
-            val sensorListener = SensorRawListener(emitter)
+            val sensorListener =
+                SensorRawListener(
+                    emitter
+                )
             sensorManager.registerListener(sensorListener, sensor, toSamplingPeriodUs(100))
             emitter.setCancellable {
                 sensorManager.unregisterListener(sensorListener)

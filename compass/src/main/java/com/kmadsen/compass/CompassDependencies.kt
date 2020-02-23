@@ -15,7 +15,7 @@ import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kmadsen.compass.mapbox.MapBottomSheet
 import com.kmadsen.compass.mapbox.MapComponent
 import com.kmadsen.compass.mapbox.MapModule
-import com.kmadsen.compass.sensors.AndroidSensors
+import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
 import com.kmadsen.compass.walking.WalkingStateSensor
 import com.kmadsen.compass.wifilocation.WifiLocationScanner
@@ -62,18 +62,18 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
     }
 
     @Provides
-    fun provideAndroidSensors(sensorManager: SensorManager): AndroidSensors {
-        return AndroidSensors(sensorManager)
+    fun provideAndroidSensors(sensorManager: SensorManager): RxAndroidSensors {
+        return RxAndroidSensors(sensorManager)
     }
 
     @Provides
     fun provideSensorLogger(
-            androidSensors: AndroidSensors,
-            sensorManager: SensorManager,
-            locationRepository: LocationRepository
+        rxAndroidSensors: RxAndroidSensors,
+        sensorManager: SensorManager,
+        locationRepository: LocationRepository
     ): SensorLogger {
         return SensorLogger(
-                androidSensors,
+                rxAndroidSensors,
                 sensorManager,
                 locationRepository
         )
@@ -81,18 +81,18 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
 
     @Provides
     fun provideTurnSensor(
-        androidSensors: AndroidSensors,
+        rxAndroidSensors: RxAndroidSensors,
         locationRepository: LocationRepository
     ): TurnSensor {
-        return TurnSensor(androidSensors, locationRepository)
+        return TurnSensor(rxAndroidSensors, locationRepository)
     }
 
     @Provides
     fun provideAzimuthSensor(
-            androidSensors: AndroidSensors,
-            locationRepository: LocationRepository
+        rxAndroidSensors: RxAndroidSensors,
+        locationRepository: LocationRepository
     ): AzimuthSensor {
-        return AzimuthSensor(androidSensors, locationRepository)
+        return AzimuthSensor(rxAndroidSensors, locationRepository)
     }
 
     @Provides
@@ -106,18 +106,18 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
 
     @Provides
     fun provideAltitudeSensor(
-        androidSensors: AndroidSensors,
+        rxAndroidSensors: RxAndroidSensors,
         locationRepository: LocationRepository
     ): AltitudeSensor {
-        return AltitudeSensor(androidSensors, locationRepository)
+        return AltitudeSensor(rxAndroidSensors, locationRepository)
     }
 
     @Provides
     fun provideWalkingSensor(
-        androidSensors: AndroidSensors,
+        rxAndroidSensors: RxAndroidSensors,
         locationRepository: LocationRepository
     ): WalkingStateSensor {
-        return WalkingStateSensor(androidSensors, locationRepository)
+        return WalkingStateSensor(rxAndroidSensors, locationRepository)
     }
 
     @Provides
