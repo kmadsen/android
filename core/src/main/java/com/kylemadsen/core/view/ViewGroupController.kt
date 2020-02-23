@@ -34,7 +34,7 @@ class ViewGroupController private constructor(
 
         @MainThread
         @JvmStatic
-        fun onCreate(viewGroup: ViewGroup): ViewGroupController {
+        fun createController(viewGroup: ViewGroup): ViewGroupController {
             val layoutInflater = LayoutInflater.from(viewGroup.context)
             return ViewGroupController(viewGroup, layoutInflater)
         }

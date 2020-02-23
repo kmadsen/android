@@ -19,8 +19,8 @@ public class ArMainActivity extends AppCompatActivity {
 
         FrameLayout configurationLayout = findViewById(R.id.ar_configuration);
         FrameLayout statusLayout = findViewById(R.id.ar_status);
-        configurationController = ViewGroupController.Companion.onCreate(configurationLayout);
-        statusController = ViewGroupController.Companion.onCreate(statusLayout);
+        configurationController = ViewGroupController.Companion.createController(configurationLayout);
+        statusController = ViewGroupController.Companion.createController(statusLayout);
 
         ArFragment arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 

@@ -16,7 +16,7 @@ public class AnimationMainActivity extends AppCompatActivity {
         setContentView(R.layout.animation_main_activity);
 
         ViewGroup contentView = findViewById(R.id.animation_content);
-        viewGroupController = ViewGroupController.onCreate(contentView);
+        viewGroupController = ViewGroupController.createController(contentView);
         viewGroupController.attach(new TextToSpeechController());
         viewGroupController.attach(new AnimationController());
     }
