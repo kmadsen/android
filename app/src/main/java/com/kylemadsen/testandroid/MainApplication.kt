@@ -2,7 +2,6 @@ package com.kylemadsen.testandroid
 
 import android.app.Application
 import android.content.Context
-import android.preference.PreferenceManager
 import com.google.gson.Gson
 
 import com.kylemadsen.core.logger.AndroidLogger

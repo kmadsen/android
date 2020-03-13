@@ -27,7 +27,6 @@ android {
 
 dependencies {
     // https://github.com/nhaarman/mockito-kotlin/releases
-    def versionMockitoKotlin = '2.0.0-RC1'
     def versionRxKotlin = '2.2.0'
     def koptional_version = '1.6.0'
 
@@ -38,7 +37,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$versionMockitoKotlin"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 
     // Dagger 2
     implementation 'com.google.dagger:dagger-android:2.20'
@@ -57,23 +56,23 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
 
     // Http request library
-    implementation "com.squareup.retrofit2:retrofit:2.5.0"
+    implementation "com.squareup.retrofit2:retrofit:2.7.1"
     implementation "com.squareup.retrofit2:adapter-rxjava2:2.5.0"
-    implementation "com.squareup.retrofit2:converter-gson:2.5.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.7.1"
     implementation "com.squareup.retrofit2:converter-moshi:2.5.0"
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 }
 
 dependencies {
     // Required to make map box work because they're using architecture components
-    implementation 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-reactivestreams:2.2.0'
 
     // 'api' so the main app doesn't have to also include it as a dependency
-    api 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.4.0'
+    api 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.1.0-alpha.1'
 }
 repositories {
     mavenCentral()

@@ -118,13 +118,6 @@ abstract class DebugBehavior<ViewType : View>(context: Context, attrs: Attribute
         log("onStopNestedScroll")
     }
 
-    override fun onNestedScroll(coordinatorLayout: CoordinatorLayout, child: ViewType,
-                       target: View, dxConsumed: Int, dyConsumed: Int,
-                       dxUnconsumed: Int, dyUnconsumed: Int, @ViewCompat.NestedScrollType type: Int) {
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type)
-        log("onNestedScroll")
-    }
-
     override fun onNestedPreScroll(coordinatorLayout: CoordinatorLayout,
                           child: ViewType, target: View, dx: Int, dy: Int, consumed: IntArray,
                           @ViewCompat.NestedScrollType type: Int) {

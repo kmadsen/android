@@ -57,7 +57,7 @@ dependencies {
     implementation files('libs/achartengine-1.2.0.jar')
 
     implementation 'joda-time:joda-time:2.9.4'
-    implementation files('libs/guava-22.0-android.jar')
+//    implementation files('libs/guava-22.0-android.jar') duplicate with mapbox 9.1.0-alpha.1
     implementation files('libs/commons-math3-3.6.1.jar')
     implementation files('libs/commons-codec-1.10.jar')
     implementation files('libs/asn1-supl2.jar')
