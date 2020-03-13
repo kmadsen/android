@@ -1,0 +1,19 @@
+/**
+ * Generate a configuration file so api keys don't need to be pushed into the repo
+ */
+task accessToken {
+    def tokenFile = new File("${projectDir}/src/main/res/values/developer.xml")
+    if (!tokenFile.exists()) {
+        String tokenFileContents = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<resources>\n" +
+                "    <string name=\"mapbox_access_token\">YOUR_MAPBOX_ACCESS_TOKEN</string>\n" +
+                "    <string name=\"google_geolocation_api\">YOUR_GOOGLE_GEOLOCATION_API</string>\n" +
+                "</resources>\n" +
+                ""
+        tokenFile.write(tokenFileContents)
+    }
+}
+
+gradle.projectsEvaluated {
+    preBuild.dependsOn('accessToken')
+}

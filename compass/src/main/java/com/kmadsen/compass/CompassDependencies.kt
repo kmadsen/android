@@ -133,7 +133,7 @@ class CompassModule(private val compassMainActivity: CompassMainActivity) {
 
         return GoogleGeolocationApiService(
             googleGeolocationApi,
-            resources.getString(R.string.compass_google_geolocation_api)
+            resources.getString(R.string.google_geolocation_api)
         )
     }
 
