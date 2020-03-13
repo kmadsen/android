@@ -3,15 +3,16 @@ package com.kmadsen.compass
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.kmadsen.compass.location.LocationSensor
-import com.kmadsen.compass.mapbox.MapModule
 import com.kmadsen.compass.mapbox.MapViewController
-import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kmadsen.compass.sensors.SensorLogger
+import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.compass_main_activity.*
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.dsl.module
 
 class CompassMainActivity : AppCompatActivity() {
 
@@ -20,19 +21,15 @@ class CompassMainActivity : AppCompatActivity() {
     private lateinit var mapViewController: MapViewController
 //    private lateinit var compassGLSurfaceView: CompassGLSurfaceView
 
-    @Inject lateinit var locationSensor: LocationSensor
-    @Inject lateinit var sensorLogger: SensorLogger
-    @Inject lateinit var rxAndroidSensors: RxAndroidSensors
+    private val locationSensor: LocationSensor by inject()
+    private val sensorLogger: SensorLogger by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.compass_main_activity)
+        loadKoinModules(compassModule)
 
-        val compassComponent = DaggerCompassComponent.builder()
-                .compassModule(CompassModule(this))
-                .build()
-        compassComponent.inject(this)
-        compassComponent.inject(bottom_sheet)
+        super.onCreate(savedInstanceState)
+
+        setContentView(R.layout.compass_main_activity)
 
         compositeDisposable.add(sensorLogger.attachFileWriting(this)
                 .subscribe())
@@ -43,14 +40,20 @@ class CompassMainActivity : AppCompatActivity() {
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { mapboxMap ->
-            val mapComponent = compassComponent.plus(MapModule(mapboxMap))
+            loadKoinModules(module = module {
+                factory { mapboxMap }
+            })
+
             mapViewController = MapViewController()
-            mapComponent.inject(mapViewController)
             mapViewController.attach(findViewById(R.id.map_overlay_view))
 
             mapboxMap.setStyle(Style.TRAFFIC_DAY)
 //            mapComponent.inject(compassGLSurfaceView)
 //            compassGLSurfaceView.attach()
+            mapboxMap.addOnMapLongClickListener {
+                L.i("location_debug mapBoxMap mapLongPress")
+                false
+            }
         }
     }
 
@@ -68,6 +71,8 @@ class CompassMainActivity : AppCompatActivity() {
         compositeDisposable.clear()
 //        compassGLSurfaceView.detach()
         mapViewController.detach()
+
+        unloadKoinModules(compassModule)
         super.onDestroy()
     }
 

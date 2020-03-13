@@ -11,9 +11,9 @@ import com.kmadsen.compass.azimuth.AltitudeSensor
 import com.kmadsen.compass.azimuth.Measure1d
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.sensor.SensorLocation
-import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kmadsen.compass.walking.WalkingStateSensor
 import com.kylemadsen.core.FpsChoreographer
+import com.kylemadsen.core.koin.inject
 import com.kylemadsen.core.logger.L
 import com.kylemadsen.core.time.DeviceClock
 import io.reactivex.Observable
@@ -23,7 +23,6 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function3
 import kotlinx.android.synthetic.main.compass_map_bottom_sheet.view.*
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 
 class MapBottomSheet(
@@ -31,10 +30,9 @@ class MapBottomSheet(
     attrs: AttributeSet
 ) : LinearLayout(context, attrs) {
 
-    @Inject lateinit var locationRepository: LocationRepository
-    @Inject lateinit var rxAndroidSensors: RxAndroidSensors
-    @Inject lateinit var altitudeSensor: AltitudeSensor
-    @Inject lateinit var walkingStateSensor: WalkingStateSensor
+    private val locationRepository: LocationRepository by inject()
+    private val altitudeSensor: AltitudeSensor by inject()
+    private val walkingStateSensor: WalkingStateSensor by inject()
 
     private lateinit var standardBottomSheetBehavior: BottomSheetBehavior<View>
 

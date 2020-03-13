@@ -11,6 +11,7 @@ import com.kmadsen.compass.azimuth.DeviceDirectionSensor
 import com.kmadsen.compass.azimuth.Measure1d
 import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationSensor
+import com.kylemadsen.core.koin.inject
 import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -18,15 +19,14 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.withLatestFrom
-import javax.inject.Inject
 
 class MapViewController {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    @Inject lateinit var mapboxMap: MapboxMap
-    @Inject lateinit var locationSensor: LocationSensor
-    @Inject lateinit var deviceDirectionSensor: DeviceDirectionSensor
+    private val mapboxMap: MapboxMap by inject()
+    private val locationSensor: LocationSensor by inject()
+    private val deviceDirectionSensor: DeviceDirectionSensor by inject()
 
     private val defaultZoom: Double = 12.0
     private var isShowingDirection: Boolean = false
