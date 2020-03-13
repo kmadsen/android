@@ -21,7 +21,7 @@ class MainApplication : Application() {
         super.onCreate()
 
         initDeviceClock()
-        Mapbox.getInstance(applicationContext, getString(R.string.compass_mapbox_access_token))
+        Mapbox.getInstance(applicationContext, getString(R.string.mapbox_access_token))
     }
 
     private fun initLogging() {
