@@ -19,11 +19,12 @@ import com.kmadsen.compass.wifilocation.googlegeolocation.GoogleGeolocationApi
 import com.kmadsen.compass.wifilocation.googlegeolocation.GoogleGeolocationApiService
 import com.kmadsen.compass.wifilocation.wifiscan.WifiScanReceiver
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-val compassModule = module {
+val localizationModule = module {
 
     single { LocationRepository() }
     single { LocationPermissions() }
@@ -55,4 +56,5 @@ val compassModule = module {
         WifiScanReceiver(wifiManager)
     }
     single { WifiLocationScanner(get(), get(), get()) }
+
 }

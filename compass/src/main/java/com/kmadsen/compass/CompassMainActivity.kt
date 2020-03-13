@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.SensorLogger
-import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
 import io.reactivex.disposables.CompositeDisposable
@@ -25,7 +24,7 @@ class CompassMainActivity : AppCompatActivity() {
     private val sensorLogger: SensorLogger by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        loadKoinModules(compassModule)
+        loadKoinModules(localizationModule)
 
         super.onCreate(savedInstanceState)
 
@@ -40,8 +39,10 @@ class CompassMainActivity : AppCompatActivity() {
         val mapView: MapView = findViewById(R.id.mapbox_mapview)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { mapboxMap ->
-            loadKoinModules(module = module {
-                factory { mapboxMap }
+            loadKoinModules(module {
+                scope<CompassMainActivity> {
+                    scoped { mapboxMap }
+                }
             })
 
             mapViewController = MapViewController()
@@ -51,7 +52,6 @@ class CompassMainActivity : AppCompatActivity() {
 //            mapComponent.inject(compassGLSurfaceView)
 //            compassGLSurfaceView.attach()
             mapboxMap.addOnMapLongClickListener {
-                L.i("location_debug mapBoxMap mapLongPress")
                 false
             }
         }
@@ -72,7 +72,7 @@ class CompassMainActivity : AppCompatActivity() {
 //        compassGLSurfaceView.detach()
         mapViewController.detach()
 
-        unloadKoinModules(compassModule)
+        unloadKoinModules(localizationModule)
         super.onDestroy()
     }
 

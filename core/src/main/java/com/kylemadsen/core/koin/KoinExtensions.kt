@@ -13,3 +13,5 @@ inline fun <reified T : Any> get(
     qualifier: Qualifier? = null,
     noinline parameters: ParametersDefinition? = null
 ): T = getKoin().get(qualifier, parameters)
+
+fun koinLateModule() = lazy(LazyThreadSafetyMode.NONE) { KoinLateLoadModule() }
