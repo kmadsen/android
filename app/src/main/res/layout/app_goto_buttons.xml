@@ -20,6 +20,12 @@
         android:text="@string/activity_main_compass" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/goto_localhost_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_main_localhost" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/goto_layout_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
