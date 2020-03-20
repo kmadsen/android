@@ -1,1 +1,17 @@
-<manifest package="com.kylemadsen.core" />
+<manifest package="com.kylemadsen.core"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
+        <activity
+            android:name=".localhost.LocalhostFilesActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
+            android:label="@string/localhost_activity_title"
+            android:screenOrientation="portrait"
+            tools:node="merge">
+        </activity>
+    </application>
+
+</manifest>

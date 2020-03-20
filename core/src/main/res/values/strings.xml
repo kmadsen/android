@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Core</string>
+
+    <string name="localhost_activity_title">Localhost</string>
+
+    <string name="localhost_ip_address_input_hint">192.168.188.120</string>
+    <string name="localhost_ip_address_input_helper_text">Your IP Address</string>
 </resources>

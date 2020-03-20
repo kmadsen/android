@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.kmadsen.compass.CompassMainActivity
+import com.kylemadsen.core.localhost.LocalhostFilesActivity
 import com.kylemadsen.core.logger.L
 import com.kylemadsen.core.time.DeviceClock
 import com.kylemadsen.core.view.ViewController
@@ -33,6 +34,11 @@ class MainViewController(
         val gotoCompassButton: View = view.find(R.id.goto_compass_button)
         gotoCompassButton.setOnClickListener {
             viewRouter.goToActivity(CompassMainActivity::class.java)
+        }
+
+        val gotoLocalhostButton: View = view.find(R.id.goto_localhost_button)
+        gotoLocalhostButton.setOnClickListener {
+            viewRouter.goToActivity(LocalhostFilesActivity::class.java)
         }
 
         val gotoCoordinatorLayoutButton: View = view.find(R.id.goto_layout_button)
