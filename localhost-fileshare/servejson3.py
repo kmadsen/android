@@ -1,11 +1,13 @@
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import socketserver
 import json
 import cgi
-import filelist
 import os
 import urllib
 import socket
+
+import filelist
+import ipaddress
 
 class Server(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -57,12 +59,14 @@ class Server(BaseHTTPRequestHandler):
 def run(server_class=HTTPServer, handler_class=Server, port=8000):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    
-    # hostname = socket.gethostname()
-    # ipaddress = socket.gethostbyname(hostname)
 
+    ipaddress.printAllInterfaces()
+    
+    # doesn't always work
+    # ipaddress = socket.gethostbyname(hostname)
     # print "Server started http://%s:%s/drives" % (ipaddress, port)
-    print 'Starting httpd on port %d...' % port
+
+    print('Starting httpd on port %d...' % port)
     httpd.serve_forever()
     
 if __name__ == "__main__":
@@ -72,4 +76,3 @@ if __name__ == "__main__":
         run(port=int(argv[1]))
     else:
         run()
-        

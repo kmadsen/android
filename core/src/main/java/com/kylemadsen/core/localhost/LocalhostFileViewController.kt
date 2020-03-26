@@ -1,6 +1,7 @@
 package com.kylemadsen.core.localhost
 
 import com.kylemadsen.core.logger.L
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -15,26 +16,31 @@ class LocalhostFileViewController(
 ) {
 
     var ipAddress = ipAddressStorage.serverIpAddress
+    var viewAdapter: LocalhostFileAdapter? = null
     val historyFilesApi = LocalhostFilesApi()
 
     fun attach(viewAdapter: LocalhostFileAdapter) {
         val lastSavedIpAddress = ipAddressStorage.serverIpAddress
+        this.viewAdapter = viewAdapter
         viewAdapter.authHistorySource = AuthSourceItem(lastSavedIpAddress)
         viewAdapter.authTextChanged = { ipAddress: String ->
             this.ipAddress = ipAddress
-            if (ipAddress.length == AUTH_SUCCESS_TEXT_LENGTH) {
-                if (ipAddress.matches(ipAddressRegex)) {
-                    ipAddressStorage.serverIpAddress = ipAddress
-                    viewAdapter.authClearFocus()
-                    requestHistory(viewAdapter)
-                } else {
-                    L.e("Auth text is failing $ipAddress")
-                }
-            }
         }
         viewAdapter.itemClicked = { historyFileItem ->
             requestHistoryData(historyFileItem)
         }
+    }
+
+    fun connectToLocalhost(connectedCallback: (Boolean) -> Unit) {
+        viewAdapter?.let {
+            it.authClearFocus()
+            val saveIpAddress: (Boolean) -> Unit = { connected ->
+                if (connected) saveIpAddress()
+                connectedCallback.invoke(connected)
+            }
+            requestHistory(it, saveIpAddress)
+        }
+        connectedCallback.invoke(false)
     }
 
     fun saveIpAddress() {
@@ -53,23 +59,22 @@ class LocalhostFileViewController(
         }
     }
 
-    private fun requestHistory(viewAdapter: LocalhostFileAdapter) {
+    private fun requestHistory(viewAdapter: LocalhostFileAdapter, connected: (Boolean) -> Unit) {
         L.i("requestHistory")
-        val uiScope = CoroutineScope(Dispatchers.Main)
-        uiScope.launch {
+        val handler = CoroutineExceptionHandler { _, exception ->
+            println("Caught $exception")
+            connected.invoke(false)
+        }
+        CoroutineScope(Dispatchers.Main).launch(handler) {
             val task = async(Dispatchers.IO) {
                 return@async historyFilesApi.requestHistory(ipAddressStorage.serverIpAddress)
             }
             val drives = task.await()
+            connected.invoke(true)
             viewAdapter.data = drives.mapIndexed { index, filename ->
                 LocalhostFileItem(filename, index.toString())
             }
             viewAdapter.notifyDataSetChanged()
         }
-    }
-
-    companion object {
-        const val AUTH_SUCCESS_TEXT_LENGTH = "xxx.xxx.xxx.xxx".length // 15
-        val ipAddressRegex: Regex = Regex("^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$")
     }
 }
