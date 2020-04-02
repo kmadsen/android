@@ -23,8 +23,10 @@ class LocalhostFilesActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         val fab: FloatingActionButton = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            viewController?.connectToLocalhost { connected ->
+                Snackbar.make(view, "Successful connection $connected", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            }
         }
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
