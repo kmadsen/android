@@ -58,11 +58,12 @@ def run(server_class=HTTPServer, handler_class=Server, port=8000):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     
-    # hostname = socket.gethostname()
+    hostname = socket.gethostname()
     # ipaddress = socket.gethostbyname(hostname)
+    ipaddress = socket.gethostbyname('kmadsen.local')
 
-    # print "Server started http://%s:%s/drives" % (ipaddress, port)
-    print 'Starting httpd on port %d...' % port
+    print('Server started http://%s:%s/drives' % (ipaddress, port))
+    print('Starting httpd on port %d...' % port)
     httpd.serve_forever()
     
 if __name__ == "__main__":
