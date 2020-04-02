@@ -12,12 +12,20 @@ import retrofit2.http.Path
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+data class FilePath(
+    val title: String,
+    val path: String
+)
+
+data class JsonFileDataResponse(
+    val version: String
+)
 
 class LocalhostFilesApi {
 
     interface LocalhostFiles {
-        @GET("json_files")
-        fun drives(): Call<LocalhostFilesResponse>
+        @GET("index.json")
+        fun drives(): Call<List<FilePath>>
 
         @GET("json_files/{filename}")
         fun data(@Path("filename") filename: String): Call<String>
@@ -26,31 +34,23 @@ class LocalhostFilesApi {
         fun dataJson(@Path("filename") filename: String): Call<JsonFileDataResponse>
     }
 
-    data class LocalhostFilesResponse(
-        val json_files: List<String>
-    )
-
-    data class JsonFileDataResponse(
-        val version: String
-    )
-
-    suspend fun requestHistory(ipAddress: String): List<String> = suspendCoroutine { cont ->
+    suspend fun requestHistory(): List<FilePath> = suspendCoroutine { cont ->
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://$ipAddress:8000")
+            .baseUrl("https://kmadsen.github.io/android/localhost-fileshare/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val historyDrives = retrofit.create(LocalhostFiles::class.java)
-        historyDrives.drives().enqueue(object : Callback<LocalhostFilesResponse> {
-            override fun onFailure(call: Call<LocalhostFilesResponse>, t: Throwable) {
-                L.e(t, "requestData onFailure")
+        historyDrives.drives().enqueue(object : Callback<List<FilePath>> {
+            override fun onFailure(call: Call<List<FilePath>>, t: Throwable) {
+                L.e(t, "requestHistory onFailure")
                 cont.resume(emptyList())
             }
 
-            override fun onResponse(call: Call<LocalhostFilesResponse>, response: Response<LocalhostFilesResponse>) {
-                L.i("requestData onResponse")
+            override fun onResponse(call: Call<List<FilePath>>, response: Response<List<FilePath>>) {
+                L.i("requestHistory onResponse")
                 val drives = if (response.isSuccessful) {
-                    response.body()?.json_files ?: emptyList()
+                    response.body() ?: emptyList()
                 } else {
                     emptyList()
                 }
@@ -59,34 +59,9 @@ class LocalhostFilesApi {
         })
     }
 
-    suspend fun requestData(ipAddress: String, filename: String): String = suspendCoroutine { cont ->
+    suspend fun requestDataJson(filename: String): JsonFileDataResponse? = suspendCoroutine { cont ->
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://$ipAddress:8000")
-            .addConverterFactory(ToStringConverterFactory())
-            .build()
-
-        val historyDrives = retrofit.create(LocalhostFiles::class.java)
-        historyDrives.data(filename).enqueue(object : Callback<String> {
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                L.e(t, "requestData onFailure")
-                cont.resume("")
-            }
-
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                L.i("requestData onResponse")
-                val data = if (response.isSuccessful) {
-                    response.body() ?: ""
-                } else {
-                    ""
-                }
-                cont.resume(data)
-            }
-        })
-    }
-
-    suspend fun requestDataJson(ipAddress: String, filename: String): JsonFileDataResponse? = suspendCoroutine { cont ->
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://$ipAddress:8000")
+            .baseUrl("https://kmadsen.github.io/android/localhost-fileshare/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
             .build()
 
