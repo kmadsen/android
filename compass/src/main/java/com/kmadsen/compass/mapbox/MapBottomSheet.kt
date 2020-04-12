@@ -7,10 +7,10 @@ import android.view.View
 import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kmadsen.compass.R
-import com.kmadsen.compass.sensors.rx.RxAltitudeSensor
-import com.kmadsen.compass.sensors.data.Measure1d
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.sensor.SensorLocation
+import com.kmadsen.compass.sensors.data.Measure1d
+import com.kmadsen.compass.sensors.rx.RxAltitudeSensor
 import com.kmadsen.compass.walking.WalkingStateSensor
 import com.kylemadsen.core.FpsChoreographer
 import com.kylemadsen.core.koin.inject

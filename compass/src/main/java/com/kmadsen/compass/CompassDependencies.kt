@@ -3,17 +3,17 @@ package com.kmadsen.compass
 import android.content.Context
 import android.content.res.Resources
 import android.net.wifi.WifiManager
-import com.kmadsen.compass.sensors.rx.RxAltitudeSensor
-import com.kmadsen.compass.sensors.rx.RxAzimuthSensor
-import com.kmadsen.compass.sensors.rx.RxDeviceDirectionSensor
-import com.kmadsen.compass.sensors.rx.TurnSensor
 import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.location.fused.FusedLocationService
 import com.kmadsen.compass.sensors.CompassSensorManager
 import com.kmadsen.compass.sensors.config.SensorConfigManager
+import com.kmadsen.compass.sensors.rx.RxAltitudeSensor
 import com.kmadsen.compass.sensors.rx.RxAndroidSensors
+import com.kmadsen.compass.sensors.rx.RxAzimuthSensor
+import com.kmadsen.compass.sensors.rx.RxDeviceDirectionSensor
+import com.kmadsen.compass.sensors.rx.TurnSensor
 import com.kmadsen.compass.walking.WalkingStateSensor
 import com.kmadsen.compass.wifilocation.WifiLocationScanner
 import com.kmadsen.compass.wifilocation.googlegeolocation.GoogleGeolocationApi
@@ -33,7 +33,7 @@ val localizationModule = module {
     single { RxAndroidSensors(get()) }
     single { TurnSensor(get(), get()) }
     single { SensorConfigManager(get(), get(), get()) }
-    single { CompassSensorManager(get(), get()) }
+    single { CompassSensorManager(get(), get(), get()) }
     single { RxAzimuthSensor(get(), get()) }
     single {
         RxDeviceDirectionSensor(

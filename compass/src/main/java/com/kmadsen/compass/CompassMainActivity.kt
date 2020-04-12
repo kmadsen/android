@@ -6,6 +6,8 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapViewController
+import com.kmadsen.compass.sensors.CompassSensorManager
+import com.kmadsen.compass.sensors.SensorEventViewModel
 import com.kmadsen.compass.sensors.config.SensorConfigActivity
 import com.kylemadsen.core.koin.koinLateModule
 import com.mapbox.mapboxsdk.maps.MapView
@@ -19,6 +21,7 @@ import org.koin.dsl.module
 class CompassMainActivity : AppCompatActivity() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private val compassSensorManager: CompassSensorManager by inject()
 
     private lateinit var mapViewController: MapViewController
 //    private lateinit var compassGLSurfaceView: CompassGLSurfaceView
@@ -63,9 +66,13 @@ class CompassMainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         locationSensor.onStart(this)
+        SensorEventViewModel.get(this).start {
+            // Does this work
+        }
     }
 
     override fun onStop() {
+        SensorEventViewModel.get(this).stop()
         locationSensor.onStop()
         super.onStop()
     }

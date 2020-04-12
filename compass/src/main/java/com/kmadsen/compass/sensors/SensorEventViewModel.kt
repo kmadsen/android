@@ -1,21 +1,16 @@
 package com.kmadsen.compass.sensors
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
 import android.hardware.SensorEvent
-import android.hardware.SensorManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.sensors.config.SensorConfig
 import com.kmadsen.compass.sensors.config.SensorConfigManager
 import com.kylemadsen.core.koin.inject
+import com.kylemadsen.core.logger.L
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 
 class SensorEventViewModel(
     application: Application
@@ -25,14 +20,19 @@ class SensorEventViewModel(
     private val navigationSensorManager: CompassSensorManager by inject()
 
     fun start(eventEmitter: (SensorEvent) -> Unit) {
+        L.i("sensor_debug start sensors")
         val eventEmitterWithWriter = attachEventFileWriter(eventEmitter)
         viewModelScope.launch {
-            navigationSensorManager.start(getApplication(), eventEmitterWithWriter)
+            navigationSensorManager.start(eventEmitterWithWriter)
         }
     }
 
-    override fun onCleared() {
+    fun stop() {
         navigationSensorManager.stop()
+    }
+
+    override fun onCleared() {
+        stop()
 
         super.onCleared()
     }
@@ -48,7 +48,7 @@ class SensorEventViewModel(
         return { sensorEvent ->
             eventEmitter(sensorEvent)
             viewModelScope.launch {
-                navigationSensorManager.writeEvent(sensorEvent)
+                navigationSensorManager.broadcastSensorEvent(sensorEvent)
             }
         }
     }

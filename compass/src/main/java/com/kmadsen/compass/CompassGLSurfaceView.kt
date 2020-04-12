@@ -2,6 +2,7 @@ package com.kmadsen.compass
 
 import android.content.Context
 import android.graphics.PixelFormat
+import android.hardware.Sensor
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import com.kmadsen.compass.sensors.SensorGLRenderer
@@ -34,7 +35,7 @@ class CompassGLSurfaceView constructor(context: Context, attrs: AttributeSet) : 
     }
 
     fun attach() {
-        compositeDisposable.add(rxAndroidSensors.observeRotationVector().subscribe {
+        compositeDisposable.add(rxAndroidSensors.observeSensor(Sensor.TYPE_ROTATION_VECTOR).subscribe {
             glSurfaceRenderer.update(it.sensorEvent.values)
         })
 

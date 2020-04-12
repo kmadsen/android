@@ -18,6 +18,12 @@ class SensorConfigManager(
     private val gson: Gson
 ) {
 
+    fun getSensorConfig(sensorType: Int): SensorConfig? {
+        val savedSensorConfigs = savedSensorConfigs
+        check(savedSensorConfigs.isNotEmpty()) { "You must first call loadSensorConfigs" }
+        return savedSensorConfigs.firstOrNull { it.sensor.type == sensorType }
+    }
+
     suspend fun loadSensorConfigs(): List<SensorConfig> = suspendCoroutine { cont ->
         val sensorConfigMap = SENSOR_CONFIG_PREFERENCES.toMutableMap()
         val sensorConfigsPreferences = loadFromPreferences()
@@ -33,16 +39,18 @@ class SensorConfigManager(
                 val preference = sensorConfigMap[sensor.type]
                 preference?.toSensorConfig(sensor)
             }
+        savedSensorConfigs = sensorConfigs
         cont.resume(sensorConfigs)
     }
 
-    fun saveSensorConfigs(configs: List<SensorConfig>) {
-        val configPreferences = configs.map { it.preference }
+    fun saveSensorConfigs(sensorConfigs: List<SensorConfig>) {
+        val configPreferences = sensorConfigs.map { it.preference }
         val configPreferencesJson = gson.toJson(configPreferences)
         L.i("sensor_debug sensor saveSensorConfigPreferences $configPreferencesJson")
         sharedPreferences.edit()
             .putString("sensor_config_json", configPreferencesJson)
             .apply()
+        savedSensorConfigs = sensorConfigs
     }
 
     private fun loadFromPreferences(): List<SensorConfigPreference> {
@@ -82,6 +90,8 @@ class SensorConfigManager(
     }
 
     internal companion object {
+        private var savedSensorConfigs: List<SensorConfig> = emptyList()
+
         val SENSOR_CONFIG_PREFERENCES: MutableMap<Int, SensorConfigPreference> by lazy {
             val defaultPreferences = mutableMapOf(
                 Sensor.TYPE_ACCELEROMETER to defaultSensorConfigPreference(Sensor.TYPE_ACCELEROMETER),
