@@ -1,10 +1,15 @@
 package com.kmadsen.compass
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.SensorLogger
+import com.kmadsen.compass.sensors.config.SensorConfigActivity
 import com.kylemadsen.core.koin.koinLateModule
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
@@ -54,6 +59,11 @@ class CompassMainActivity : AppCompatActivity() {
             mapboxMap.addOnMapLongClickListener {
                 false
             }
+        }
+
+        findViewById<Button>(R.id.configure_sensors).setOnClickListener {
+            val intent = Intent(this, SensorConfigActivity::class.java)
+            startActivity(intent)
         }
     }
 

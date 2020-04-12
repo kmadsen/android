@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class SensorFileWriter private constructor(
+class SensorFileWriter(
     private val fileDirectory: File,
     private val fileOutputStream: FileOutputStream
 ) {
@@ -70,7 +70,7 @@ class SensorFileWriter private constructor(
         private const val sensorFileName = "device_sensors"
         private val formatter = SimpleDateFormat("yyy_MM_dd_HH_mm_ss", Locale.ENGLISH)
 
-        suspend fun openSensorFileWriter(context: Context): SensorFileWriter = withContext(Dispatchers.IO) {
+        suspend fun open(context: Context): SensorFileWriter = withContext(Dispatchers.IO) {
             val directory = File(context.filesDir, directoryName)
             directory.mkdir()
 
