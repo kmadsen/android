@@ -6,6 +6,8 @@ import android.content.SharedPreferences
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.kmadsen.compass.sensors.config.SensorConfig
@@ -47,6 +49,12 @@ class SensorEventViewModel(
             viewModelScope.launch {
                 navigationSensorManager.writeEvent(sensorEvent)
             }
+        }
+    }
+
+    companion object {
+        fun get(owner: ViewModelStoreOwner): SensorEventViewModel {
+            return ViewModelProvider(owner).get(SensorEventViewModel::class.java)
         }
     }
 }

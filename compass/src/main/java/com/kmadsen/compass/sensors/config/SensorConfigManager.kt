@@ -19,18 +19,19 @@ class SensorConfigManager(
 ) {
 
     suspend fun loadSensorConfigs(): List<SensorConfig> = suspendCoroutine { cont ->
+        val sensorConfigMap = SENSOR_CONFIG_PREFERENCES.toMutableMap()
         val sensorConfigsPreferences = loadFromPreferences()
-        val sensorSet = SENSOR_CONFIG_PREFERENCES.toMutableMap()
         sensorConfigsPreferences.forEach { sensorConfigsPreference ->
-            sensorSet[sensorConfigsPreference.sensorType] = sensorConfigsPreference
+            sensorConfigMap[sensorConfigsPreference.sensorType] = sensorConfigsPreference
         }
+
         val sensorConfigs = sensorManager.getSensorList(Sensor.TYPE_ALL)
             .filter { sensor ->
-                sensorSet.contains(sensor.type)
+                sensorConfigMap.contains(sensor.type)
             }
             .mapNotNull { sensor ->
-                val preference = sensorConfigsPreferences[sensor.type]
-                preference.toSensorConfig(sensor)
+                val preference = sensorConfigMap[sensor.type]
+                preference?.toSensorConfig(sensor)
             }
         cont.resume(sensorConfigs)
     }

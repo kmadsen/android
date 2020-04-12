@@ -74,9 +74,3 @@ repositories {
 dependencies {
     implementation project(path: ':core')
 }
-
-dependencies {
-    implementation 'androidx.appcompat:appcompat:+'
-    implementation 'androidx.constraintlayout:constraintlayout:+'
-    implementation 'com.google.android.material:material:+'
-}
