@@ -1,4 +1,4 @@
-package com.kmadsen.compass.azimuth
+package com.kmadsen.compass.sensors.data
 
 import kotlin.math.abs
 import kotlin.math.sqrt
@@ -50,14 +50,14 @@ data class Vector3d(
         return this
     }
 
-    fun subtract(v: Vector3d): Vector3d  {
+    fun subtract(v: Vector3d): Vector3d {
         this.x -= v.x
         this.y -= v.y
         this.z -= v.z
         return this
     }
 
-    fun abs(): Vector3d  {
+    fun abs(): Vector3d {
         this.x = abs(x)
         this.y = abs(y)
         this.z = abs(z)
@@ -88,5 +88,6 @@ fun cross(v1: Vector3d, v2: Vector3d): Vector3d {
     return Vector3d(
         v1.y * v2.z - v1.z * v2.y,
         v2.x * v1.z - v2.z * v1.x,
-        v1.x * v2.y - v1.y * v2.x)
+        v1.x * v2.y - v1.y * v2.x
+    )
 }

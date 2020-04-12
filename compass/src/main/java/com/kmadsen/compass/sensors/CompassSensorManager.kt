@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import androidx.lifecycle.viewModelScope
 import com.kmadsen.compass.sensors.config.SensorConfigManager
 import com.kylemadsen.core.logger.L
+import com.kylemadsen.core.time.toSamplingPeriodMicros
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.ext.scope
@@ -31,7 +32,7 @@ class CompassSensorManager(
 
         sensorConfigs.forEach { sensorConfig ->
             L.i("sensor_debug register listener ${sensorConfig.preference}")
-            val samplingPeriodUs = toSamplingPeriodUs(sensorConfig.preference.signalsPerSecond)
+            val samplingPeriodUs = toSamplingPeriodMicros(sensorConfig.preference.signalsPerSecond)
             sensorManager.registerListener(this,
                 sensorConfig.sensor,
                 samplingPeriodUs)
@@ -54,9 +55,5 @@ class CompassSensorManager(
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Haven't found a need for this
-    }
-
-    private fun toSamplingPeriodUs(signalsPerSecond: Int): Int {
-        return 1000000 / signalsPerSecond
     }
 }

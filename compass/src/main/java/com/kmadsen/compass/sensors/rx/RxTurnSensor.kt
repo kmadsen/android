@@ -1,9 +1,11 @@
-package com.kmadsen.compass.azimuth
+package com.kmadsen.compass.sensors.rx
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
+import com.kmadsen.compass.sensors.data.Measure1d
+import com.kmadsen.compass.sensors.data.Vector3d
+import com.kmadsen.compass.sensors.data.dot
 import com.kmadsen.compass.location.LocationRepository
-import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kylemadsen.core.time.DeviceClock
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -25,12 +27,17 @@ class TurnSensor(
                     val gravity = Vector3d(
                         -gravityEvent.values[0].toDouble(),
                         -gravityEvent.values[1].toDouble(),
-                        -gravityEvent.values[2].toDouble())
+                        -gravityEvent.values[2].toDouble()
+                    )
                     val gyro = Vector3d(
                         gyroEvent.values[0].toDouble(),
                         gyroEvent.values[1].toDouble(),
-                        gyroEvent.values[2].toDouble())
-                    val rotated = dot(gravity, gyro) / gravity.length()
+                        gyroEvent.values[2].toDouble()
+                    )
+                    val rotated = dot(
+                        gravity,
+                        gyro
+                    ) / gravity.length()
                     if (lastTimeNanos != 0L) {
                         val deltaNanos = gyroEvent.timestamp - lastTimeNanos
                         val deltaSeconds = deltaNanos / 1000000000.0
@@ -43,7 +50,10 @@ class TurnSensor(
             })
             .map {
                 val value = it.toNormalizedDegrees()
-                Measure1d(DeviceClock.elapsedMillis(), value.toFloat())
+                Measure1d(
+                    DeviceClock.elapsedMillis(),
+                    value.toFloat()
+                )
             }
             .doOnNext {
                 locationRepository.updateTurnDegrees(it)

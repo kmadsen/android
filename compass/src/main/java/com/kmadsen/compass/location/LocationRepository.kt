@@ -4,7 +4,7 @@ import com.gojuno.koptional.None
 import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
 import com.jakewharton.rxrelay2.BehaviorRelay
-import com.kmadsen.compass.azimuth.Measure1d
+import com.kmadsen.compass.sensors.data.Measure1d
 import com.kmadsen.compass.location.fused.FusedLocation
 import com.kmadsen.compass.walking.WalkingState
 import com.kmadsen.compass.wifilocation.WifiLocationResponse

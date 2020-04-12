@@ -24,6 +24,6 @@ fun toSamplesPerSecond(minDelayUs: Int): Int? {
     }
 }
 
-private fun toSamplingPeriodMicros(signalsPerSecond: Int): Int {
+fun toSamplingPeriodMicros(signalsPerSecond: Int): Int {
     return 1000000 / signalsPerSecond
 }

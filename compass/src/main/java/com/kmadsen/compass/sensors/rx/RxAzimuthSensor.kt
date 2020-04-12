@@ -1,11 +1,12 @@
-package com.kmadsen.compass.azimuth
+package com.kmadsen.compass.sensors.rx
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.os.SystemClock
+import com.kmadsen.compass.sensors.data.Measure1d
+import com.kmadsen.compass.sensors.data.Measure3d
 import com.kmadsen.compass.location.LocationRepository
-import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kylemadsen.core.time.toMillisecondPeriod
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.PI
 import kotlin.math.min
 
-class AzimuthSensor(
+class RxAzimuthSensor(
     private val androidSensors: RxAndroidSensors,
     private val locationRepository: LocationRepository
 ) {
@@ -74,9 +75,21 @@ fun Measure3d.lowPassFilter(nextEstimate: SensorEvent): Measure3d {
     val nanosEstimateDelta = (nextEstimate.timestamp - measuredAtNanos)
     val delayEstimateNanos = TimeUnit.MILLISECONDS.toNanos(500).toDouble()
     val alpha = min(0.9, (nanosEstimateDelta / delayEstimateNanos)).toFloat()
-    x = lowPassFilter(x, nextEstimate.values[0], alpha)
-    y = lowPassFilter(y, nextEstimate.values[1], alpha)
-    z = lowPassFilter(z, nextEstimate.values[2], alpha)
+    x = lowPassFilter(
+        x,
+        nextEstimate.values[0],
+        alpha
+    )
+    y = lowPassFilter(
+        y,
+        nextEstimate.values[1],
+        alpha
+    )
+    z = lowPassFilter(
+        z,
+        nextEstimate.values[2],
+        alpha
+    )
     measuredAtNanos = nextEstimate.timestamp
     recordedAtNanos = SystemClock.elapsedRealtimeNanos()
     accuracy = nextEstimate.accuracy

@@ -1,13 +1,13 @@
-package com.kmadsen.compass.azimuth
+package com.kmadsen.compass.sensors.rx
 
 import android.hardware.Sensor
 import android.hardware.SensorManager
+import com.kmadsen.compass.sensors.data.Measure1d
 import com.kmadsen.compass.location.LocationRepository
-import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 
-class AltitudeSensor(
+class RxAltitudeSensor(
     val rxAndroidSensors: RxAndroidSensors,
     val locationRepository: LocationRepository
 ) {
@@ -16,7 +16,11 @@ class AltitudeSensor(
         return rxAndroidSensors.observeRawSensor(Sensor.TYPE_PRESSURE)
             .map {
                 val altitudeMeters = getAltitude(it.values[0])
-                Measure1d(TimeUnit.NANOSECONDS.toMillis(it.timestamp), altitudeMeters)
+                Measure1d(
+                    TimeUnit.NANOSECONDS.toMillis(
+                        it.timestamp
+                    ), altitudeMeters
+                )
             }.toObservable()
             .doAfterNext {
                 locationRepository.updateAltitudeMeters(it)

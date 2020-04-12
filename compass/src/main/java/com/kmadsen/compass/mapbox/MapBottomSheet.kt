@@ -7,8 +7,8 @@ import android.view.View
 import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kmadsen.compass.R
-import com.kmadsen.compass.azimuth.AltitudeSensor
-import com.kmadsen.compass.azimuth.Measure1d
+import com.kmadsen.compass.sensors.rx.RxAltitudeSensor
+import com.kmadsen.compass.sensors.data.Measure1d
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.sensor.SensorLocation
 import com.kmadsen.compass.walking.WalkingStateSensor
@@ -31,7 +31,7 @@ class MapBottomSheet(
 ) : LinearLayout(context, attrs) {
 
     private val locationRepository: LocationRepository by inject()
-    private val altitudeSensor: AltitudeSensor by inject()
+    private val rxAltitudeSensor: RxAltitudeSensor by inject()
     private val walkingStateSensor: WalkingStateSensor by inject()
 
     private lateinit var standardBottomSheetBehavior: BottomSheetBehavior<View>
@@ -76,7 +76,7 @@ class MapBottomSheet(
 
         var firstAltitudeMeters: Float? = null
         var firstAltitudeMetersMeasuredMs: Long? = null
-        compositeDisposable.add(altitudeSensor.observeAltitude().observeOn(AndroidSchedulers.mainThread()).subscribe {
+        compositeDisposable.add(rxAltitudeSensor.observeAltitude().observeOn(AndroidSchedulers.mainThread()).subscribe {
             if (firstAltitudeMeters == null) {
                 firstAltitudeMeters = it.value
                 firstAltitudeMetersMeasuredMs = it.recordedAtMs

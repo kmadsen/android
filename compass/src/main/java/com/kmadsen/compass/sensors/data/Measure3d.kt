@@ -1,4 +1,4 @@
-package com.kmadsen.compass.azimuth
+package com.kmadsen.compass.sensors.data
 
 import kotlin.math.sqrt
 

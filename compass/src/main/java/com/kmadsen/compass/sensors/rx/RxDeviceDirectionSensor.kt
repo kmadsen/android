@@ -1,12 +1,13 @@
-package com.kmadsen.compass.azimuth
+package com.kmadsen.compass.sensors.rx
 
 import com.jakewharton.rxrelay2.BehaviorRelay
+import com.kmadsen.compass.sensors.data.Measure1d
 import com.kmadsen.compass.location.LocationRepository
 import com.kylemadsen.core.time.DeviceClock
 import io.reactivex.Observable
 
-class DeviceDirectionSensor(
-    private val azimuthSensor: AzimuthSensor,
+class RxDeviceDirectionSensor(
+    private val azimuthSensor: RxAzimuthSensor,
     private val turnSensor: TurnSensor,
     private val locationRepository: LocationRepository
 ) {

@@ -7,8 +7,8 @@ import android.widget.ImageView
 import androidx.core.view.animation.PathInterpolatorCompat
 import com.gojuno.koptional.Optional
 import com.kmadsen.compass.R
-import com.kmadsen.compass.azimuth.DeviceDirectionSensor
-import com.kmadsen.compass.azimuth.Measure1d
+import com.kmadsen.compass.sensors.rx.RxDeviceDirectionSensor
+import com.kmadsen.compass.sensors.data.Measure1d
 import com.kmadsen.compass.location.BasicLocation
 import com.kmadsen.compass.location.LocationSensor
 import com.kylemadsen.core.koin.inject
@@ -26,7 +26,7 @@ class MapViewController {
 
     private val mapboxMap: MapboxMap by inject()
     private val locationSensor: LocationSensor by inject()
-    private val deviceDirectionSensor: DeviceDirectionSensor by inject()
+    private val rxDeviceDirectionSensor: RxDeviceDirectionSensor by inject()
 
     private val defaultZoom: Double = 12.0
     private var isShowingDirection: Boolean = false
@@ -40,7 +40,7 @@ class MapViewController {
         val rotationView = deviceDirectionView.findViewById<ImageView>(R.id.location_direction)
         rotationView.visibility = View.GONE
 
-        compositeDisposable.add(deviceDirectionSensor.observeHorizontalDirection()
+        compositeDisposable.add(rxDeviceDirectionSensor.observeHorizontalDirection()
                 .withLatestFrom(locationSensor.observeLocations())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { azimuthLocationPair: Pair<Measure1d, Optional<BasicLocation>> ->

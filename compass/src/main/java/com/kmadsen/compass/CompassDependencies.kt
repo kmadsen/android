@@ -3,10 +3,10 @@ package com.kmadsen.compass
 import android.content.Context
 import android.content.res.Resources
 import android.net.wifi.WifiManager
-import com.kmadsen.compass.azimuth.AltitudeSensor
-import com.kmadsen.compass.azimuth.AzimuthSensor
-import com.kmadsen.compass.azimuth.DeviceDirectionSensor
-import com.kmadsen.compass.azimuth.TurnSensor
+import com.kmadsen.compass.sensors.rx.RxAltitudeSensor
+import com.kmadsen.compass.sensors.rx.RxAzimuthSensor
+import com.kmadsen.compass.sensors.rx.RxDeviceDirectionSensor
+import com.kmadsen.compass.sensors.rx.TurnSensor
 import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationSensor
@@ -34,9 +34,15 @@ val localizationModule = module {
     single { TurnSensor(get(), get()) }
     single { SensorConfigManager(get(), get(), get()) }
     single { CompassSensorManager(get(), get()) }
-    single { AzimuthSensor(get(), get()) }
-    single { DeviceDirectionSensor(get(), get(), get()) }
-    single { AltitudeSensor(get(), get()) }
+    single { RxAzimuthSensor(get(), get()) }
+    single {
+        RxDeviceDirectionSensor(
+            get(),
+            get(),
+            get()
+        )
+    }
+    single { RxAltitudeSensor(get(), get()) }
     single { WalkingStateSensor(get(), get()) }
     single {
         val resources = get<Resources>()

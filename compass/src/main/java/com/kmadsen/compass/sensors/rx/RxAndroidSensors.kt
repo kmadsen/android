@@ -5,6 +5,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.SystemClock
+import com.kylemadsen.core.time.toSamplingPeriodMicros
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.FlowableEmitter
@@ -17,7 +18,7 @@ class RxAndroidSensors(private val sensorManager: SensorManager) {
                 SensorListener(
                     emitter
                 )
-            sensorManager.registerListener(sensorListener, rotationVectorSensor, toSamplingPeriodUs(100))
+            sensorManager.registerListener(sensorListener, rotationVectorSensor, toSamplingPeriodMicros(100))
             emitter.setCancellable {
                 sensorManager.unregisterListener(sensorListener)
             }
@@ -31,7 +32,7 @@ class RxAndroidSensors(private val sensorManager: SensorManager) {
                 SensorListener(
                     emitter
                 )
-            sensorManager.registerListener(sensorListener, sensor, toSamplingPeriodUs(100))
+            sensorManager.registerListener(sensorListener, sensor, toSamplingPeriodMicros(100))
             emitter.setCancellable {
                 sensorManager.unregisterListener(sensorListener)
             }
@@ -65,7 +66,7 @@ class RxAndroidSensors(private val sensorManager: SensorManager) {
                 SensorRawListener(
                     emitter
                 )
-            sensorManager.registerListener(sensorListener, sensor, toSamplingPeriodUs(100))
+            sensorManager.registerListener(sensorListener, sensor, toSamplingPeriodMicros(100))
             emitter.setCancellable {
                 sensorManager.unregisterListener(sensorListener)
             }
@@ -84,12 +85,6 @@ class RxAndroidSensors(private val sensorManager: SensorManager) {
                 emitter.onNext(sensorEvent)
             }
         }
-    }
-
-    // 25 signals per second is 40000 microseconds.
-    // 1/25 = 0.04 seconds and 40000 microseconds
-    private fun toSamplingPeriodUs(signalsPerSecond: Int): Int {
-        return 1000000 / signalsPerSecond
     }
 }
 
