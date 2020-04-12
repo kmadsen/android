@@ -65,7 +65,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-reactivestreams:2.2.0'
 
     // 'api' so the main app doesn't have to also include it as a dependency
-    api 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.1.0-alpha.1'
+    api 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.1.0'
 }
 repositories {
     mavenCentral()
@@ -73,4 +73,10 @@ repositories {
 
 dependencies {
     implementation project(path: ':core')
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:+'
+    implementation 'androidx.constraintlayout:constraintlayout:+'
+    implementation 'com.google.android.material:material:+'
 }

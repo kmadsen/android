@@ -1,34 +1,51 @@
 package com.kmadsen.compass.sensors
 
+import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import androidx.lifecycle.viewModelScope
+import com.kmadsen.compass.sensors.config.SensorConfigManager
+import com.kylemadsen.core.logger.L
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.koin.ext.scope
 
 class CompassSensorManager(
     private val sensorManager: SensorManager,
-    private val sensorConfig: SensorConfig
+    private val sensorConfigManager: SensorConfigManager
 ) : SensorEventListener {
 
     private var eventEmitter: (SensorEvent) -> Unit = { }
+    private var sensorFileWriter: SensorFileWriter? = null
 
-    fun start(eventEmitter: (SensorEvent) -> Unit) {
+    suspend fun start(context: Context, eventEmitter: (SensorEvent) -> Unit) {
         this.eventEmitter = eventEmitter
-        sensorList.forEach { sensor ->
-            sensorManager.registerListener(this, sensor, 0)
+
+        val sensorConfigs = sensorConfigManager.loadSensorConfigs()
+        val sensorFileWriter = SensorFileWriter.open(context)
+        val sensorList = sensorConfigs.map { it.sensor }
+        sensorFileWriter.write(sensorList)
+        this.sensorFileWriter = sensorFileWriter
+
+        sensorConfigs.forEach { sensorConfig ->
+            L.i("sensor_debug register listener ${sensorConfig.preference}")
+            val samplingPeriodUs = toSamplingPeriodUs(sensorConfig.preference.signalsPerSecond)
+            sensorManager.registerListener(this,
+                sensorConfig.sensor,
+                samplingPeriodUs)
         }
     }
 
-    val sensorList: List<Sensor> by lazy {
-        sensorManager.getSensorList(Sensor.TYPE_ALL)
-            .filter { sensor ->
-                sensorConfig.supports(sensor.type)
-            }
-            .filterNotNull()
+    fun stop() {
+        eventEmitter = { }
+        sensorManager.unregisterListener(this)
+        sensorFileWriter?.close()
     }
 
-    fun stop() {
-        sensorManager.unregisterListener(this)
+    suspend fun writeEvent(sensorEvent: SensorEvent) {
+        sensorFileWriter?.write(sensorEvent)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -39,11 +56,6 @@ class CompassSensorManager(
         // Haven't found a need for this
     }
 
-    /**
-     * Helper function to turn signalsPerSecond into what Android expects, samplingPeriodUs
-     *
-     * 25 signals per second is 40000 samplingPeriodUs.
-     */
     private fun toSamplingPeriodUs(signalsPerSecond: Int): Int {
         return 1000000 / signalsPerSecond
     }
