@@ -11,7 +11,8 @@ import com.kmadsen.compass.location.LocationPermissions
 import com.kmadsen.compass.location.LocationRepository
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.location.fused.FusedLocationService
-import com.kmadsen.compass.sensors.SensorLogger
+import com.kmadsen.compass.sensors.CompassSensorManager
+import com.kmadsen.compass.sensors.config.SensorConfigManager
 import com.kmadsen.compass.sensors.rx.RxAndroidSensors
 import com.kmadsen.compass.walking.WalkingStateSensor
 import com.kmadsen.compass.wifilocation.WifiLocationScanner
@@ -30,8 +31,9 @@ val localizationModule = module {
     single { FusedLocationService(androidApplication()) }
     single { LocationSensor(get(), get(), get() ) }
     single { RxAndroidSensors(get()) }
-    single { SensorLogger(get(), get(), get()) }
     single { TurnSensor(get(), get()) }
+    single { SensorConfigManager(get(), get(), get()) }
+    single { CompassSensorManager(get(), get()) }
     single { AzimuthSensor(get(), get()) }
     single { DeviceDirectionSensor(get(), get(), get()) }
     single { AltitudeSensor(get(), get()) }

@@ -2,13 +2,14 @@ package com.kmadsen.compass.location.fused
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
 import android.location.Location
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.kylemadsen.core.logger.L
 import java.util.concurrent.TimeUnit
 
-class FusedLocationService(private val application: Application) {
+class FusedLocationService(private val context: Context) {
 
     private val locationRequest: LocationRequest = LocationRequest.create()
             .setPriority(PRIORITY_HIGH_ACCURACY)
@@ -16,7 +17,7 @@ class FusedLocationService(private val application: Application) {
 
     private val providerClient: FusedLocationProviderClient by lazy {
         L.i("providerClient)")
-        LocationServices.getFusedLocationProviderClient(application)
+        LocationServices.getFusedLocationProviderClient(context)
     }
 
     private var lastLocation: Location? = null

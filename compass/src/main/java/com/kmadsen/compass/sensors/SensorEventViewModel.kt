@@ -10,18 +10,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.sensors.config.SensorConfig
 import com.kmadsen.compass.sensors.config.SensorConfigManager
+import com.kylemadsen.core.koin.inject
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class SensorEventViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val sensorManager = application.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val sharedPreferences: SharedPreferences = application.getSharedPreferences("sensor_config", Context.MODE_PRIVATE)
-    private val sensorConfigManager = SensorConfigManager(sensorManager, sharedPreferences, Gson())
-    private val navigationSensorManager = CompassSensorManager(sensorManager, sensorConfigManager)
+    private val sensorConfigManager: SensorConfigManager by inject()
+    private val navigationSensorManager: CompassSensorManager by inject()
 
     fun start(eventEmitter: (SensorEvent) -> Unit) {
         val eventEmitterWithWriter = attachEventFileWriter(eventEmitter)
@@ -50,6 +51,10 @@ class SensorEventViewModel(
                 navigationSensorManager.writeEvent(sensorEvent)
             }
         }
+    }
+
+    fun saveSensorConfigs(sensorConfigs: List<SensorConfig>) {
+        sensorConfigManager.saveSensorConfigs(sensorConfigs)
     }
 
     companion object {

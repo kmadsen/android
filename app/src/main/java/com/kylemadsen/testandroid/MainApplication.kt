@@ -10,16 +10,20 @@ import com.kylemadsen.core.logger.L
 import com.kylemadsen.core.time.DeviceBootTimeProvider
 import com.kylemadsen.core.time.DeviceClock
 import com.mapbox.mapboxsdk.Mapbox
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+import kotlin.math.sin
 
 class MainApplication : Application() {
 
     init {
         initLogging()
     }
+
+    private val deviceBootTimeProvider: DeviceBootTimeProvider by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -29,7 +33,9 @@ class MainApplication : Application() {
             modules(appModule)
         }
 
-        initDeviceClock()
+        appModule
+
+        DeviceClock.initialize(deviceBootTimeProvider)
         Mapbox.getInstance(applicationContext, getString(R.string.mapbox_access_token))
     }
 
@@ -38,17 +44,12 @@ class MainApplication : Application() {
             L.add(AndroidLogger.getInstance())
         }
     }
-
-    private fun initDeviceClock() {
-        val deviceBootTimeProvider = DeviceBootTimeProvider(
-            gson = Gson(),
-            clockPreferences = getSharedPreferences("device_clock", Context.MODE_PRIVATE)
-        )
-        DeviceClock.initialize(deviceBootTimeProvider)
-    }
 }
 
 val appModule = module {
     single<Resources> { androidApplication().resources }
     single { androidContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager }
+    single { androidApplication().getSharedPreferences("compass_preferences", Context.MODE_PRIVATE) }
+    single { Gson() }
+    single { DeviceBootTimeProvider(get(), get()) }
 }

@@ -4,11 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapViewController
-import com.kmadsen.compass.sensors.SensorLogger
 import com.kmadsen.compass.sensors.config.SensorConfigActivity
 import com.kylemadsen.core.koin.koinLateModule
 import com.mapbox.mapboxsdk.maps.MapView
@@ -27,7 +24,6 @@ class CompassMainActivity : AppCompatActivity() {
 //    private lateinit var compassGLSurfaceView: CompassGLSurfaceView
 
     private val locationSensor: LocationSensor by inject()
-    private val sensorLogger: SensorLogger by inject()
     private val mapLateModule by koinLateModule()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,9 +32,6 @@ class CompassMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.compass_main_activity)
-
-        compositeDisposable.add(sensorLogger.attachFileWriting(this)
-                .subscribe())
 
 //        compassGLSurfaceView = map_gl_surface_view
 //        compassGLSurfaceView.setZOrderMediaOverlay(true)

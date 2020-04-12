@@ -38,7 +38,7 @@ class SensorConfigManager(
 
     fun saveSensorConfigs(configs: List<SensorConfig>) {
         val configPreferences = configs.map { it.preference }
-        val configPreferencesJson = gson.toJson(configs)
+        val configPreferencesJson = gson.toJson(configPreferences)
         L.i("sensor_debug sensor saveSensorConfigPreferences $configPreferencesJson")
         sharedPreferences.edit()
             .putString("sensor_config_json", configPreferencesJson)

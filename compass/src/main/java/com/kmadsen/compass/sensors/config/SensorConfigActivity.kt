@@ -4,10 +4,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kmadsen.compass.R
+import com.kmadsen.compass.sensors.CompassSensorManager
 import com.kmadsen.compass.sensors.SensorEventViewModel
 import com.kylemadsen.core.logger.L
 
 import kotlinx.android.synthetic.main.compass_sensor_config_activity.*
+import org.koin.android.ext.android.inject
 
 class SensorConfigActivity : AppCompatActivity() {
 
@@ -36,6 +38,12 @@ class SensorConfigActivity : AppCompatActivity() {
         sensorViewModel.loadSensorConfigs { sensorConfigs ->
             viewAdapter.data = sensorConfigs
         }
+    }
+
+    override fun onStop() {
+        sensorViewModel?.saveSensorConfigs(viewAdapter.data)
+
+        super.onStop()
     }
 
 }
