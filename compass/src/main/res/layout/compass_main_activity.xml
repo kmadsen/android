@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_bright">
+    android:layout_height="match_parent" >
 
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapbox_mapview"
@@ -28,7 +27,6 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:orientation="vertical"
-        android:background="@color/colorPrimaryDark"
         style="?attr/bottomSheetStyle"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         />

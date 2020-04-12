@@ -1,14 +1,13 @@
 package com.kmadsen.compass.sensors.config
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kmadsen.compass.R
 import com.kmadsen.compass.sensors.SensorEventViewModel
 import com.kylemadsen.core.logger.L
 
-import kotlinx.android.synthetic.main.activity_sensor_config.*
+import kotlinx.android.synthetic.main.compass_sensor_config_activity.*
 
 class SensorConfigActivity : AppCompatActivity() {
 
@@ -17,7 +16,7 @@ class SensorConfigActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sensor_config)
+        setContentView(R.layout.compass_sensor_config_activity)
         setSupportActionBar(toolbar)
 
         val viewManager = LinearLayoutManager(recyclerView.context)
