@@ -6,7 +6,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import com.kmadsen.compass.sensors.config.SensorConfigManager
-import com.kylemadsen.core.logger.L
 import com.kylemadsen.core.time.toSamplingPeriodMicros
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -32,7 +31,6 @@ class CompassSensorManager(
         this.sensorFileWriter = sensorFileWriter
 
         sensorConfigs.forEach { sensorConfig ->
-            L.i("sensor_debug register listener ${sensorConfig.preference}")
             val samplingPeriodUs = toSamplingPeriodMicros(sensorConfig.preference.signalsPerSecond)
             sensorManager.registerListener(this,
                 sensorConfig.sensor,

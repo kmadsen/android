@@ -4,17 +4,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kmadsen.compass.R
-import com.kmadsen.compass.sensors.CompassSensorManager
-import com.kmadsen.compass.sensors.SensorEventViewModel
 import com.kylemadsen.core.logger.L
-
 import kotlinx.android.synthetic.main.compass_sensor_config_activity.*
 import org.koin.android.ext.android.inject
 
 class SensorConfigActivity : AppCompatActivity() {
 
     private val viewAdapter = SensorConfigAdapter()
-    private var sensorViewModel: SensorEventViewModel? = null
+    private val sensorConfigManager: SensorConfigManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,21 +26,14 @@ class SensorConfigActivity : AppCompatActivity() {
         }
 
         viewAdapter.itemClicked = {
-            L.i("sensor_debug sensor clicked")
+            L.i("sensor clicked ${it.sensor.name}")
         }
 
-        val sensorViewModel = SensorEventViewModel.get(this)
-        this.sensorViewModel = sensorViewModel
-
-        sensorViewModel.loadSensorConfigs { sensorConfigs ->
-            viewAdapter.data = sensorConfigs
-        }
+        viewAdapter.data = SensorConfigManager.savedSensorConfigs
     }
 
-    override fun onStop() {
-        sensorViewModel?.saveSensorConfigs(viewAdapter.data)
-
-        super.onStop()
+    override fun onPause() {
+        sensorConfigManager.saveSensorConfigs(viewAdapter.data)
+        super.onPause()
     }
-
 }

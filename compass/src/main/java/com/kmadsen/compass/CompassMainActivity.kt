@@ -4,12 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.viewModelScope
 import com.kmadsen.compass.location.LocationSensor
 import com.kmadsen.compass.mapbox.MapViewController
 import com.kmadsen.compass.sensors.CompassSensorManager
 import com.kmadsen.compass.sensors.SensorEventViewModel
 import com.kmadsen.compass.sensors.config.SensorConfigActivity
 import com.kylemadsen.core.koin.koinLateModule
+import com.kylemadsen.core.logger.L
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
 import io.reactivex.disposables.CompositeDisposable
@@ -63,18 +65,19 @@ class CompassMainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         locationSensor.onStart(this)
         SensorEventViewModel.get(this).start {
             // Does this work
         }
     }
 
-    override fun onStop() {
+    override fun onPause() {
         SensorEventViewModel.get(this).stop()
+
         locationSensor.onStop()
-        super.onStop()
+        super.onPause()
     }
 
     override fun onDestroy() {

@@ -9,14 +9,14 @@ import io.reactivex.Emitter
 import io.reactivex.Flowable
 
 class RxAndroidSensors(
-    private val sensorManager: CompassSensorManager
+    private val compassSensorManager: CompassSensorManager
 ) {
     fun observeSensor(sensorType: Int): Flowable<LoggedEvent> {
         return Flowable.create({ emitter ->
             val sensorListener = LoggedSensorEventListener(emitter, sensorType)
-            sensorManager.registerListener(sensorListener)
+            compassSensorManager.registerListener(sensorListener)
             emitter.setCancellable {
-                sensorManager.unregisterListener(sensorListener)
+                compassSensorManager.unregisterListener(sensorListener)
             }
         }, BackpressureStrategy.BUFFER)
     }
@@ -24,9 +24,9 @@ class RxAndroidSensors(
     fun observeRawSensor(sensorType: Int): Flowable<SensorEvent> {
         return Flowable.create({ emitter ->
             val sensorListener = RawSensorEventListener(emitter, sensorType)
-            sensorManager.registerListener(sensorListener)
+            compassSensorManager.registerListener(sensorListener)
             emitter.setCancellable {
-                sensorManager.unregisterListener(sensorListener)
+                compassSensorManager.unregisterListener(sensorListener)
             }
         }, BackpressureStrategy.BUFFER)
     }

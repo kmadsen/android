@@ -17,13 +17,6 @@ class SensorConfigManager(
     private val sharedPreferences: SharedPreferences,
     private val gson: Gson
 ) {
-
-    fun getSensorConfig(sensorType: Int): SensorConfig? {
-        val savedSensorConfigs = savedSensorConfigs
-        check(savedSensorConfigs.isNotEmpty()) { "You must first call loadSensorConfigs" }
-        return savedSensorConfigs.firstOrNull { it.sensor.type == sensorType }
-    }
-
     suspend fun loadSensorConfigs(): List<SensorConfig> = suspendCoroutine { cont ->
         val sensorConfigMap = SENSOR_CONFIG_PREFERENCES.toMutableMap()
         val sensorConfigsPreferences = loadFromPreferences()
@@ -44,18 +37,17 @@ class SensorConfigManager(
     }
 
     fun saveSensorConfigs(sensorConfigs: List<SensorConfig>) {
+        savedSensorConfigs = sensorConfigs
+
         val configPreferences = sensorConfigs.map { it.preference }
         val configPreferencesJson = gson.toJson(configPreferences)
-        L.i("sensor_debug sensor saveSensorConfigPreferences $configPreferencesJson")
         sharedPreferences.edit()
-            .putString("sensor_config_json", configPreferencesJson)
+            .putString(sensorConfigJsonKey, configPreferencesJson)
             .apply()
-        savedSensorConfigs = sensorConfigs
     }
 
     private fun loadFromPreferences(): List<SensorConfigPreference> {
-        val json = sharedPreferences.getString("sensor_config_json", null) ?: ""
-        L.i("sensor_debug loadSensorConfigPreferences: \"$json\"")
+        val json = sharedPreferences.getString(sensorConfigJsonKey, null) ?: ""
         return readFromJson(json)
     }
 
@@ -68,7 +60,7 @@ class SensorConfigManager(
                 val collectionType: Type = object : TypeToken<List<SensorConfigPreference>>() {}.type
                 gson.fromJson(json, collectionType)
             } catch (t: Throwable) {
-                L.e("sensor_debug Failed to load sensor config preferences: \"$json\"")
+                L.e("Failed to load sensor config preferences: \"$json\"")
                 failedList
             }
             successList
@@ -90,7 +82,9 @@ class SensorConfigManager(
     }
 
     internal companion object {
-        private var savedSensorConfigs: List<SensorConfig> = emptyList()
+        const val sensorConfigJsonKey = "sensor_config_json"
+
+        var savedSensorConfigs: List<SensorConfig> = emptyList()
 
         val SENSOR_CONFIG_PREFERENCES: MutableMap<Int, SensorConfigPreference> by lazy {
             val defaultPreferences = mutableMapOf(
