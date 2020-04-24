@@ -27,10 +27,10 @@ class LocalhostFilesApi {
         @GET("index.json")
         fun drives(): Call<List<FilePath>>
 
-        @GET("json_files/{filename}")
+        @GET("json-files/{filename}")
         fun data(@Path("filename") filename: String): Call<String>
 
-        @GET("json_files/{filename}")
+        @GET("json-files/{filename}")
         fun dataJson(@Path("filename") filename: String): Call<JsonFileDataResponse>
     }
 
