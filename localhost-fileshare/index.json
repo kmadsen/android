@@ -1,14 +1,18 @@
 [
   {
-    "title": "Andy",
-    "path": "json_files/fast-speed-2020-02-04.json"
+    "title": "San Francisco motorcycle",
+    "path": "2020-04-22-san-francisco-sensor-data.json.gzip"
   },
   {
     "title": "Andy",
-    "path": "json_files/andy.json"
+    "path": "fast-speed-2020-02-04.json"
+  },
+  {
+    "title": "Andy",
+    "path": "andy.json"
   },
   {
     "title": "Kyle",
-    "path": "json_files/kyle.json"
+    "path": "kyle.json"
   }
 ]
