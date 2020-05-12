@@ -1,7 +1,11 @@
 [
   {
-    "title": "San Francisco motorcycle",
-    "path": "2020-04-22-san-francisco-sensor-data.json.gzip"
+    "title": "San Francisco motorcycle sensor data",
+    "path": "2020-04-22-san-francisco-sensor-data.json"
+  },
+  {
+    "title": "San Francisco motorcycle windy road",
+    "path": "2020-04-25-motorycycle-windy-road.json"
   },
   {
     "title": "Andy",
