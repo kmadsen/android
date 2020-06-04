@@ -1,5 +1,6 @@
 package com.kylemadsen.testandroid.bluetooth
 
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
@@ -8,9 +9,9 @@ import androidx.annotation.RequiresApi
 import com.kylemadsen.core.logger.L
 
 class BluetoothLeScanner {
+    private var listener: Listener? = null
 
     val mutableMap: MutableMap<BluetoothDevice, ScanResult> = mutableMapOf()
-    var listener: Listener? = null
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     val scanCallback = object : ScanCallback() {
@@ -41,7 +42,52 @@ class BluetoothLeScanner {
         }
     }
 
+    fun startScanning(_bluetoothAdapter: BluetoothAdapter?, dataSetChanged: (Map<BluetoothDevice, ScanResult>) -> Unit) {
+        val bluetoothAdapter = _bluetoothAdapter
+            ?: return
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            listener = object : Listener {
+                override fun onUpdate(
+                    devices: Map<BluetoothDevice, ScanResult>,
+                    deviceUpdated: BluetoothDevice
+                ) {
+                    dataSetChanged(devices)
+                }
+            }
+            bluetoothAdapter.bluetoothLeScanner?.startScan(scanCallback)
+        } else {
+            throw NotImplementedError("This bluetooth scanner is not implemented")
+        }
+    }
+
+    fun stopScanning(_bluetoothAdapter: BluetoothAdapter?) {
+        val bluetoothAdapter = _bluetoothAdapter
+            ?: return
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            bluetoothAdapter.bluetoothLeScanner.stopScan(scanCallback)
+        }
+    }
+
     interface Listener {
         fun onUpdate(devices: Map<BluetoothDevice, ScanResult>, deviceUpdated: BluetoothDevice)
+    }
+
+    companion object {
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun prettyPrint(dataValue: ScanResult): String {
+            return """
+                rssi: ${dataValue.rssi}
+                txPower: ${dataValue.txPower}
+                isConnectable: ${dataValue.isConnectable}
+                isLegacy: ${dataValue.isLegacy}
+                name: ${dataValue.device.name}
+                address: ${dataValue.device.address}
+                bluetoothClass: ${dataValue.device.bluetoothClass}
+                bondState: ${dataValue.device.bondState}
+                type: ${dataValue.device.type}
+            """.trimIndent()
+        }
     }
 }

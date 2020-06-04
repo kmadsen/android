@@ -13,7 +13,7 @@ import com.kylemadsen.testandroid.R
 
 typealias BluetoothDeviceClicked = (BluetoothDevice) -> Unit
 
-class BluetoothDevicesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class BluetoothLeViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var data: List<ScanResult> = emptyList()
     var itemClicked: BluetoothDeviceClicked? = null
@@ -28,17 +28,7 @@ class BluetoothDevicesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val dataValue = data[position]
         val historyHolder = holder as BluetoothDeviceViewHolder
-        historyHolder.textViewTop.text = """
-            rssi: ${dataValue.rssi}
-            txPower: ${dataValue.txPower}
-            isConnectable: ${dataValue.isConnectable}
-            isLegacy: ${dataValue.isLegacy}
-            name: ${dataValue.device.name}
-            address: ${dataValue.device.address}
-            bluetoothClass: ${dataValue.device.bluetoothClass}
-            bondState: ${dataValue.device.bondState}
-            type: ${dataValue.device.type}
-        """.trimIndent()
+        historyHolder.textViewTop.text = BluetoothLeScanner.prettyPrint(dataValue)
         historyHolder.itemView.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 itemClicked?.invoke(dataValue.device)

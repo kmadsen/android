@@ -5,10 +5,10 @@ import android.content.Context
 
 class BluetoothDevicesViewController {
 
-    private var viewAdapter: BluetoothDevicesAdapter? = null
+    private var viewAdapter: BluetoothLeViewAdapter? = null
 //    private val historyFilesApi = HistoryFilesClient()
 
-    fun attach(context: Context, viewAdapter: BluetoothDevicesAdapter, result: (BluetoothDevice) -> Unit) {
+    fun attach(context: Context, viewAdapter: BluetoothLeViewAdapter, result: (BluetoothDevice) -> Unit) {
         this.viewAdapter = viewAdapter
         viewAdapter.itemClicked = { bluetoothDevice ->
 //            if (historyFileItem.isOnDisk()) {

@@ -18,7 +18,7 @@ class BluetoothDevicesActivity : AppCompatActivity() {
 
     private val bluetoothAdapter: BluetoothAdapter? by inject()
     private var filesViewController: BluetoothDevicesViewController? = null
-    private val viewAdapter = BluetoothDevicesAdapter()
+    private val viewAdapter = BluetoothLeViewAdapter()
     private val bluetoothLeScanner = BluetoothLeScanner()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,27 +56,15 @@ class BluetoothDevicesActivity : AppCompatActivity() {
                 // TODO
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                bluetoothLeScanner.listener = object : BluetoothLeScanner.Listener {
-                    override fun onUpdate(
-                        devices: Map<BluetoothDevice, ScanResult>,
-                        deviceUpdated: BluetoothDevice
-                    ) {
-                        viewAdapter.data = devices.values.toList()
-                        viewAdapter.notifyDataSetChanged()
-                    }
-                }
-                bluetoothAdapter?.bluetoothLeScanner?.startScan(bluetoothLeScanner.scanCallback)
-            } else {
-                throw NotImplementedError("This bluetooth scanner is not implemented")
+            bluetoothLeScanner.startScanning(bluetoothAdapter) { devices ->
+                viewAdapter.data = devices.values.toList()
+                viewAdapter.notifyDataSetChanged()
             }
         }
     }
 
     override fun onDestroy() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            bluetoothAdapter?.bluetoothLeScanner?.stopScan(bluetoothLeScanner.scanCallback)
-        }
+        bluetoothLeScanner.stopScanning(bluetoothAdapter)
 
         super.onDestroy()
     }
