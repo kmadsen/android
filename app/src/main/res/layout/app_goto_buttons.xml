@@ -43,4 +43,9 @@
         android:layout_height="wrap_content"
         android:text="@string/activity_main_clock_info" />
 
+    <Button
+        android:id="@+id/goto_bluetooth_select"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_main_bluetooth_select" />
 </merge>
