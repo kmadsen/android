@@ -2,9 +2,9 @@ package com.kylemadsen.testandroid.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.le.ScanResult
+import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,10 +16,10 @@ import org.koin.core.context.loadKoinModules
 
 class BluetoothDevicesActivity : AppCompatActivity() {
 
+    private val bluetoothManager: BluetoothManager? by inject()
     private val bluetoothAdapter: BluetoothAdapter? by inject()
     private var filesViewController: BluetoothDevicesViewController? = null
-    private val viewAdapter = BluetoothLeViewAdapter()
-    private val bluetoothLeScanner = BluetoothLeScanner()
+    private val viewAdapter = BluetoothBondedViewAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         loadKoinModules(bluetoothModule)
@@ -56,17 +56,9 @@ class BluetoothDevicesActivity : AppCompatActivity() {
                 // TODO
             }
 
-            bluetoothLeScanner.startScanning(bluetoothAdapter) { devices ->
-                viewAdapter.data = devices.values.toList()
-                viewAdapter.notifyDataSetChanged()
-            }
+            viewAdapter.data = bluetoothAdapter?.bondedDevices?.toList() ?: emptyList()
+            viewAdapter.notifyDataSetChanged()
         }
-    }
-
-    override fun onDestroy() {
-        bluetoothLeScanner.stopScanning(bluetoothAdapter)
-
-        super.onDestroy()
     }
 
     companion object {

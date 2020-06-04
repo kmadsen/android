@@ -85,9 +85,28 @@ class BluetoothLeScanner {
                 name: ${dataValue.device.name}
                 address: ${dataValue.device.address}
                 bluetoothClass: ${dataValue.device.bluetoothClass}
-                bondState: ${dataValue.device.bondState}
+                bondState: ${bondState(dataValue.device.bondState)}
                 type: ${dataValue.device.type}
             """.trimIndent()
+        }
+
+        fun prettyPrint(dataValue: BluetoothDevice): String {
+            return """
+                name: ${dataValue.name}
+                address: ${dataValue.address}
+                bluetoothClass: ${dataValue.bluetoothClass}
+                bondState: ${bondState(dataValue.bondState)}
+                type: ${dataValue.type}
+            """.trimIndent()
+        }
+
+        private fun bondState(bondState: Int): String {
+            return when (bondState) {
+                BluetoothDevice.BOND_NONE -> "NONE"
+                BluetoothDevice.BOND_BONDED -> "BONDED"
+                BluetoothDevice.BOND_BONDING -> "BONDING"
+                else -> "unknown"
+            }
         }
     }
 }

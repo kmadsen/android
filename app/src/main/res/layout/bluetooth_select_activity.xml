@@ -30,12 +30,6 @@
                 app:srcCompat="@drawable/ic_bluetooth_black_24dp"
                 tools:ignore="VectorDrawableCompat" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -44,7 +38,6 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".history.HistoryFilesActivity"
         tools:showIn="@layout/bluetooth_select_activity"
