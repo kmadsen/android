@@ -1,9 +1,7 @@
 package com.kylemadsen.testandroid.bluetooth
 
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothProfile
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +18,7 @@ class BluetoothDevicesActivity : AppCompatActivity() {
     private val bluetoothAdapter: BluetoothAdapter? by inject()
     private var filesViewController: BluetoothDevicesViewController? = null
     private val viewAdapter = BluetoothBondedViewAdapter()
+    private val connectedDevices = BluetoothConnectedDevices()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         loadKoinModules(bluetoothModule)
@@ -56,8 +55,10 @@ class BluetoothDevicesActivity : AppCompatActivity() {
                 // TODO
             }
 
-            viewAdapter.data = bluetoothAdapter?.bondedDevices?.toList() ?: emptyList()
-            viewAdapter.notifyDataSetChanged()
+            connectedDevices.connect(this, bluetoothAdapter) {
+                viewAdapter.data = it.connectedDevices
+                viewAdapter.notifyDataSetChanged()
+            }
         }
     }
 
