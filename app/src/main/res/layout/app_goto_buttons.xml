@@ -37,17 +37,10 @@
         android:layout_height="wrap_content"
         android:text="@string/activity_main_world_view" />
 
-    <TextView
-        android:id="@+id/clock_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-
     <Button
-        android:id="@+id/clock_info_rest"
+        android:id="@+id/goto_clock_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/activity_main_clock_drift_info"
-        />
+        android:text="@string/activity_main_clock_info" />
 
 </merge>

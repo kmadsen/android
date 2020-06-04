@@ -15,7 +15,6 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import kotlin.math.sin
 
 class MainApplication : Application() {
 
@@ -32,8 +31,6 @@ class MainApplication : Application() {
             androidContext(this@MainApplication)
             modules(appModule)
         }
-
-        appModule
 
         DeviceClock.initialize(deviceBootTimeProvider)
         Mapbox.getInstance(applicationContext, getString(R.string.mapbox_access_token))

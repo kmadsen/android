@@ -11,6 +11,7 @@ import com.kylemadsen.core.view.ViewController
 import com.kylemadsen.core.view.ViewRouter
 import com.kylemadsen.testandroid.animation.AnimationMainActivity
 import com.kylemadsen.testandroid.ar.ArMainActivity
+import com.kylemadsen.testandroid.clock.ClockInfoActivity
 import com.kylemadsen.testandroid.coordinatorlayout.CoordinatorLayoutActivity
 import com.kylemadsen.testandroid.worldview.WorldViewActivity
 
@@ -50,12 +51,8 @@ class MainViewController(
             viewRouter.goToActivity(WorldViewActivity::class.java)
         }
 
-        val clockInfoText: TextView = view.find(R.id.clock_info)
-        clockInfoText.text = DeviceClock.getClockDriftInfo()
-        val resetDriftButton: Button = view.find(R.id.clock_info_rest)
-        resetDriftButton.setOnClickListener {
-            DeviceClock.resetClockDriftInfo()
-            clockInfoText.text = DeviceClock.getClockDriftInfo()
+        view.find<View>(R.id.goto_clock_info).setOnClickListener {
+            viewRouter.goToActivity(ClockInfoActivity::class.java)
         }
     }
 
