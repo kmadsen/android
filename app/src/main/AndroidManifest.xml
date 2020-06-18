@@ -83,20 +83,28 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <activity android:name=".worldview.WorldViewActivity"
+        <activity
+            android:name=".worldview.WorldViewActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
 
-        <activity android:name=".clock.ClockInfoActivity"
+        <activity
+            android:name=".clock.ClockInfoActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
+        <activity
+            android:name=".renderscript.RenderscriptActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>

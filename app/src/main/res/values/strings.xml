@@ -11,6 +11,7 @@
     <string name="activity_main_localhost">Go to Localhost</string>
     <string name="activity_main_coordinator_layout">Go to Coordinator Layout</string>
     <string name="activity_main_world_view">Go to World View</string>
+    <string name="activity_main_renderscript">Go to Renderscript</string>
     <string name="activity_main_clock_info">Go to device clock info</string>
     <string name="activity_main_clock_drift_info">Reset clock drift info</string>
 
