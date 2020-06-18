@@ -13,6 +13,7 @@ import com.kylemadsen.testandroid.animation.AnimationMainActivity
 import com.kylemadsen.testandroid.ar.ArMainActivity
 import com.kylemadsen.testandroid.clock.ClockInfoActivity
 import com.kylemadsen.testandroid.coordinatorlayout.CoordinatorLayoutActivity
+import com.kylemadsen.testandroid.renderscript.RenderscriptActivity
 import com.kylemadsen.testandroid.worldview.WorldViewActivity
 
 class MainViewController(
@@ -53,6 +54,10 @@ class MainViewController(
 
         view.find<View>(R.id.goto_clock_info).setOnClickListener {
             viewRouter.goToActivity(ClockInfoActivity::class.java)
+        }
+
+        view.find<View>(R.id.goto_renderscript).setOnClickListener {
+            viewRouter.goToActivity(RenderscriptActivity::class.java)
         }
     }
 
