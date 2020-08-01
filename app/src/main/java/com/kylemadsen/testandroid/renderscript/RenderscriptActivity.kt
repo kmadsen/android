@@ -12,14 +12,14 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 
-@ExperimentalCoroutinesApi
-@FlowPreview
 class RenderscriptActivity : AppCompatActivity() {
 
     private var originalBitmap: Bitmap? = null
     private var blurredBitmap: Bitmap? = null
     private val seekProgressChannel = Channel<Int>(1)
 
+    @FlowPreview
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_renderscript)

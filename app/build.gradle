@@ -48,13 +48,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.ar:core:1.2.1'
-
-    implementation "com.google.ar.sceneform:core:1.0.0"
-    implementation "com.google.ar.sceneform.ux:sceneform-ux:1.0.0"
-}
-
-dependencies {
     implementation files('libs/achartengine-1.2.0.jar')
 
     implementation 'joda-time:joda-time:2.9.4'
