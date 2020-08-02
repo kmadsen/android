@@ -8,6 +8,7 @@ task accessToken {
                 "<resources>\n" +
                 "    <string name=\"mapbox_access_token\">YOUR_MAPBOX_ACCESS_TOKEN</string>\n" +
                 "    <string name=\"google_geolocation_api\">YOUR_GOOGLE_GEOLOCATION_API</string>\n" +
+                "    <string name=\"google_maps_api_key\">YOUR_GOOGLE_MAPS_API</string\n" +
                 "</resources>\n" +
                 ""
         tokenFile.write(tokenFileContents)

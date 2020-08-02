@@ -3,8 +3,8 @@ package com.kylemadsen.core.time
 import android.os.Build
 import android.os.SystemClock
 import androidx.annotation.RequiresApi
+import java.time.DateTimeException
 import java.time.Instant
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 object DeviceClock {
@@ -28,7 +28,11 @@ object DeviceClock {
     fun displayMillis() = System.currentTimeMillis()
     fun gnssMillis(): Long? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            SystemClock.currentGnssTimeClock().instant().toEpochMilli()
+            try {
+                SystemClock.currentGnssTimeClock().instant().toEpochMilli()
+            } catch (e: DateTimeException) {
+                null
+            }
         } else null
     }
 
