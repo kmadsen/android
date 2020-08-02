@@ -18,23 +18,19 @@ class MainViewController(
         get() = R.layout.app_goto_buttons
 
     override fun attach(view: View) {
-        val gotoAnimationsButton: View = view.find(R.id.goto_animations_button)
-        gotoAnimationsButton.setOnClickListener {
+        view.find<View>(R.id.goto_animations_button).setOnClickListener {
             viewRouter.goToActivity(AnimationMainActivity::class.java)
         }
 
-        val gotoCompassButton: View = view.find(R.id.goto_compass_button)
-        gotoCompassButton.setOnClickListener {
+        view.find<View>(R.id.goto_compass_button).setOnClickListener {
             viewRouter.goToActivity(CompassMainActivity::class.java)
         }
 
-        val gotoLocalhostButton: View = view.find(R.id.goto_localhost_button)
-        gotoLocalhostButton.setOnClickListener {
+        view.find<View>(R.id.goto_localhost_button).setOnClickListener {
             viewRouter.goToActivity(LocalhostFilesActivity::class.java)
         }
 
-        val gotoCoordinatorLayoutButton: View = view.find(R.id.goto_layout_button)
-        gotoCoordinatorLayoutButton.setOnClickListener {
+        view.find<View>(R.id.goto_layout_button).setOnClickListener {
             viewRouter.goToActivity(CoordinatorLayoutActivity::class.java)
         }
 
